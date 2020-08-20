@@ -11,6 +11,7 @@ class App extends Component {
  
     state = {
       ipfsHash:null,
+      verified:false,
       buffer:'',
       ethAddress:'',
       blockNumber:'',
@@ -67,15 +68,24 @@ onSubmit = async (event) => {
    // call Ethereum contract method "sendHash" and .send IPFS hash to etheruem contract 
   //return the transaction hash from the ethereum contract
  //see, this https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#methods-mymethod-send
-        
+      // if the user has the tokens, 
+
+      if(this.verified)  {
         storehash.methods.sendHash(this.state.ipfsHash).send({
           from: accounts[0] 
         }, (error, transactionHash) => {
           console.log(transactionHash);
           this.setState({transactionHash});
         }); //storehash 
+      }
       }) //await ipfs.add 
     }; //onSubmit
+  
+
+    // for any user who has metamask, send the ERC-20 tokens to the account.
+    getToken = async () => {}
+
+
 render() {
       
       return (
@@ -100,6 +110,7 @@ render() {
           </Form>
 <hr/>
  <Button onClick = {this.onClick}> Get Transaction Receipt </Button>
+ <Button onClick = {this.getToken}> Get Token</Button>
   <Table bordered responsive>
                 <thead>
                   <tr>
