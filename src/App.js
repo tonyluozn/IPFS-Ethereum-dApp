@@ -5,7 +5,7 @@ import web3 from './web3';
 import ipfs from './ipfs';
 import storehash from './storehash';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Table, Button, Form } from 'react-bootstrap';
+import { Container, Table, Button, Form, Row,Col} from 'react-bootstrap';
 
 class App extends Component {
  
@@ -33,6 +33,7 @@ captureFile =(event) => {
       //set this buffer -using es6 syntax
         this.setState({buffer});
     };
+    
 onClick = async () => {
 try{
         this.setState({blockNumber:"waiting.."});
@@ -90,14 +91,22 @@ render() {
       
       return (
         <div className="App">
-          <header className="App-header">
-            <h1> Ethereum and IPFS with Create React App</h1>
-          </header>
-          
+        <p className="App-header">Northwestern Covid-19 News-Sharing Platform</p>  
           <hr />
-<Container>
-          <h3> Choose file to send to IPFS </h3>
-          <Form onSubmit={this.onSubmit}>
+          <Row>
+            <Col>
+                <p>News update</p>
+                <hr />
+            </Col>
+            <Col>
+            <Container>
+              <Row>
+                <Col><p>Link your Metamask account:</p></Col>
+                <Col><Button onClick = {this.getToken}> Get Token</Button></Col>
+                
+              </Row>
+              <hr />
+              <Form onSubmit={this.onSubmit}>
             <input 
               type = "file"
               onChange = {this.captureFile}
@@ -107,11 +116,13 @@ render() {
              type="submit"> 
              Send it 
              </Button>
-          </Form>
-<hr/>
- <Button onClick = {this.onClick}> Get Transaction Receipt </Button>
- <Button onClick = {this.getToken}> Get Token</Button>
-  <Table bordered responsive>
+              </Form>
+  
+  
+          <hr/>
+          <Button onClick = {this.onClick}> Get Transaction Receipt </Button>
+          <hr />
+          <Table bordered responsive>
                 <thead>
                   <tr>
                     <th>Tx Receipt Category</th>
@@ -144,6 +155,12 @@ render() {
                 </tbody>
             </Table>
         </Container>
+            </Col>
+          </Row>
+
+        <p className="App-header">About</p>
+          
+          <hr />
      </div>
       );
     } //render
