@@ -104,6 +104,11 @@ class App extends Component {
     //obtain contract address from storehash.js
     const ethAddress= await storehash.options.address;
     this.setState({ethAddress});
+    const balance = await healthToken.methods.balanceOf(this.walletAddress).call();
+    if (balance >= 1000){
+      this.setState({verified: true})
+    }
+
     //save document to IPFS,return its hash#, and set hash# to state
     //https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/FILES.md#add 
     await ipfs.add(this.state.buffer, (err, ipfsHash) => {
@@ -114,6 +119,7 @@ class App extends Component {
     //return the transaction hash from the ethereum contract
     //see, this https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#methods-mymethod-send
       // if the user has the tokens, 
+
 
       if(this.verified)  {
         storehash.methods.sendHash(this.state.ipfsHash).send({
