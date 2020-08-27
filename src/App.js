@@ -41,9 +41,9 @@ class App extends Component {
 
   //loading the list of hash from the deployed storeHash contract
   componentDidMount() {
-    storehash.methods.getHash().then(
-      arr => this.setState({hashList: arr})
-    )
+    //storehash.methods.getHash().then(
+    //  arr => this.setState({hashList: arr})
+    //)
   }
 
   state = {
