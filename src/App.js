@@ -2,13 +2,34 @@ import React, { Component } from 'react';
 //import logo from ‘./logo.svg’;
 import './App.css';
 import web3 from './web3';
+import Web3 from 'web3';
 import ipfs from './ipfs';
 import storehash from './storehash';
+import healthToken from './healthToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Table, Button, Form, Row,Col} from 'react-bootstrap';
 
-
-
+//force the browser to connect to metamask upon entering the site
+window.addEventListener('load', async () => {
+  // Modern dapp browsers...
+  if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum);
+      try {
+          // Acccounts now exposed
+          web3.eth.sendTransaction({/* ... */});
+      } catch (error) {}
+  }
+  // Legacy dapp browsers...
+  else if (window.web3) {
+      window.web3 = new Web3(web3.currentProvider);
+      // Acccounts always exposed
+      web3.eth.sendTransaction({/* ... */});
+  }
+  // Non-dapp browsers...
+  else {
+      console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+  }
+});
 
 class App extends Component {
  
@@ -16,6 +37,13 @@ class App extends Component {
     super();
     //bring in user's metamask account address
     this.getWalletAddress();
+  }
+
+  //loading the list of hash from the deployed storeHash contract
+  componentDidMount() {
+    storehash.methods.getHash().then(
+      arr => this.setState({hashList: arr})
+    )
   }
 
   state = {
@@ -27,7 +55,8 @@ class App extends Component {
     transactionHash:'',
     gasUsed:'',
     txReceipt: '',
-    walletAddress:'' 
+    walletAddress:'' ,
+    hashList:[]
   };  
 
   getWalletAddress = async() =>{
@@ -85,7 +114,7 @@ class App extends Component {
     //return the transaction hash from the ethereum contract
     //see, this https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#methods-mymethod-send
       // if the user has the tokens, 
-      
+
       if(this.verified)  {
         storehash.methods.sendHash(this.state.ipfsHash).send({
           from: this.walletAddress
@@ -99,7 +128,15 @@ class App extends Component {
 
 
     // for any user who has metamask, send the ERC-20 tokens to the account.
-    getToken = async () => {}
+    getToken = async () => {
+      healthToken.methods.transfer(this.walletAddress,1000).send({
+        // creator of the contract?
+        from: ''
+      },(error,tokenTransactionHash) =>{
+        console.log('token transaction successfull with the tansaction hash: '+tokenTransactionHash);
+      });
+
+    }
 
 
 render() {
