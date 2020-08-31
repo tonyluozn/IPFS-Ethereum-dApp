@@ -64,9 +64,7 @@ class App extends Component {
   getWalletAddress = async() =>{
     const accounts =  await web3.eth.getAccounts();
     console.log('Metamask account: ' + accounts[0]);
-    this.state = {
-      walletAddress: accounts[0]
-    };
+    this.setState({walletAddress: accounts[0]});
     console.log('print out address '+this.state.walletAddress);
   }
 
