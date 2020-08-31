@@ -16,6 +16,8 @@ window.addEventListener('load', async () => {
       window.web3 = new Web3(window.ethereum);
       try {
           // Acccounts now exposed
+          window.ethereum.enable();
+          const accounts = await web3.eth.requestAccounts();
           web3.eth.sendTransaction({/* ... */});
       } catch (error) {}
   }
@@ -65,6 +67,7 @@ class App extends Component {
     this.state = {
       walletAddress: accounts[0]
     };
+    console.log('print out address '+this.state.walletAddress);
   }
 
   captureFile =(event) => {
@@ -104,7 +107,7 @@ class App extends Component {
     //obtain contract address from storehash.js
     const ethAddress= await storehash.options.address;
     this.setState({ethAddress});
-    const balance = await healthToken.methods.balanceOf(this.walletAddress).call();
+    const balance = await healthToken.methods.balanceOf(this.state.walletAddress).call();
     if (balance >= 1000){
       this.setState({verified: true})
     }
@@ -121,9 +124,9 @@ class App extends Component {
       // if the user has the tokens, 
 
 
-      if(this.verified)  {
+      if(this.state.verified)  {
         storehash.methods.sendHash(this.state.ipfsHash).send({
-          from: this.walletAddress
+          from: this.state.walletAddress
         }, (error, transactionHash) => {
           console.log(transactionHash);
           this.setState({transactionHash});
@@ -135,7 +138,7 @@ class App extends Component {
 
     // for any user who has metamask, send the ERC-20 tokens to the account.
     getToken = async () => {
-      healthToken.methods.transfer(this.walletAddress,1000).send({
+      healthToken.methods.transfer(this.state.walletAddress,1000).send({
         // creator of the contract?
         from: ''
       },(error,tokenTransactionHash) =>{
