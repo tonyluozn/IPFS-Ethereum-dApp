@@ -42,11 +42,13 @@ class App extends Component {
   }
 
   //loading the list of hash from the deployed storeHash contract
-  componentDidMount() {
-    //storehash.methods.getHash().then(
-    //  arr => this.setState({hashList: arr})
-    //)
+  componentDidMount = () => {
+    storehash.methods.getHash().call().then(
+      arr => this.setState({hashList: arr})
+    )
   }
+
+
 
   state = {
     ipfsHash:null,
@@ -58,14 +60,32 @@ class App extends Component {
     gasUsed:'',
     txReceipt: '',
     walletAddress:'' ,
-    hashList:[]
+    hashList:[],
+    updates:["News1", "News2","News3",3]
   };  
 
   getWalletAddress = async() =>{
     const accounts =  await web3.eth.getAccounts();
-    console.log('Metamask account: ' + accounts[0]);
+    //console.log(accounts)
+    //console.log('Metamask account: ' + accounts[0]);
     this.setState({walletAddress: accounts[0]});
-    console.log('print out address '+this.state.walletAddress);
+    //console.log('print out address '+this.state.walletAddress);
+  }
+
+  updateNews = async() =>{
+    this.setState({updates: storehash.methods.getHash().arguments})
+  }
+
+  //Issue: what we returned here will become a promise with undifbeing called in
+  ppTest = async() => {
+    const pp = await storehash.methods.getHash().call().then(
+      (result) => {
+        //console.log(result)
+        return result
+      }
+    )
+    console.log(pp)
+    return pp
   }
 
   captureFile =(event) => {
@@ -106,6 +126,7 @@ class App extends Component {
     const ethAddress= await storehash.options.address;
     this.setState({ethAddress});
     const balance = await healthToken.methods.balanceOf(this.state.walletAddress).call();
+    console.log(balance)
     if (balance >= 1000){
       this.setState({verified: true})
     }
@@ -113,7 +134,7 @@ class App extends Component {
     //save document to IPFS,return its hash#, and set hash# to state
     //https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/FILES.md#add 
     await ipfs.add(this.state.buffer, (err, ipfsHash) => {
-        console.log(err,ipfsHash);
+        //console.log(err,ipfsHash);
         //setState by setting ipfsHash to ipfsHash[0].hash 
         this.setState({ ipfsHash:ipfsHash[0].hash });
      // call Ethereum contract method "sendHash" and .send IPFS hash to etheruem contract 
@@ -126,11 +147,14 @@ class App extends Component {
         storehash.methods.sendHash(this.state.ipfsHash).send({
           from: this.state.walletAddress
         }, (error, transactionHash) => {
-          console.log(transactionHash);
+          //console.log(transactionHash);
           this.setState({transactionHash});
+          //console.log(storehash.methods.getHash())
         }); //storehash 
       }
-      }) //await ipfs.add 
+      }) //await ipfs.add
+      //console.log("Locate")
+      //console.log(storehash.methods.getHash())
     }; //onSubmit
 
 
@@ -147,8 +171,17 @@ class App extends Component {
 
 
 render() {
+      //const mypp = storehash.methods.getHash().call()
+      //const mypp = this.ppTest()
+
+      //Issue: pp returned in ppTest() is an array
+      //However, when it is called here, it becomes a promise
+      //This should be fixed
+      console.log(this.ppTest())      
+      const updateItems = this.state.updates.map((update) =>
+        <li>{update}</li>);
       
-      return (
+        return (
         <div className="App">
         <p className="App-header">Northwestern Covid-19 News-Sharing Platform</p>  
           <hr />
@@ -156,6 +189,7 @@ render() {
             <Col>
                 <p>News update</p>
                 <hr />
+                <p>{updateItems}</p>
             </Col>
             <Col>
             <Container>
