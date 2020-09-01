@@ -85,7 +85,7 @@ class App extends Component {
       }
     )
     console.log(pp)
-    return pp
+    this.setState({hashList: pp})
   }
 
   captureFile =(event) => {
@@ -177,8 +177,9 @@ render() {
       //Issue: pp returned in ppTest() is an array
       //However, when it is called here, it becomes a promise
       //This should be fixed
-      console.log(this.ppTest())      
-      const updateItems = this.state.updates.map((update) =>
+      //Y
+      //console.log(this.ppTest())      
+      const updateItems = this.state.hashList.map((update) =>
         <li>{update}</li>);
       
         return (
