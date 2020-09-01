@@ -27,6 +27,14 @@
 .App-link {
   color: #61dafb;
 }
+.list-wrapper{
+  overflow-x: hidden;
+  overflow-y: scroll;
+  white-space: nowrap;
+  height: 470px;
+  margin-bottom: 50px;
+
+}
 
 @keyframes App-logo-spin {
   from {

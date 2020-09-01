@@ -7,7 +7,8 @@ import ipfs from './ipfs';
 import storehash from './storehash';
 import healthToken from './healthToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Table, Button, Form, Row,Col} from 'react-bootstrap';
+import { Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
+import ViewNews from "./ViewNews";
 
 //force the browser to connect to metamask upon entering the site
 window.addEventListener('load', async () => {
@@ -175,7 +176,19 @@ render() {
       //Y
       //console.log(this.ppTest()) 
       const updateItems = this.state.hashList.map((update) =>
-        <li>{update}</li>);
+      <ListGroup.Item key={update.id}>
+      <Row>
+        <Col xs={8} style={{ display: "flex"}}>
+          <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>{update}</Container>
+        </Col>
+        <Col >
+            <ViewNews hash={update}/>
+          </Col>
+          <Col>
+            <Button variant="outline-dark" >Report</Button>
+          </Col>
+      </Row>
+  </ListGroup.Item>);
       
         return (
         <div className="App">
@@ -185,7 +198,10 @@ render() {
             <Col>
                 <p>News update</p>
                 <hr />
-                <p>{updateItems}</p>
+                <div className="list-wrapper">
+                  <p>{updateItems}</p>
+                </div>                     
+                
             </Col>
             <Col>
             <Container>
