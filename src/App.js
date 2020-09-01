@@ -39,13 +39,20 @@ class App extends Component {
     super();
     //bring in user's metamask account address
     this.getWalletAddress();
+    this.updateNews();
   }
 
   //loading the list of hash from the deployed storeHash contract
-  componentDidMount = () => {
-    storehash.methods.getHash().call().then(
-      arr => this.setState({hashList: arr})
+  updateNews = async() => {
+    const pp = await storehash.methods.getHash().call().then(
+      (result) => {
+        //console.log(result)
+        return result
+      }
     )
+    console.log(this.state.hashList)
+    this.setState({hashList: pp})
+    console.log(this.state.hashList)
   }
 
 
@@ -72,21 +79,8 @@ class App extends Component {
     //console.log('print out address '+this.state.walletAddress);
   }
 
-  updateNews = async() =>{
-    this.setState({updates: storehash.methods.getHash().arguments})
-  }
 
   //Issue: what we returned here will become a promise with undifbeing called in
-  ppTest = async() => {
-    const pp = await storehash.methods.getHash().call().then(
-      (result) => {
-        //console.log(result)
-        return result
-      }
-    )
-    console.log(pp)
-    this.setState({hashList: pp})
-  }
 
   captureFile =(event) => {
         event.stopPropagation()
@@ -155,6 +149,7 @@ class App extends Component {
       }) //await ipfs.add
       //console.log("Locate")
       //console.log(storehash.methods.getHash())
+      //console.log(this.state.hashList)
     }; //onSubmit
 
 
@@ -178,7 +173,7 @@ render() {
       //However, when it is called here, it becomes a promise
       //This should be fixed
       //Y
-      //console.log(this.ppTest())      
+      //console.log(this.ppTest()) 
       const updateItems = this.state.hashList.map((update) =>
         <li>{update}</li>);
       
