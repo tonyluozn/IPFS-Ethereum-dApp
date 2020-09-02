@@ -41,6 +41,9 @@ class App extends Component {
     //bring in user's metamask account address
     this.getWalletAddress();
     this.updateNews();
+    // text input
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   //loading the list of hash from the deployed storeHash contract
@@ -55,9 +58,6 @@ class App extends Component {
     this.setState({hashList: pp})
     console.log(this.state.hashList)
   }
-
-
-
   state = {
     ipfsHash:null,
     verified:true,
@@ -82,6 +82,35 @@ class App extends Component {
 
 
   //Issue: what we returned here will become a promise with undifbeing called in
+
+  // captureText = (event) => {
+  //   event.preventDefault()
+  //   console.log('text capture');
+
+
+  // };
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    const element = document.createElement("a");
+    const file = new Blob([this.state.value], {type: 'text/plain'});
+    // download that submit file
+    // element.href = URL.createObjectURL(file);
+    // element.download = "myFile.txt";
+    // document.body.appendChild(element); // Required for this to work in FireFox
+    // element.click();
+    let reader = new window.FileReader()
+    reader.readAsArrayBuffer(file)
+    reader.onloadend = () => {
+      // console.log('buffer', Buffer(reader.result));
+      this.convertToBuffer(reader);
+      this.onSubmit(event);
+    }
+  }
 
   captureFile =(event) => {
         event.stopPropagation()
@@ -211,20 +240,19 @@ render() {
                 
               </Row>
               <hr />
-              <Form onSubmit={this.onSubmit}>
-            <input 
-              type = "file"
-              onChange = {this.captureFile}
-            />
-             <Button 
-             bsStyle="primary" 
-             type="submit"> 
-             Send it 
-             </Button>
+
+              <Form onSubmit={this.handleSubmit}>
+                <textarea value={this.state.value} onChange={this.handleChange}/>
+                <Button bsStyle="primary" type="submit"> Send it </Button>
               </Form>
-  
-  
-          <hr/>
+
+              <hr/>
+              <Form onSubmit={this.onSubmit}>
+                <input type = "file" onChange = {this.captureFile}/>
+                <Button bsStyle="primary" type="submit"> Send it </Button>
+              </Form>
+              <hr/>
+
           <Button onClick = {this.onClick}> Get Transaction Receipt </Button>
           <hr />
           <Table bordered responsive>

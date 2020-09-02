@@ -18,8 +18,6 @@ export default function ViewNews(props) {
         )
     }
 
-
-
     return (
         <>
           <Button block variant="outline-primary" onClick={handleShow}>
@@ -31,7 +29,7 @@ export default function ViewNews(props) {
               <Modal.Title>News</Modal.Title>
             </Modal.Header>
               <Modal.Body>
-              <img src={"https://gateway.ipfs.io/ipfs/"+props.hash} width="300" height="300"/>            
+              <img src={"https://gateway.ipfs.io/ipfs/"+props.hash} width="300" height="300"/> 
               </Modal.Body>
             <Modal.Footer>
               <Button variant="outline-secondary" onClick={handleClose}>
