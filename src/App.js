@@ -206,7 +206,7 @@ render() {
             <Col>
             <Container>
               <Row>
-                <Col><p>Link your Metamask account:</p></Col>
+        <Col><p>Link your Metamask account: {this.state.walletAddress}</p></Col>
                 <Col><Button onClick = {this.getToken}> Get Token</Button></Col>
                 
               </Row>
