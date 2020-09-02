@@ -69,7 +69,8 @@ class App extends Component {
     txReceipt: '',
     walletAddress:'' ,
     hashList:[],
-    updates:["News1", "News2","News3",3]
+    updates:["News1", "News2","News3",3],
+    value:''
   };  
 
   getWalletAddress = async() =>{
@@ -93,16 +94,12 @@ class App extends Component {
   handleChange(event) {
     this.setState({value: event.target.value});
   }
-
+  
   handleSubmit(event) {
     event.preventDefault();
     const element = document.createElement("a");
     const file = new Blob([this.state.value], {type: 'text/plain'});
-    // download that submit file
-    // element.href = URL.createObjectURL(file);
-    // element.download = "myFile.txt";
-    // document.body.appendChild(element); // Required for this to work in FireFox
-    // element.click();
+    console.log("state.value: "+this.state.value);
     let reader = new window.FileReader()
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
@@ -144,6 +141,8 @@ class App extends Component {
           console.log(error);
         } //catch
   } //onClick
+
+  //file upload
   onSubmit = async (event) => {
     event.preventDefault();
     //obtain contract address from storehash.js
@@ -196,14 +195,6 @@ class App extends Component {
 
 
 render() {
-      //const mypp = storehash.methods.getHash().call()
-      //const mypp = this.ppTest()
-
-      //Issue: pp returned in ppTest() is an array
-      //However, when it is called here, it becomes a promise
-      //This should be fixed
-      //Y
-      //console.log(this.ppTest()) 
       const updateItems = this.state.hashList.map((update) =>
       <ListGroup.Item key={update.id}>
       <Row>
@@ -225,7 +216,7 @@ render() {
           <hr />
           <Row>
             <Col>
-                <p>News update</p>
+                <strong>News update</strong>
                 <hr />
                 <div className="list-wrapper">
                   <p>{updateItems}</p>
@@ -235,21 +226,26 @@ render() {
             <Col>
             <Container>
               <Row>
-        <Col><p>Link your Metamask account: {this.state.walletAddress}</p></Col>
-                <Col><Button onClick = {this.getToken}> Get Token</Button></Col>
-                
+                <Col span={8}><p>Link your Metamask account: {this.state.walletAddress}</p></Col>
+                <div className="button"><Button bsStyle="primary"style={{width:"130px"}} type="submit" onClick = {this.getToken} > Get Token</Button></div>
               </Row>
               <hr />
 
               <Form onSubmit={this.handleSubmit}>
-                <textarea value={this.state.value} onChange={this.handleChange}/>
-                <Button bsStyle="primary" type="submit"> Send it </Button>
+              <Row>
+              <Col span={8}><textarea className="inputBox" value={this.state.value} onChange={this.handleChange}/></Col>
+              <div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit"> Send Report </Button></div>
+              </Row>
               </Form>
 
               <hr/>
               <Form onSubmit={this.onSubmit}>
-                <input type = "file" onChange = {this.captureFile}/>
-                <Button bsStyle="primary" type="submit"> Send it </Button>
+              <Row>
+              <Col span={8}><input type = "file" onChange = {this.captureFile}/></Col>
+              <div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit" > File upload </Button></div>
+              </Row>
+                
+                
               </Form>
               <hr/>
 

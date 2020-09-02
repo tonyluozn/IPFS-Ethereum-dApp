@@ -31,11 +31,19 @@
   overflow-x: hidden;
   overflow-y: scroll;
   white-space: nowrap;
-  height: 470px;
+  height: 620px;
   margin-bottom: 50px;
 
 }
-
+.inputBox{
+  width:400px;
+  height:100px;
+  margin-right:60px;
+}
+.button{
+  margin-right: 30px;
+  
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
