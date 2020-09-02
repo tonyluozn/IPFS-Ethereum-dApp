@@ -12,10 +12,17 @@ export default function ViewNews(props) {
     //useEffect(() => {onLoad()}, []);
     // for future uses of converting api endpoint to the text 
     async function onLoad() {
+
         await fetch("https://gateway.ipfs.io/ipfs/"+props.hash).then( (content)=>{
             setContent(content);
         }
         )
+    }
+
+    function seeContent(){
+      fetch("https://gateway.ipfs.io/ipfs/"+props.hash)
+      .then(response => response.text())
+      .then(data => console.log(data));
     }
 
     return (
@@ -30,8 +37,13 @@ export default function ViewNews(props) {
             </Modal.Header>
               <Modal.Body>
               <img src={"https://gateway.ipfs.io/ipfs/"+props.hash} width="300" height="300"/> 
+
+              {"https://gateway.ipfs.io/ipfs/"+props.hash}
               </Modal.Body>
             <Modal.Footer>
+              <Button variant="outline-secondary" onClick={seeContent}>
+                View
+              </Button>
               <Button variant="outline-secondary" onClick={handleClose}>
                 Close
               </Button>
