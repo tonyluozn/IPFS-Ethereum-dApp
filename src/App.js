@@ -149,7 +149,7 @@ class App extends Component {
     const ethAddress= await storehash.options.address;
     this.setState({ethAddress});
     const balance = await healthToken.methods.balanceOf(this.state.walletAddress).call();
-    console.log(balance)
+    console.log("Balance of the tokens: "+balance)
     if (balance >= 1000){
       this.setState({verified: true})
     }
@@ -174,12 +174,21 @@ class App extends Component {
           this.setState({transactionHash});
           //console.log(storehash.methods.getHash())
         }); //storehash 
+
+        //Use event to trigger UI update
+        storehash.events.storageUpdate().watch((error,result)=>{
+          if(!error){
+            console.log("Event recieved: hash "+result.args.newValue+
+            "uploaded by the account "+result.args.updatedBy);
+            //UI update
+
+
+            
+          }
+        });
       }
-      }) //await ipfs.add
-      //console.log("Locate")
-      //console.log(storehash.methods.getHash())
-      //console.log(this.state.hashList)
-    }; //onSubmit
+      }) 
+    };
 
 
     // for any user who has metamask, send the ERC-20 tokens to the account.
