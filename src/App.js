@@ -180,10 +180,8 @@ class App extends Component {
           if(!error){
             console.log("Event recieved: hash "+result.args.newValue+
             "uploaded by the account "+result.args.updatedBy);
-            //UI update
+            //UI update - refresh the page/ displaying a message about successfully added
 
-
-            
           }
         });
       }
@@ -211,7 +209,7 @@ render() {
           <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>{update}</Container>
         </Col>
         <Col >
-            <ViewNews hash={update}/>
+            <ViewNews hash={update} view={this.state.verified}/>
           </Col>
           <Col>
             <Button variant="outline-dark" >Report</Button>

@@ -33,13 +33,17 @@ export default function ViewNews(props) {
               <Modal.Title>News</Modal.Title>
             </Modal.Header>
               <Modal.Body>
-                  <Col>
-                  <Row><p>{content}</p></Row>
-                  {content?null:
-                <img src={"https://gateway.ipfs.io/ipfs/"+props.hash} width="300" height="300"/> 
-                }
-                  <Row><a href={"https://gateway.ipfs.io/ipfs/"+props.hash}>File Link</a></Row>
-                  </Col>
+                  
+                  {props.view? 
+                    <Col>
+                    <Row><p>{content}</p></Row>
+                    {content?null:
+                  <img src={"https://gateway.ipfs.io/ipfs/"+props.hash} width="300" height="300"/> 
+                  }
+                    <Row><a href={"https://gateway.ipfs.io/ipfs/"+props.hash}>File Link</a></Row>
+                    </Col>
+                :<p>you don't have enough tokens to view this news</p>}
+                  
               
               </Modal.Body>
             <Modal.Footer>
