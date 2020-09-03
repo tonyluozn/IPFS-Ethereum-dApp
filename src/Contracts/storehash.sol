@@ -17,15 +17,20 @@ contract Contract {
 
     event storageUpdate(string newValue, address updatedBy);
     
-    function sendUpdate(string memory ipfsHash,string memory location, string memory time) public {
+    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash) public {
         newsList.push(newsUpdate({
-            user:msg.sender;
-            timeStamp:time;
-            location:location;
-            ipfsHash: ipfsHash;
+            user:msg.sender,
+            timeStamp:time,
+            location:location,
+            fileHash: ipfsHash,
+            imageHash: imageHash
         }));
-        
-        userReputation[msg.sender]+=10;
+        if (userReputation[msg.sender] != 0x0){
+             userReputation[msg.sender]+=10;
+        }else{
+            userReputation[msg.sender]=10;
+        }
+       
         emit storageUpdate(ipfsHash, msg.sender);
     }
 
@@ -37,13 +42,14 @@ contract Contract {
         return userReputation[account];
     }
     
-    function increaseReputation(address account, uint amount) public view {
+    function increaseReputation(address account, uint amount) public  {
         userReputation[account] +=amount;
     }
     
-    function decreaseReputation(address account, uint amount) public view {
+    function decreaseReputation(address account, uint amount) public  {
         require(userReputation[account]>amount);
         userReputation[account] -=amount;
     }
     
 }
+
