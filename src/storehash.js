@@ -3,7 +3,7 @@ import web3 from './web3';
 //use your own contract address
 const address = '0x15bA0Ea266CD2A8dfb27b1fc738A6B8c4A1fE781';
 //use the ABI from your contract
-[
+const abi = [
 	{
 		"inputs": [
 			{

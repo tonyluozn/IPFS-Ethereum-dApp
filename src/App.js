@@ -42,8 +42,8 @@ class App extends Component {
     this.getWalletAddress();
     this.updateNews();
     // text input
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    //this.handleChange = this.handleChange.bind(this);
+    //this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   //loading the list of hash from the deployed storeHash contract
@@ -59,10 +59,20 @@ class App extends Component {
     console.log(this.state.hashList)
   }
   state = {
+    //text file hash
     ipfsHash:null,
-    verified:true,
-    buffer:'',
+    //image file hash
+    imageHash:null,
+    //text box value for report
+    value:'',
+    //text box value for location
+    location:'',
     ethAddress:'',
+    verified:true,
+    // two buffer for two seperate files
+    textBuffer:'',
+    imageBuffer:'',
+
     blockNumber:'',
     transactionHash:'',
     gasUsed:'',
@@ -70,32 +80,25 @@ class App extends Component {
     walletAddress:'' ,
     hashList:[],
     updates:["News1", "News2","News3",3],
-    value:''
+
+
   };  
 
   getWalletAddress = async() =>{
     const accounts =  await web3.eth.getAccounts();
-    //console.log(accounts)
-    //console.log('Metamask account: ' + accounts[0]);
     this.setState({walletAddress: accounts[0]});
     //console.log('print out address '+this.state.walletAddress);
   }
 
 
-  //Issue: what we returned here will become a promise with undifbeing called in
-
-  // captureText = (event) => {
-  //   event.preventDefault()
-  //   console.log('text capture');
-
-
-  // };
-
-  handleChange(event) {
+  handleTextChange(event) {
     this.setState({value: event.target.value});
   }
+  handleLocationChange(event) {
+    this.setState({location: event.target.value});
+  }
   
-  handleSubmit(event) {
+  textSubmit(event) {
     event.preventDefault();
     const element = document.createElement("a");
     const file = new Blob([this.state.value], {type: 'text/plain'});
@@ -103,48 +106,46 @@ class App extends Component {
     let reader = new window.FileReader()
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
-      // console.log('buffer', Buffer(reader.result));
       this.convertToBuffer(reader);
-      this.onSubmit(event);
+      this.imageSubmit(event);
     }
   }
 
+  // Image saved to imageBuffer once we select the file
+  //for the text however, they are saved to the textBuffer once we click submit.
   captureFile =(event) => {
         event.stopPropagation()
         event.preventDefault()
         const file = event.target.files[0]
         let reader = new window.FileReader()
         reader.readAsArrayBuffer(file)
-        reader.onloadend = () => this.convertToBuffer(reader)    
+        reader.onloadend = () => this.convertImageToBuffer(reader)    
       };
-  convertToBuffer = async(reader) => {
+  convertImageToBuffer = async(reader) => {
       //file is converted to a buffer for upload to IPFS
         const buffer = await Buffer.from(reader.result);
       //set this buffer -using es6 syntax
-        this.setState({buffer});
-    };
-    
-  onClick = async () => {
-    try{
-          this.setState({blockNumber:"waiting.."});
-          this.setState({gasUsed:"waiting..."});
-    //get Transaction Receipt in console on click
-    //See: https://web3js.readthedocs.io/en/1.0/web3-eth.html#gettransactionreceipt
-    await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt)=>{
-            console.log(err,txReceipt);
-            this.setState({txReceipt});
-          }); //await for getTransactionReceipt
-    await this.setState({blockNumber: this.state.txReceipt.blockNumber});
-          await this.setState({gasUsed: this.state.txReceipt.gasUsed});    
-        } //try
-      catch(error){
-          console.log(error);
-        } //catch
-  } //onClick
+        this.setState({imageBuffer: buffer});
+  };
+  convertTextToBuffer = async(reader) => {
+    //file is converted to a buffer for upload to IPFS
+      const buffer = await Buffer.from(reader.result);
+    //set this buffer -using es6 syntax
+      this.setState({textBuffer: buffer});
+};
+  
 
-  //file upload
-  onSubmit = async (event) => {
+
+  //first, convert the report text to buffer, then send the combined update to blockchain. 
+  updateSubmit = async (event) => {
     event.preventDefault();
+    //convert the text report to buffer
+    const file = new Blob([this.state.value], {type: 'text/plain'});
+    console.log("state.value: "+this.state.value);
+    let reader = new window.FileReader()
+    reader.readAsArrayBuffer(file)
+    reader.onloadend = () => this.convertTextToBuffer(reader)    
+
     //obtain contract address from storehash.js
     const ethAddress= await storehash.options.address;
     this.setState({ethAddress});
@@ -154,40 +155,44 @@ class App extends Component {
       this.setState({verified: true})
     }
 
-    //save document to IPFS,return its hash#, and set hash# to state
-    //https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/FILES.md#add 
-    await ipfs.add(this.state.buffer, (err, ipfsHash) => {
-        //console.log(err,ipfsHash);
-        //setState by setting ipfsHash to ipfsHash[0].hash 
+    //submit both image and text to ipfs network, save two returned hashes to states.
+    await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
         this.setState({ ipfsHash:ipfsHash[0].hash });
-     // call Ethereum contract method "sendHash" and .send IPFS hash to etheruem contract 
-    //return the transaction hash from the ethereum contract
-    //see, this https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#methods-mymethod-send
-      // if the user has the tokens, 
+    await ipfs.add(this.state.imageBuffer, (err, ipfsHash) => {
+        this.setState({ imageHash:ipfsHash[0].hash });
+      });
 
-
+      const time = new Date().toLocaleString();
       if(this.state.verified)  {
-        storehash.methods.sendHash(this.state.ipfsHash).send({
+        storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
+          time,this.state.imageHash).send({
           from: this.state.walletAddress
         }, (error, transactionHash) => {
           //console.log(transactionHash);
           this.setState({transactionHash});
           //console.log(storehash.methods.getHash())
         }); //storehash 
-
-        //Use event to trigger UI update
-        storehash.events.storageUpdate().watch((error,result)=>{
-          if(!error){
-            console.log("Event recieved: hash "+result.args.newValue+
-            "uploaded by the account "+result.args.updatedBy);
-            //UI update - refresh the page/ displaying a message about successfully added
-
-          }
-        });
       }
       }) 
     };
 
+    onClick = async () => {
+      try{
+            this.setState({blockNumber:"waiting.."});
+            this.setState({gasUsed:"waiting..."});
+      //get Transaction Receipt in console on click
+      //See: https://web3js.readthedocs.io/en/1.0/web3-eth.html#gettransactionreceipt
+      await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt)=>{
+              console.log(err,txReceipt);
+              this.setState({txReceipt});
+            }); //await for getTransactionReceipt
+      await this.setState({blockNumber: this.state.txReceipt.blockNumber});
+            await this.setState({gasUsed: this.state.txReceipt.gasUsed});    
+          } //try
+        catch(error){
+            console.log(error);
+          } //catch
+    } //onClick
 
     // for any user who has metamask, send the ERC-20 tokens to the account.
     getToken = async () => {
@@ -197,7 +202,6 @@ class App extends Component {
       },(error,tokenTransactionHash) =>{
         console.log('token transaction successfull with the tansaction hash: '+tokenTransactionHash);
       });
-
     }
 
 
@@ -238,20 +242,20 @@ render() {
               </Row>
               <hr />
 
-              <Form onSubmit={this.handleSubmit}>
+              <Form onSubmit={this.updateSubmit}>
               <Row>
-              <Col span={8}><textarea className="inputBox" value={this.state.value} onChange={this.handleChange}/></Col>
-              <div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit"> Send Report </Button></div>
+              <Col span={8}><textarea className="inputBox" value={this.state.value} onChange={this.handleTextChange}/></Col>
+              <div className="button"><Button bsStyle="primary" style={{width:"130px"}} type="submit"> Send Report </Button></div>
               </Row>
-              </Form>
 
-              <hr/>
-              <Form onSubmit={this.onSubmit}>
+              <Row>
+              <Col span={8}><textarea className="inputBox" value={this.state.location} onChange={this.handleLocationChange}/></Col>
+              </Row>
+
               <Row>
               <Col span={8}><input type = "file" onChange = {this.captureFile}/></Col>
-              <div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit" > File upload </Button></div>
+              <div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit" > Image upload </Button></div>
               </Row>
-                
                 
               </Form>
               <hr/>
