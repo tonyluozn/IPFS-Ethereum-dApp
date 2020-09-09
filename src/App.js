@@ -42,22 +42,19 @@ class App extends Component {
     //bring in user's metamask account address
     this.getWalletAddress();
     this.updateNews();
-    // text input
-    //this.handleChange = this.handleChange.bind(this);
-    //this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   //loading the list of hash from the deployed storeHash contract
   updateNews = async() => {
-    const pp = await storehash.methods.getHash().call().then(
+    const pp = await storehash.methods.getUpdate().call().then(
       (result) => {
         //console.log(result)
         return result
       }
     )
-    console.log(this.state.hashList)
-    this.setState({hashList: pp})
-    console.log(this.state.hashList)
+    console.log(this.state.newsList)
+    this.setState({newsList: pp})
+    console.log(this.state.newsList)
   }
   state = {
     //text file hash
@@ -79,9 +76,7 @@ class App extends Component {
     gasUsed:'',
     txReceipt: '',
     walletAddress:'' ,
-    hashList:[],
-    updates:["News1", "News2","News3",3],
-
+    newsList:[],
 
   };  
 
@@ -199,7 +194,7 @@ class App extends Component {
 
 
 render() {
-      const updateItems = this.state.hashList.map((update) =>
+      const updateItems = this.state.newsList.map((update) =>
       <ListGroup.Item key={update.id}>
       <Row>
         <Col xs={8} style={{ display: "flex"}}>
@@ -248,10 +243,10 @@ render() {
               </Row>
               <br/>
               <Row>
-                 <Col span={5}></Col>
+                <Col span={5}></Col>
                 <Col><input className="input" type = "file" onChange = {this.captureFile}/></Col>
                 <Col><div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit" > Submit </Button></div>
-</Col>
+                </Col>
               </Row>
             
                 
