@@ -9,6 +9,7 @@ import healthToken from './healthToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
+import { cpus } from 'os';
 
 //force the browser to connect to metamask upon entering the site
 window.addEventListener('load', async () => {
@@ -88,14 +89,6 @@ class App extends Component {
     const accounts =  await web3.eth.getAccounts();
     this.setState({walletAddress: accounts[0]});
     //console.log('print out address '+this.state.walletAddress);
-  }
-
-
-  handleTextChange(event) {
-    this.setState({value: event.target.value});
-  }
-  handleLocationChange(event) {
-    this.setState({location: event.target.value});
   }
   
   textSubmit(event) {
@@ -237,6 +230,7 @@ render() {
             <Col>
             <Container>
               <Row>
+                
                 <Col span={8}><p>Link your Metamask account: {this.state.walletAddress}</p></Col>
                 <div className="button"><Button bsStyle="primary"style={{width:"130px"}} type="submit" onClick = {this.getToken} > Get Token</Button></div>
               </Row>
@@ -244,18 +238,22 @@ render() {
 
               <Form onSubmit={this.updateSubmit}>
               <Row>
-              <Col span={8}><textarea className="inputBox" value={this.state.value} onChange={this.handleTextChange}/></Col>
-              <div className="button"><Button bsStyle="primary" style={{width:"130px"}} type="submit"> Send Report </Button></div>
+              <Col span={3}>Report</Col>
+              <Col span={8}><textarea className="textInputBox" onChange={e=>{this.setState({value:e.target.value});}}/></Col>
               </Row>
 
               <Row>
-              <Col span={8}><textarea className="inputBox" value={this.state.location} onChange={this.handleLocationChange}/></Col>
+              <Col span={3}>Location</Col>
+              <Col span={8}><textarea className="locationInputBox" onChange={e=>{this.setState({location:e.target.value});}}/></Col>
               </Row>
-
+              <br/>
               <Row>
-              <Col span={8}><input type = "file" onChange = {this.captureFile}/></Col>
-              <div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit" > Image upload </Button></div>
+                 <Col span={5}></Col>
+                <Col><input className="input" type = "file" onChange = {this.captureFile}/></Col>
+                <Col><div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit" > Submit </Button></div>
+</Col>
               </Row>
+            
                 
               </Form>
               <hr/>

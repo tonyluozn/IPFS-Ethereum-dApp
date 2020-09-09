@@ -35,9 +35,14 @@
   margin-bottom: 50px;
 
 }
-.inputBox{
+.textInputBox{
   width:400px;
   height:100px;
+  margin-right:60px;
+}
+.locationInputBox{
+  width:400px;
+  height:30px;
   margin-right:60px;
 }
 .button{
