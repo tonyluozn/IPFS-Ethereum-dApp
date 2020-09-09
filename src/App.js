@@ -9,7 +9,6 @@ import healthToken from './healthToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
-import { cpus } from 'os';
 
 //force the browser to connect to metamask upon entering the site
 window.addEventListener('load', async () => {
@@ -66,7 +65,7 @@ class App extends Component {
     //text box value for location
     location:'',
     ethAddress:'',
-    verified:true,
+    verified:false,
     // two buffer for two seperate files
     textBuffer:'',
     imageBuffer:'',
@@ -201,14 +200,14 @@ class App extends Component {
 
 render() {
 
-      const updateItems = this.state.newsList.map((update) =>
-      <ListGroup.Item key={update.id}>
+      const updateItems = this.state.newsList.map((update,index) =>
+      <ListGroup.Item key={index}>
       <Row>
         <Col xs={8} style={{ display: "flex"}}>
           <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
         </Col>
         <Col >
-            <ViewNews hash={update} view={this.state.verified}/>
+            <ViewNews hash={update} view={index<4||this.state.verified}/>
           </Col>
           <Col>
             <Button variant="outline-dark" >Report</Button>

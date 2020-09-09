@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
-import "@openzeppelin/contracts/access/Ownable.sol";
-
+pragma solidity ^0.7.0
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC20/ERC20Pausable.sol"
 
 contract TokenZendR is Ownable, Pausable {
 
@@ -115,10 +116,6 @@ contract TokenZendR is Ownable, Pausable {
         emit TransferSuccessful(from_, to_, amount_);
     }
 
-    /**
-    * @dev allow contract to receive funds
-    */
-    function() public payable {}
 
     /**
     * @dev withdraw funds from this contract
