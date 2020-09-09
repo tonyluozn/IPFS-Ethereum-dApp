@@ -276,8 +276,12 @@ render() {
                
                 <tbody>
                   <tr>
-                    <td>IPFS Hash # stored on Eth Contract</td>
+                    <td>IPFS Hash of text stored on Eth Contract</td>
                     <td>{this.state.ipfsHash}</td>
+                  </tr>
+                  <tr>
+                    <td>IPFS Hash of image stored on Eth Contract</td>
+                    <td>{this.state.imageHash}</td>
                   </tr>
                   <tr>
                     <td>Ethereum Contract Address</td>
