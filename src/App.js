@@ -194,11 +194,12 @@ class App extends Component {
 
 
 render() {
+
       const updateItems = this.state.newsList.map((update) =>
       <ListGroup.Item key={update.id}>
       <Row>
         <Col xs={8} style={{ display: "flex"}}>
-          <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>{update}</Container>
+          <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
         </Col>
         <Col >
             <ViewNews hash={update} view={this.state.verified}/>
@@ -206,6 +207,10 @@ render() {
           <Col>
             <Button variant="outline-dark" >Report</Button>
           </Col>
+      </Row>
+      <Row>
+        <Col>Location: {update.location}</Col>
+        <Col offset={5}>Submitted on: {update.timeStamp}</Col>
       </Row>
   </ListGroup.Item>);
       

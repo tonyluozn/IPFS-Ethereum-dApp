@@ -10,10 +10,10 @@ export default function ViewNews(props) {
     const [content, setContent] = useState(null);
 
     useEffect(() => {onLoad()}, []);
-    // for future uses of converting api endpoint to the text 
+    // first convert the fileHash to the string and save to the state
     async function onLoad() {
 
-        await fetch("https://gateway.ipfs.io/ipfs/"+props.hash).then(response => response.text())
+        await fetch("https://gateway.ipfs.io/ipfs/"+props.hash.fileHash).then(response => response.text())
         .then(data => {
             setContent(data);
             console.log("text loaded: "+data);
@@ -37,10 +37,10 @@ export default function ViewNews(props) {
                   {props.view? 
                     <Col>
                     <Row><p>{content}</p></Row>
-                    {content?null:
-                  <img src={"https://gateway.ipfs.io/ipfs/"+props.hash} width="300" height="300"/> 
-                  }
-                    <Row><a href={"https://gateway.ipfs.io/ipfs/"+props.hash}>File Link</a></Row>
+                  <img src={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash} width="300" height="300"/> 
+                  
+                  <Row><Col><a href={"https://gateway.ipfs.io/ipfs/"+props.hash.fileHash}>File Link</a></Col>
+                  <Col><a href={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash}>Image Link</a></Col></Row>
                     </Col>
                 :<p>you don't have enough tokens to view this news</p>}
                   
