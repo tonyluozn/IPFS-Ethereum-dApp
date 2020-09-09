@@ -1,18 +1,69 @@
 import web3 from './web3';
 //access our local copy to contract deployed on rinkeby testnet
 //use your own contract address
-const address = '0xe188ad5062E3d9443C67c3D3F9E2f1EEFE7254BE';
+const address = '0x15bA0Ea266CD2A8dfb27b1fc738A6B8c4A1fE781';
 //use the ABI from your contract
-const abi = [
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "decreaseReputation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "increaseReputation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
 	{
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "hash",
+				"name": "ipfsHash",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "time",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "imageHash",
 				"type": "string"
 			}
 		],
-		"name": "sendHash",
+		"name": "sendUpdate",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -37,13 +88,117 @@ const abi = [
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "getHash",
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "getReputation",
 		"outputs": [
 			{
-				"internalType": "string[]",
+				"internalType": "uint256",
 				"name": "",
-				"type": "string[]"
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getUpdate",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "timeStamp",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "location",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "fileHash",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "imageHash",
+						"type": "string"
+					}
+				],
+				"internalType": "struct Contract.newsUpdate[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "newsList",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "timeStamp",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "fileHash",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "imageHash",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "userReputation",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
