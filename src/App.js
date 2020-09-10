@@ -77,6 +77,8 @@ class App extends Component {
     txReceipt: '',
     walletAddress:'' ,
     newsList:[],
+    //Byte32 for 'NUHT'
+    tokenByte: 0x4e55485400000000000000000000000000000000000000000000000000000000,
 
   };  
 
