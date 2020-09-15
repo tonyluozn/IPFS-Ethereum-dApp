@@ -41,6 +41,7 @@ class App extends Component {
     super();
     //bring in user's metamask account address
     this.getWalletAddress();
+    // this.getReputation();
     this.updateNews();
   }
 
@@ -56,6 +57,8 @@ class App extends Component {
     this.setState({newsList: pp})
     console.log(this.state.newsList)
   }
+
+
   state = {
     //text file hash
     ipfsHash:null,
@@ -76,6 +79,7 @@ class App extends Component {
     gasUsed:'',
     txReceipt: '',
     walletAddress:'' ,
+    reputation:0,
     newsList:[],
     //Byte32 for 'NUHT'
     tokenByte: 0x4e55485400000000000000000000000000000000000000000000000000000000,
@@ -85,9 +89,13 @@ class App extends Component {
   getWalletAddress = async() =>{
     const accounts =  await web3.eth.getAccounts();
     this.setState({walletAddress: accounts[0]});
-    //console.log('print out address '+this.state.walletAddress);
+    console.log('print out address '+this.state.walletAddress);
+    console.log('current address', this.state.walletAddress);
+    if (this.state.walletAddress != '') {
+      this.getReputation()
+    }
   }
-  
+
   textSubmit(event) {
     event.preventDefault();
     const element = document.createElement("a");
@@ -177,7 +185,6 @@ class App extends Component {
             }, (error, transactionHash) => {
               this.setState({transactionHash});
             }); //storehash 
-            this.testGetToken(this.state.walletAddress);
         }
       }) 
     }
@@ -217,6 +224,25 @@ class App extends Component {
       console.log(`user ${address} at adress will get token`);
     }
 
+    // get the user reputation
+    getReputation = async() =>{
+      const address = this.state.walletAddress
+      const repu = await storehash.methods.getReputation(address).call().then((result) => {
+        console.log(result);
+        return result});
+    // console.log(this.state.reputation);
+    this.setState({reputation: repu});
+    // console.log(this.state.reputation);
+  }
+
+    // report post 
+    reportPost = async (address) => {
+      console.log('call reportPost function');
+      const de_repu = 5;
+      storehash.methods.decreaseReputation(address, de_repu).send({from: this.state.walletAddress});
+      this.getReputation();
+    }
+
 
 render() {
 
@@ -230,7 +256,7 @@ render() {
             <ViewNews hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
           </Col>
           <Col>
-            <Button variant="outline-dark" >Report</Button>
+            <Button variant="outline-dark" onClick = {()=>this.reportPost(update.user)}>Report</Button>
           </Col>
       </Row>
       <Row>
@@ -256,7 +282,10 @@ render() {
             <Container>
               <Row>
                 
-                <Col span={8}><p>Link your Metamask account: {this.state.walletAddress}</p></Col>
+                <Col span={8}>
+                  <p>Link your Metamask account: {this.state.walletAddress}</p>
+                  <p> Your reputation: {this.state.reputation} </p> 
+                  </Col>
                 <div className="button"><Button bsStyle="primary"style={{width:"130px"}} type="submit" onClick = {this.getToken} > Get Token</Button></div>
               </Row>
               <hr />
