@@ -66,7 +66,7 @@ class App extends Component {
     //text box value for location
     location:'',
     ethAddress:'',
-    verified:false,
+    verified:true,
     // two buffer for two seperate files
     textBuffer:'',
     imageBuffer:'',
@@ -142,7 +142,7 @@ class App extends Component {
     if (balance >= 1000){
       this.setState({verified: true})
     }
-
+    console.log(this.state.verified)
     //submit both image and text to ipfs network, save two returned hashes to states.
     
     //If there is no image, the buffer is ''
@@ -172,7 +172,7 @@ class App extends Component {
         if(this.state.verified){
           //Trying to use '' as an image hash/place holder
           storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-            time,'').send({
+            time,null).send({
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({transactionHash});
@@ -227,7 +227,7 @@ render() {
           <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
         </Col>
         <Col >
-            <ViewNews hash={update} view={index<4||this.state.verified}/>
+            <ViewNews hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
           </Col>
           <Col>
             <Button variant="outline-dark" >Report</Button>
