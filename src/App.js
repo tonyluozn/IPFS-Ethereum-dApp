@@ -10,6 +10,7 @@ import transferToken from './transferToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
+import {DownCircleTwoTone, UpCircleTwoTone,DownOutlined,UpOutlined}from '@ant-design/icons';
 
 //force the browser to connect to metamask upon entering the site
 window.addEventListener('load', async () => {
@@ -253,6 +254,10 @@ class App extends Component {
       this.getReputation();
     }
 
+    upvotePost = async (address) => {
+     
+    }
+
 
 render() {
       const news_total = this.state.newsList.length;
@@ -266,7 +271,10 @@ render() {
             <ViewNews hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
           </Col>
           <Col>
-            <Button variant="outline-dark" onClick = {()=>this.reportPost(update.user)}>Report</Button>
+            <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
+          </Col>
+          <Col>
+            <UpOutlined style={{ fontSize: '20px' }} onClick = {()=>this.upvotePost(update.user)}/>
           </Col>
       </Row>
       <Row>
