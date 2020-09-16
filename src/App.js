@@ -80,9 +80,12 @@ class App extends Component {
     txReceipt: '',
     walletAddress:'' ,
     reputation:0,
+    token_balance:0,
     newsList:[],
     //Byte32 for 'NUHT'
-    tokenByte: 0x4e55485400000000000000000000000000000000000000000000000000000000,
+    tokenByte: '0x4e55485400000000000000000000000000000000000000000000000000000000',
+    required_token:10*1000000000000000000,
+    
 
   };  
 
@@ -93,7 +96,9 @@ class App extends Component {
     console.log('current address', this.state.walletAddress);
     if (this.state.walletAddress != '') {
       this.getReputation()
+      this.getTokenBalance()
     }
+    
   }
 
   textSubmit(event) {
@@ -145,9 +150,8 @@ class App extends Component {
     //obtain contract address from storehash.js
     const ethAddress= await storehash.options.address;
     this.setState({ethAddress});
-    const balance = await healthToken.methods.balanceOf(this.state.walletAddress).call();
-    console.log("Balance of the tokens: "+balance)
-    if (balance >= 1000){
+
+    if (this.state.token_balance >= 10){
       this.setState({verified: true})
     }
     console.log(this.state.verified)
@@ -211,8 +215,8 @@ class App extends Component {
 
     // for any user who has metamask, send the ERC-20 tokens to the account.
     getToken = async () => {
-      healthToken.methods.transfer(this.state.walletAddress,1000).send({
-        // creator of the contract?
+      transferToken.methods.transferTokens(this.state.tokenByte,this.state.walletAddress,1000).send({
+        // creator of the contract? 
         from: ''
       },(error,tokenTransactionHash) =>{
         console.log('token transaction successfull with the tansaction hash: '+tokenTransactionHash);
@@ -234,6 +238,12 @@ class App extends Component {
     this.setState({reputation: repu});
     // console.log(this.state.reputation);
   }
+
+  getTokenBalance = async() =>{
+    const address = this.state.walletAddress
+    const balance = await healthToken.methods.balanceOf(address).call();
+  this.setState({token_balance: balance/1000000000000000000});
+}
 
     // report post 
     reportPost = async (address) => {
@@ -285,6 +295,7 @@ render() {
                 <Col span={8}>
                   <p>Your Metamask account: {this.state.walletAddress}</p>
                   <p> Your reputation: {this.state.reputation} </p> 
+                  <p> Your NUHT token balance: {this.state.token_balance} </p> 
                   </Col>
                 <div className="button"><Button bsStyle="primary"style={{width:"130px"}} type="submit" onClick = {this.getToken} > Get Token</Button></div>
               </Row>
