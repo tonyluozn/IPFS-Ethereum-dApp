@@ -245,8 +245,8 @@ class App extends Component {
 
 
 render() {
-
-      const updateItems = this.state.newsList.map((update,index) =>
+      const news_total = this.state.newsList.length;
+      const updateItems = this.state.newsList.slice(0).reverse().map((update,index) =>
       <ListGroup.Item key={index}>
       <Row>
         <Col xs={8} style={{ display: "flex"}}>
@@ -283,7 +283,7 @@ render() {
               <Row>
                 
                 <Col span={8}>
-                  <p>Link your Metamask account: {this.state.walletAddress}</p>
+                  <p>Your Metamask account: {this.state.walletAddress}</p>
                   <p> Your reputation: {this.state.reputation} </p> 
                   </Col>
                 <div className="button"><Button bsStyle="primary"style={{width:"130px"}} type="submit" onClick = {this.getToken} > Get Token</Button></div>
