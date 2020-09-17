@@ -170,8 +170,8 @@ class App extends Component {
     //submit both image and text to ipfs network, save two returned hashes to states.
     
     //If there is no image, the buffer is ''
-    console.log(this.state.imageBuffer == '') 
     if(this.state.imageBuffer !== ''){
+      console.log(this.state.textBuffer) 
       await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
         this.setState({ ipfsHash:ipfsHash[0].hash });
         await ipfs.add(this.state.imageBuffer, (err, imageHash) => {
@@ -190,13 +190,14 @@ class App extends Component {
         }) 
     }
     else{ //we only want to send the text
+      console.log(this.state.textBuffer)
       await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
         this.setState({ ipfsHash:ipfsHash[0].hash });
         const time = new Date().toLocaleString();
         if(this.state.verified){
           //Trying to use '' as an image hash/place holder
           storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-            time,null).send({
+            time,'').send({
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({transactionHash});
