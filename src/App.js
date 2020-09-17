@@ -44,6 +44,8 @@ class App extends Component {
     this.getWalletAddress();
     // this.getReputation();
     this.updateNews();
+    // approve the spender to spend on contract creator's behalf, calling this only once
+    //this.approve();
   }
 
   //loading the list of hash from the deployed storeHash contract
@@ -89,6 +91,15 @@ class App extends Component {
     
 
   };  
+
+ // approve = async () => {
+ //   const amount = 1000000000;
+ //   healthToken.methods.approve('0xaEd736D1b3d3cB35be456c9dC4D7F7CA63A78408',amount).call({
+ //     from: '0x65bA114024121a991865e9130B196cA9E504E262'
+ //   }, (error, transactionHash) => {
+ //     console.log("spender approved. Transaction hash: "+ transactionHash);
+ //   }); 
+ // }
 
   getWalletAddress = async() =>{
     const accounts =  await web3.eth.getAccounts();
@@ -216,9 +227,9 @@ class App extends Component {
 
     // for any user who has metamask, send the ERC-20 tokens to the account.
     getToken = async () => {
-      transferToken.methods.transferTokens(this.state.tokenByte,this.state.walletAddress,1000).send({
+      transferToken.methods.transferTokens(this.state.tokenByte,this.state.walletAddress,10).send({
         // creator of the contract? 
-        from: ''
+        from: '0x65bA114024121a991865e9130B196cA9E504E262'
       },(error,tokenTransactionHash) =>{
         console.log('token transaction successfull with the tansaction hash: '+tokenTransactionHash);
       });
