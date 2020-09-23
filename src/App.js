@@ -348,7 +348,7 @@ render() {
           <Table bordered responsive>
                 <thead>
                   <tr>
-                    <th>Tx Receipt Category</th>
+                    <th>Transaction Receipt Category</th>
                     <th>Values</th>
                   </tr>
                 </thead>

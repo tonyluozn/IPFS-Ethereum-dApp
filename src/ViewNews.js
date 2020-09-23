@@ -49,8 +49,8 @@ export default function ViewNews(props) {
                   <img src={validImage(props)[0]} width= {validImage(props)[1]} height={validImage(props)[2]}/> 
                   
                   
-                  <Row><Col><a href={"https://gateway.ipfs.io/ipfs/"+props.hash.fileHash}>File Link</a></Col>
-                  {props.image? <p/>:<Col><a href={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash}>Image Link</a></Col>}
+                  <Row><Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.fileHash}>File Link</a></Col>
+                  {props.image? <p/>:<Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash}>Image Link</a></Col>}
                     </Row>
                     </Col>
                 :<p>you don't have enough tokens to view this news</p>}
