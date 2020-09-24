@@ -252,6 +252,16 @@ class App extends Component {
     // console.log(this.state.reputation);
   }
 
+  //To capture the reputation of the message poster
+  returnReputation = async(userAddress) =>{
+    const address = userAddress;
+    const repu = await storehash.methods.getReputation(address).call().then((result) => {
+      //console.log("This is the repu " + result + (result > 0));
+      return result});
+    console.log(repu > 0)
+    return repu > 0;
+  }
+
   getTokenBalance = async() =>{
     const address = this.state.walletAddress
     const balance = await healthToken.methods.balanceOf(address).call();
@@ -280,7 +290,7 @@ render() {
           <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
         </Col>
         <Col >
-            <ViewNews repu = {this.state.reputation > 0} hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
+            <ViewNews user = {update.user} hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
           </Col>
           <Col>
             <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
