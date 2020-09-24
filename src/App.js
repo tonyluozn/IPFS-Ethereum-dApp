@@ -235,7 +235,7 @@ class App extends Component {
  .use(require('chai-as-promised'))  
  .use(require('chai-bignumber')(BigNumber))  
  .should();  
-      const amount = new BigNumber(1e18); 
+      const amount = new BigNumber(1e18);
       healthToken.methods.transfer('0x3C9c010366aEd756647B83BC0120B925c41D9bf8',amount).send({
         from: this.state.walletAddress
       },(error,tokenTransactionHash) =>{
@@ -270,11 +270,17 @@ class App extends Component {
     return repu > 0;
   }
 
+
+
+  //Update State right after getting the token balance
   getTokenBalance = async() =>{
     const address = this.state.walletAddress
     const balance = await healthToken.methods.balanceOf(address).call();
-  this.setState({token_balance: balance/1000000000000000000});
-}
+    this.setState({token_balance: balance/1000000000000000000});
+    if(this.state.token_balance >5){
+      this.setState({verified: true})
+    }
+  }
 
     // report post 
     reportPost = async (address) => {
