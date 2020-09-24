@@ -31,6 +31,7 @@ export default function ViewNews(props) {
         }
     }
 
+
     // assuming the file is either text file or an image. Conditional rendering added 
     return (
         <>
@@ -43,19 +44,18 @@ export default function ViewNews(props) {
               <Modal.Title>News</Modal.Title>
             </Modal.Header>
               <Modal.Body>
+                {props.repu? 
+                <p>
                   {props.view? 
                     <Col>
                     <Row><p>{content}</p></Row>
                   <img src={validImage(props)[0]} width= {validImage(props)[1]} height={validImage(props)[2]}/> 
-                  
-                  
                   <Row><Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.fileHash}>File Link</a></Col>
                   {props.image? <p/>:<Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash}>Image Link</a></Col>}
                     </Row>
                     </Col>
                 :<p>you don't have enough tokens to view this news</p>}
-                  
-              
+                </p> : <p>You don't have enough reputation to view this news.</p>}
               </Modal.Body>
             <Modal.Footer>
               <Button variant="outline-secondary" onClick={handleClose}>

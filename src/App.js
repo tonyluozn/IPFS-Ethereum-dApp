@@ -280,7 +280,7 @@ render() {
           <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
         </Col>
         <Col >
-            <ViewNews hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
+            <ViewNews repu = {this.state.reputation > 0} hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
           </Col>
           <Col>
             <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
