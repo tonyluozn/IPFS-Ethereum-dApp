@@ -46,6 +46,7 @@ class App extends Component {
     this.updateNews();
     // approve the spender to spend on contract creator's behalf, calling this only once
     //this.approve();
+    
   }
 
   //loading the list of hash from the deployed storeHash contract
@@ -226,14 +227,21 @@ class App extends Component {
           } //catch
     } //onClick
 
+    
     // for any user who has metamask, send the ERC-20 tokens to the account.
     getToken = async () => {
-      transferToken.methods.transferTokens(this.state.tokenByte,this.state.walletAddress,10).send({
-        // creator of the contract? 
-        from: '0x65bA114024121a991865e9130B196cA9E504E262'
+      const BigNumber = web3.BigNumber; 
+      const should = require('chai')  
+ .use(require('chai-as-promised'))  
+ .use(require('chai-bignumber')(BigNumber))  
+ .should();  
+      const amount = new BigNumber(1e18); 
+      healthToken.methods.transfer('0x3C9c010366aEd756647B83BC0120B925c41D9bf8',amount).send({
+        from: this.state.walletAddress
       },(error,tokenTransactionHash) =>{
         console.log('token transaction successfull with the tansaction hash: '+tokenTransactionHash);
       });
+      
     }
 
     // for testing purpose
