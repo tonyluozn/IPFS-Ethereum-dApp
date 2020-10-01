@@ -79,6 +79,9 @@ class App extends Component {
     textBuffer:'',
     imageBuffer:'',
 
+    //value for post category
+    category: '',
+
     blockNumber:'',
     transactionHash:'',
     gasUsed:'',
@@ -181,7 +184,7 @@ class App extends Component {
             const time = new Date().toLocaleString();
             if(this.state.verified)  {
               storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-                time,this.state.imageHash).send({
+                time,this.state.imageHash,this.location).send({
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({transactionHash});
