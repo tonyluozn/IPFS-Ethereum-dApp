@@ -9,7 +9,8 @@ export default function ViewNews(props) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [content, setContent] = useState(null);
-    const [repu, setRepu] = useState(false);
+    const [repu, setRepu] = useState(true);
+    const [reputation,setReputation] = useState(0);
 
     useEffect(() => {onLoad()}, []);
     // first convert the fileHash to the string and save to the state
@@ -23,9 +24,11 @@ export default function ViewNews(props) {
         }
         ) 
         const address = props.user;
-        const local_repu = await storehash.methods.getReputation(address).call().then((result) => {
+        await storehash.methods.getReputation(address).call().then((result) => {
           //console.log("This is the repu " + result + (result > 0));
-          setRepu(result<0)});
+          setRepu(result>0);
+          setReputation(result);
+        });
     }
 
     //place holder for the props.
@@ -38,10 +41,6 @@ export default function ViewNews(props) {
         }
     }
 
-    async function getRepu(){
-      
-    }
-
     console.log(repu)
     // assuming the file is either text file or an image. Conditional rendering added 
     return (
@@ -52,7 +51,7 @@ export default function ViewNews(props) {
 
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-              <Modal.Title>News</Modal.Title>
+              <Modal.Title>News - Reputation: {reputation}</Modal.Title>
             </Modal.Header>
               <Modal.Body>
                 {repu? 

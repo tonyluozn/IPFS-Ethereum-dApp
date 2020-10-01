@@ -285,13 +285,14 @@ class App extends Component {
     // report post 
     reportPost = async (address) => {
       console.log('call reportPost function');
-      const de_repu = 5;
-      storehash.methods.decreaseReputation(address, de_repu).send({from: this.state.walletAddress});
+      storehash.methods.decreaseReputation(address, 1).send({from: this.state.walletAddress});
       this.getReputation();
     }
 
     upvotePost = async (address) => {
-     
+      console.log('call upVote function');
+      storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress});
+      this.getReputation();
     }
 
 
