@@ -8,7 +8,7 @@ import storehash from './storehash';
 import healthToken from './healthToken';
 import transferToken from './transferToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
+import { Checkbox, Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
 import {DownCircleTwoTone, UpCircleTwoTone,DownOutlined,UpOutlined}from '@ant-design/icons';
 
@@ -352,6 +352,7 @@ render() {
               <Col span={3}>Location</Col>
               <Col span={8}><textarea className="locationInputBox" onChange={e=>{this.setState({location:e.target.value});}}/></Col>
               </Row>
+              <Checkbox onChange={e=>{this.setState({categroy:e.target.checked?'':''})}}>Do you want this information to </Checkbox>
               <br/>
               <Row>
                 <Col span={5}></Col>
