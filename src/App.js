@@ -8,8 +8,9 @@ import storehash from './storehash';
 import healthToken from './healthToken';
 import transferToken from './transferToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Checkbox, Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
+import { Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
+import { Checkbox } from 'antd';
 import {DownCircleTwoTone, UpCircleTwoTone,DownOutlined,UpOutlined}from '@ant-design/icons';
 
 /* global BigInt */
@@ -184,7 +185,7 @@ class App extends Component {
             const time = new Date().toLocaleString();
             if(this.state.verified)  {
               storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-                time,this.state.imageHash,this.location).send({
+                time,this.state.imageHash,this.category).send({
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({transactionHash});
@@ -202,7 +203,7 @@ class App extends Component {
         if(this.state.verified){
           //Trying to use '' as an image hash/place holder
           storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-            time,'').send({
+            time,'',this.state.category).send({
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({transactionHash});
@@ -355,7 +356,9 @@ render() {
               <Col span={3}>Location</Col>
               <Col span={8}><textarea className="locationInputBox" onChange={e=>{this.setState({location:e.target.value});}}/></Col>
               </Row>
-              <Checkbox onChange={e=>{this.setState({categroy:e.target.checked?'':''})}}>Do you want this information to </Checkbox>
+              <Row>
+              <Checkbox onChange={e=>{this.setState({categroy:e.target.checked?'premium':'free'})}}>Do you want to charge tokens for this post? </Checkbox>
+              </Row>
               <br/>
               <Row>
                 <Col span={5}></Col>
