@@ -185,7 +185,7 @@ class App extends Component {
             const time = new Date().toLocaleString();
             if(this.state.verified)  {
               storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-                time,this.state.imageHash,this.category).send({
+                time,this.state.imageHash,this.state.category).send({
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({transactionHash});
