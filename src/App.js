@@ -12,6 +12,7 @@ import { Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstra
 import ViewNews from "./ViewNews";
 import {DownCircleTwoTone, UpCircleTwoTone,DownOutlined,UpOutlined}from '@ant-design/icons';
 
+/* global BigInt */
 //force the browser to connect to metamask upon entering the site
 window.addEventListener('load', async () => {
   // Modern dapp browsers...
@@ -230,12 +231,7 @@ class App extends Component {
     
     // for any user who has metamask, send the ERC-20 tokens to the account.
     getToken = async () => {
-      const BigNumber = web3.BigNumber; 
-      const should = require('chai')  
- .use(require('chai-as-promised'))  
- .use(require('chai-bignumber')(BigNumber))  
- .should();  
-      const amount = new BigNumber(1e18);
+      const amount = BigInt(1000000000000000000);
       healthToken.methods.transfer('0x3C9c010366aEd756647B83BC0120B925c41D9bf8',amount).send({
         from: this.state.walletAddress
       },(error,tokenTransactionHash) =>{
