@@ -8,9 +8,8 @@ import storehash from './storehash';
 import healthToken from './healthToken';
 import transferToken from './transferToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Table, Button, Form, Row,Col,ListGroup} from 'react-bootstrap';
+import { Container, Table, Button, Form, Row,Col,ListGroup,Tabs,Tab} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
-import { Checkbox } from 'antd';
 import {DownCircleTwoTone, UpCircleTwoTone,DownOutlined,UpOutlined}from '@ant-design/icons';
 
 /* global BigInt */
@@ -328,9 +327,19 @@ render() {
             <Col>
                 <strong>News update</strong>
                 <hr />
+                <Tabs defaultActiveKey="free" id="tab">
+                <Tab eventKey="free" title="Free">
                 <div className="list-wrapper">
                   <p>{updateItems}</p>
-                </div>                     
+                </div>
+                </Tab>
+                <Tab eventKey="premium" title="Premium">
+                <div className="list-wrapper">
+                  <p>{updateItems}</p>
+                </div>
+                </Tab>
+              </Tabs>
+                                     
                 
             </Col>
             <Col>
@@ -357,7 +366,9 @@ render() {
               <Col span={8}><textarea className="locationInputBox" onChange={e=>{this.setState({location:e.target.value});}}/></Col>
               </Row>
               <Row>
-              <Checkbox onChange={e=>{this.setState({categroy:e.target.checked?'premium':'free'})}}>Do you want to charge tokens for this post? </Checkbox>
+              <Col>
+              <Form.Check onChange={e=>{this.setState({categroy:e.target.checked?'premium':'free'})}} type="checkbox" label="Do you want to charge tokens for this post? " />
+              </Col>
               </Row>
               <br/>
               <Row>
