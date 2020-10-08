@@ -8,7 +8,7 @@ import storehash from './storehash';
 import healthToken from './healthToken';
 import transferToken from './transferToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Table, Button, Form, Row,Col,ListGroup,Tabs,Tab} from 'react-bootstrap';
+import { Container, Table, Button, Form, Row,Col,ListGroup,Tabs,Tab,DropdownButton,Dropdown} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
 import {DownCircleTwoTone, UpCircleTwoTone,DownOutlined,UpOutlined}from '@ant-design/icons';
 
@@ -156,6 +156,7 @@ class App extends Component {
   
   //first, convert the report text to buffer, then send the combined update to blockchain. 
   updateSubmit = async (event) => {
+    console.log('set category to'+this.state.category);
     event.preventDefault();
     //convert the text report to buffer
     const file = new Blob([this.state.value], {type: 'text/plain'});
@@ -375,7 +376,15 @@ render() {
               </Row>
               <Row>
               <Col>
-              <Form.Check onChange={e=>{this.setState({categroy:e.target.checked?'premium':'free'})}} type="checkbox" label="Do you want to charge tokens for this post? " />
+              <DropdownButton
+                alignRight
+                title="Select the category"
+                id="dropdown"
+                onSelect={e=>this.setState({categroy:e})}
+                >
+                      <Dropdown.Item eventKey="free">free</Dropdown.Item>
+                      <Dropdown.Item eventKey="premium">premium</Dropdown.Item>
+              </DropdownButton>
               </Col>
               </Row>
               <br/>
@@ -389,7 +398,7 @@ render() {
                 
               </Form>
               <hr/>
-
+              
           <Button onClick = {this.onClick}> Get Transaction Receipt </Button>
           <hr />
           <Table bordered responsive>
