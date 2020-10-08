@@ -11,6 +11,7 @@ contract Contract {
         string fileHash;
         string imageHash;
         string category;
+        uint votes;
     }
 
     newsUpdate[] public newsList;
@@ -18,14 +19,15 @@ contract Contract {
 
     event storageUpdate(string newValue, address updatedBy);
     
-    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category) public {
+    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category, uint memory vote) public {
         newsList.push(newsUpdate({
             user:msg.sender,
             timeStamp:time,
             location:location,
             fileHash: ipfsHash,
             imageHash: imageHash,
-            category: category
+            category: category,
+            vote:vote
         }));
         if (userReputation[msg.sender] != 0x0){
              userReputation[msg.sender]+=10;

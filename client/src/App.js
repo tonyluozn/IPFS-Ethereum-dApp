@@ -380,7 +380,7 @@ render() {
                 alignRight
                 title="Select the category"
                 id="dropdown"
-                onSelect={e=>this.setState({categroy:e})}
+                onSelect={e=>{this.setState({categroy:e})}}
                 >
                       <Dropdown.Item eventKey="free">free</Dropdown.Item>
                       <Dropdown.Item eventKey="premium">premium</Dropdown.Item>
