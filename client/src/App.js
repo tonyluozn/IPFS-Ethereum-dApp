@@ -293,11 +293,8 @@ class App extends Component {
       storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress});
       this.getReputation();
     }
-
-
-render() {
-      const news_total = this.state.newsList.length;
-      const updateItems = this.state.newsList.slice(0).reverse().map((update,index) =>
+    renderNews = (data) =>{
+      return data.slice(0).reverse().map((update,index) => 
       <ListGroup.Item key={index}>
       <Row>
         <Col xs={8} style={{ display: "flex"}}>
@@ -317,7 +314,18 @@ render() {
         <Col>Location: {update.location}</Col>
         <Col offset={5}>Submitted on: {update.timeStamp}</Col>
       </Row>
-  </ListGroup.Item>);
+      <Row>
+        <Col>Category: {update.category}</Col>
+       
+      </Row>
+      </ListGroup.Item>);
+    }
+
+
+render() {
+      const news_total = this.state.newsList.length;
+      const free_posts = this.state.newsList.filter(e=>e.category=='free');
+      const premium_posts = this.state.newsList.filter(e=>e.category=='premium');
       
         return (
         <div className="App">
@@ -330,12 +338,12 @@ render() {
                 <Tabs defaultActiveKey="free" id="tab">
                 <Tab eventKey="free" title="Free">
                 <div className="list-wrapper">
-                  <p>{updateItems}</p>
+                  <p>{this.renderNews(this.state.newsList)}</p>
                 </div>
                 </Tab>
                 <Tab eventKey="premium" title="Premium">
                 <div className="list-wrapper">
-                  <p>{updateItems}</p>
+                  <p>{this.renderNews(premium_posts)}</p>
                 </div>
                 </Tab>
               </Tabs>
