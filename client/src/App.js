@@ -376,15 +376,15 @@ render() {
               </Row>
               <Row>
               <Col>
-              <DropdownButton
-                alignRight
-                title="Select the category"
-                id="dropdown"
-                onSelect={e=>{this.setState({categroy:e})}}
-                >
-                      <Dropdown.Item eventKey="free">free</Dropdown.Item>
-                      <Dropdown.Item eventKey="premium">premium</Dropdown.Item>
-              </DropdownButton>
+              <Form.Control
+                as="select"
+                custom
+                onChange={e=>{this.setState({categroy:e.target.value}); console.log(e.target.value)}}
+              >
+                <option value="choose">Choose a category: </option>
+                <option value="free">Free</option>
+                <option value="premium">Premium</option>
+              </Form.Control>
               </Col>
               </Row>
               <br/>

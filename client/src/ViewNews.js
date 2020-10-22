@@ -41,7 +41,6 @@ export default function ViewNews(props) {
         }
     }
 
-    console.log(repu)
     // assuming the file is either text file or an image. Conditional rendering added 
     return (
         <>
