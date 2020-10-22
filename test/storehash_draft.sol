@@ -62,6 +62,13 @@ contract StoreHash {
     function decreaseVote(string memory ipfsHash) public {
         postReputation[ipfsHash]-=1;
     }
+// to grant access to user to a specfic post
+
+     function grantAccess(string memory ipfsHash, address account){
+        postToUsers[ipfsHash][account] =true;
+     }
+     function checkAccess
+
     
 }
 
