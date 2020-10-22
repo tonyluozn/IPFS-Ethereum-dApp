@@ -291,7 +291,7 @@ class App extends Component {
 
     upvotePost = async (address) => {
       console.log('call upVote function');
-      storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress});
+      storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress}); 
       this.getReputation();
     }
     renderNews = (data) =>{
