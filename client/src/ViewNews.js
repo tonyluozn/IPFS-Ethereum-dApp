@@ -9,6 +9,7 @@ export default function ViewNews(props) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [content, setContent] = useState(null);
+    // boolean indicating if the repu of the post author is too low.
     const [repu, setRepu] = useState(true);
     const [reputation,setReputation] = useState(0);
 

@@ -339,7 +339,7 @@ render() {
                 <Tabs defaultActiveKey="free" id="tab">
                 <Tab eventKey="free" title="Free">
                 <div className="list-wrapper">
-                  <p>{this.renderNews(this.state.newsList)}</p>
+                  <p>{this.renderNews(free_posts)}</p>
                 </div>
                 </Tab>
                 <Tab eventKey="premium" title="Premium">
@@ -379,7 +379,7 @@ render() {
               <Form.Control
                 as="select"
                 custom
-                onChange={e=>{this.setState({categroy:e.target.value}); console.log(e.target.value)}}
+                onChange={e=>{this.setState({category:e.target.value}); console.log(this.state.category)}}
               >
                 <option value="choose">Choose a category: </option>
                 <option value="free">Free</option>
