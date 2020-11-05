@@ -36,8 +36,6 @@ contract StoreHash {
         }else{
             userReputation[msg.sender]=10;
         }
-       
-
     }
 
     function getUpdate() public view returns (newsUpdate[] memory) {
