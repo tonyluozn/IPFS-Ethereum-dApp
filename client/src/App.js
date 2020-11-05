@@ -283,17 +283,24 @@ class App extends Component {
   }
 
     // report post 
-    reportPost = async (address) => {
+    reportPost = async (update) => {
       console.log('call reportPost function');
-      storehash.methods.decreaseReputation(address, 1).send({from: this.state.walletAddress});
+      storehash.methods.decreaseReputation(update.user, 1).send({from: this.state.walletAddress});
+      storehash.methods.decreaseVote(update.ipfsHash).send({from: this.state.walletAddress});
       this.getReputation();
     }
 
-    upvotePost = async (address) => {
+    upvotePost = async (update) => {
       console.log('call upVote function');
-      storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress}); 
+      storehash.methods.increaseReputation(update.user, 1).send({from: this.state.walletAddress}); 
+      storehash.methods.increaseVote(update.ipfsHash).send({from: this.state.walletAddress});
       this.getReputation();
     }
+
+    approved = async(update)=>{
+      return storehash.methods.checkAccess(update.ipfsHash,this.state.walletAddress); 
+    }
+
     renderNews = (data) =>{
       return data.slice(0).reverse().map((update,index) => 
       <ListGroup.Item key={index}>
@@ -302,13 +309,13 @@ class App extends Component {
           <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
         </Col>
         <Col >
-            <ViewNews user = {update.user} hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
+            <ViewNews author = {update.user} user = {this.state.walletAddress} hash={update} view={this.approved(update)} image = {update.imageHash == ''}/>
           </Col>
           <Col>
-            <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
+            <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update)}/>
           </Col>
           <Col>
-            <UpOutlined style={{ fontSize: '20px' }} onClick = {()=>this.upvotePost(update.user)}/>
+            <UpOutlined style={{ fontSize: '20px' }} onClick = {()=>this.upvotePost(update)}/>
           </Col>
       </Row>
       <Row>

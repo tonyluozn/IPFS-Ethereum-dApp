@@ -25,12 +25,28 @@ export default function ViewNews(props) {
             console.log("text loaded: "+data);
         }
         ) 
-        const address = props.user;
+        const address = props.author;
         await storehash.methods.getReputation(address).call().then((result) => {
           //console.log("This is the repu " + result + (result > 0));
           setRepu(result>0);
           setReputation(result);
         });
+
+        if(props.hash.category == "premium"){
+          // ask the user to pay 
+          healthToken.methods.transfer(props.author,2).send({
+            from: props.user
+          },(error,tokenTransactionHash) =>{
+            console.log('token transaction successfull with the tansaction hash: '+tokenTransactionHash);
+            if(tokenTransactionHash){
+              storehash.methods.grantAccess(props.hash.ipfsHash,props.user);
+            }
+          });
+
+
+          //once the transaction is confirmed, we grant access to the user 
+        }
+
     }
 
     //place holder for the props.
