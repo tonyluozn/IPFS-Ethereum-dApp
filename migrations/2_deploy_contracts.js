@@ -1,8 +1,8 @@
-var StoreHash = artifacts.require("./StoreHash.sol");
+var StoreHashNew = artifacts.require("./StoreHashNew.sol");
 var NUHealthToken = artifacts.require("./NUHealthToken.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(StoreHash);
+  deployer.deploy(StoreHashNew);
 };
 
 module.exports = function(deployer) {

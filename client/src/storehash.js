@@ -1,5 +1,5 @@
 import web3 from './web3';
-import Storehash  from './contracts/StoreHash.json';
+import Storehash  from './contracts/StoreHashNew.json';
 //access our local copy to contract deployed on rinkeby testnet
 //use your own contract address
 
