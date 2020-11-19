@@ -19,8 +19,10 @@ networks: {
         return new HDWalletProvider(MNEMONIC, "https://rinkeby.infura.io/v3/061425f57e8c483ab0620dbcc680a273")
       },
       network_id: 4,
-      gas: 4000000      //make sure this gas allocation isn't over 4M, which is the max
-    }
+      gas: 4000000,      //make sure this gas allocation isn't over 4M, which is the max
+      from: '0x4C90d1bA9de25F0cDeD4151Fc2643eD78d391DFe',
+      gasPrice: 10000000000
+   }
 },
 compilers: {
    solc: {
