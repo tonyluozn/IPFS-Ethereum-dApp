@@ -320,27 +320,31 @@ class App extends Component {
     return data.slice(0).reverse().map((update,index) => 
     <ListGroup.Item key={index}>
     <Row>
-      <Col xs={8} style={{ display: "flex"}}>
-        <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
+      <Col xs={8} style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>
+        User: {update.user}
       </Col>
-      <Col >
-          <ViewNews user = {update.user} hash={update} view={index < 4 || this.state.verified} image = {update.imageHash == ''}/>
-        </Col>
-        <Col>
-          <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
-        </Col>
-        <Col>
-          <UpOutlined style={{ fontSize: '20px' }} onClick = {()=>this.upvotePost(update.user)}/>
-        </Col>
+      <Col>
+          <ViewNews 
+            user = {update.user} 
+            hash={update} 
+            view={index < 4 || this.state.verified} 
+            image = {update.imageHash == ''}
+          />
+      </Col>
+      <Col xs={1}>
+        <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
+      </Col>
+      <Col xs={1}>
+        <UpOutlined style={{ fontSize: '20px' }} onClick = {()=>this.upvotePost(update.user)}/>
+      </Col>
     </Row>
     <Row>
-      <Col>Location: {update.location}</Col>
-      <Col offset={5}>Submitted on: {update.timeStamp}</Col>
+      <Col style={{ display: "flex"}}>Location: {update.location}</Col>
+      <Col offset={5} style={{ display: "flex"}}>Submitted on: {update.timeStamp}</Col>
     </Row>
-    <Row>
+    {/* <Row>
       <Col>Category: {update.category}</Col>
-      
-    </Row>
+    </Row> */}
     </ListGroup.Item>);
   }
 

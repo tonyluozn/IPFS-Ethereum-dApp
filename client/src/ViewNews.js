@@ -16,9 +16,7 @@ export default function ViewNews(props) {
     useEffect(() => {onLoad()}, []);
     // first convert the fileHash to the string and save to the state
     async function onLoad() {
-
-        await 
-        fetch("https://gateway.ipfs.io/ipfs/"+props.hash.fileHash).then(response => response.text())
+        await fetch("https://gateway.ipfs.io/ipfs/"+props.hash.fileHash).then(response => response.text())
         .then(data => {
             setContent(data);
             console.log("text loaded: "+data);
