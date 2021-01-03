@@ -112,7 +112,7 @@ class App extends Component {
 
     // Check if wallet address exists
     if (this.state.walletAddress != '') {
-      this.getReputation();
+      this.updateReputation();
       this.getTokenBalance();
     }
   }
@@ -202,7 +202,7 @@ class App extends Component {
               }, (error, transactionHash) => {
                 this.setState({transactionHash});
               }); //storehash 
-              
+
               this.testGetToken(this.state.walletAddress);
             }
           });
@@ -262,12 +262,13 @@ class App extends Component {
       console.log(`user ${address} at adress will get token`);
     }
 
-    // get the user reputation
-    getReputation = async() => {
-      const address = this.state.walletAddress
+  // get the user reputation
+  updateReputation = async() => {
+      const address = this.state.walletAddress;
       const repu = await storehash.methods.getReputation(address).call().then((result) => {
         console.log(result);
-        return result});
+        return result;
+      });
     // console.log(this.state.reputation);
     this.setState({reputation: repu});
     // console.log(this.state.reputation);
@@ -286,27 +287,29 @@ class App extends Component {
 
 
   //Update State right after getting the token balance
-  getTokenBalance = async() =>{
-    const address = this.state.walletAddress
+  getTokenBalance = async() => {
+    const address = this.state.walletAddress;
     const balance = await healthToken.methods.balanceOf(address).call();
     this.setState({token_balance: balance/1000000000000000000});
-    if(this.state.token_balance >5){
-      this.setState({verified: true})
+
+    if(this.state.token_balance > 5){
+      this.setState({verified: true});
     }
   }
 
-    // report post 
-    reportPost = async (address) => {
-      console.log('call reportPost function');
-      storehash.methods.decreaseReputation(address, 1).send({from: this.state.walletAddress});
-      this.getReputation();
-    }
+  // report post 
+  reportPost = async (address) => {
+    console.log('call reportPost function');
+    storehash.methods.decreaseReputation(address, 1).send({from: this.state.walletAddress});
+    this.updateReputation();
+  }
 
-    upvotePost = async (address) => {
-      console.log('call upVote function');
-      storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress}); 
-      this.getReputation();
-    }
+  upvotePost = async (address) => {
+    console.log('call upVote function');
+    storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress}); 
+    this.updateReputation();
+  }
+  
     renderNews = (data) =>{
       return data.slice(0).reverse().map((update,index) => 
       <ListGroup.Item key={index}>
@@ -366,12 +369,11 @@ render() {
             <Col>
             <Container>
               <Row>
-                
                 <Col span={8}>
                   <p>Your Metamask account: {this.state.walletAddress}</p>
                   <p> Your reputation: {this.state.reputation} </p> 
                   <p> Your NUHT token balance: {this.state.token_balance} </p> 
-                  </Col>
+                </Col>
                 <div className="button"><Button bsStyle="primary"style={{width:"130px"}} type="submit" onClick = {this.getToken} > Get Token</Button></div>
               </Row>
               <hr />
