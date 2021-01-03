@@ -227,40 +227,46 @@ class App extends Component {
     
   };
 
-    onClick = async () => {
-      try{
-            this.setState({blockNumber:"waiting.."});
-            this.setState({gasUsed:"waiting..."});
+  getTransactionReceipt = async () => {
+    try{
+      this.setState({
+        blockNumber: "waiting..",
+        gasUsed: "waiting..."
+      });
+
       //get Transaction Receipt in console on click
       //See: https://web3js.readthedocs.io/en/1.0/web3-eth.html#gettransactionreceipt
-      await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt)=>{
+      await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt) => {
               console.log(err,txReceipt);
               this.setState({txReceipt});
-            }); //await for getTransactionReceipt
+            }); 
+
+      //await for getTransactionReceipt
       await this.setState({blockNumber: this.state.txReceipt.blockNumber});
-            await this.setState({gasUsed: this.state.txReceipt.gasUsed});    
-          } //try
-        catch(error){
-            console.log(error);
-          } //catch
-    } //onClick
+      await this.setState({gasUsed: this.state.txReceipt.gasUsed});    
+    }
+
+    catch(error){
+      console.log(error);
+    } 
+
+  } 
 
     
-    // for any user who has metamask, send the ERC-20 tokens to the account.
-    getToken = async () => {
-      const amount = BigInt(1000000000000000000);
-      healthToken.methods.transfer('0x3C9c010366aEd756647B83BC0120B925c41D9bf8',amount).send({
-        from: this.state.walletAddress
-      },(error,tokenTransactionHash) =>{
-        console.log('token transaction successfull with the tansaction hash: '+tokenTransactionHash);
-      });
-      
-    }
+  // for any user who has metamask, send the ERC-20 tokens to the account.
+  getToken = async () => {
+    const amount = BigInt(1000000000000000000);
+    healthToken.methods.transfer('0x3C9c010366aEd756647B83BC0120B925c41D9bf8', amount).send({
+      from: this.state.walletAddress
+    },(error,tokenTransactionHash) => {
+      console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
+    });
+  }
 
-    // for testing purpose
-    testGetToken = async (address) => {
-      console.log(`user ${address} at adress will get token`);
-    }
+  // for testing purpose
+  testGetToken = async (address) => {
+    console.log(`user ${address} at adress will get token`);
+  }
 
   // get the user reputation
   updateReputation = async() => {
@@ -275,7 +281,7 @@ class App extends Component {
   }
 
   //To capture the reputation of the message poster
-  returnReputation = async(userAddress) =>{
+  returnReputation = async(userAddress) => {
     const address = userAddress;
     const repu = await storehash.methods.getReputation(address).call().then((result) => {
       //console.log("This is the repu " + result + (result > 0));
@@ -284,9 +290,7 @@ class App extends Component {
     return repu > 0;
   }
 
-
-
-  //Update State right after getting the token balance
+  //Update balance and verified state right after getting the token balance
   getTokenBalance = async() => {
     const address = this.state.walletAddress;
     const balance = await healthToken.methods.balanceOf(address).call();
@@ -300,7 +304,9 @@ class App extends Component {
   // report post 
   reportPost = async (address) => {
     console.log('call reportPost function');
-    storehash.methods.decreaseReputation(address, 1).send({from: this.state.walletAddress});
+    storehash.methods.decreaseReputation(address, 1).send({
+      from: this.state.walletAddress
+    });
     this.updateReputation();
   }
 
@@ -310,34 +316,33 @@ class App extends Component {
     this.updateReputation();
   }
   
-    renderNews = (data) =>{
-      return data.slice(0).reverse().map((update,index) => 
-      <ListGroup.Item key={index}>
-      <Row>
-        <Col xs={8} style={{ display: "flex"}}>
-          <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
+  renderNews = (data) => {
+    return data.slice(0).reverse().map((update,index) => 
+    <ListGroup.Item key={index}>
+    <Row>
+      <Col xs={8} style={{ display: "flex"}}>
+        <Container style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>User: {update.user}</Container>
+      </Col>
+      <Col >
+          <ViewNews user = {update.user} hash={update} view={index < 4 || this.state.verified} image = {update.imageHash == ''}/>
         </Col>
-        <Col >
-            <ViewNews user = {update.user} hash={update} view={index<4||this.state.verified} image = {update.imageHash == ''}/>
-          </Col>
-          <Col>
-            <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
-          </Col>
-          <Col>
-            <UpOutlined style={{ fontSize: '20px' }} onClick = {()=>this.upvotePost(update.user)}/>
-          </Col>
-      </Row>
-      <Row>
-        <Col>Location: {update.location}</Col>
-        <Col offset={5}>Submitted on: {update.timeStamp}</Col>
-      </Row>
-      <Row>
-        <Col>Category: {update.category}</Col>
-       
-      </Row>
-      </ListGroup.Item>);
-    }
-
+        <Col>
+          <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
+        </Col>
+        <Col>
+          <UpOutlined style={{ fontSize: '20px' }} onClick = {()=>this.upvotePost(update.user)}/>
+        </Col>
+    </Row>
+    <Row>
+      <Col>Location: {update.location}</Col>
+      <Col offset={5}>Submitted on: {update.timeStamp}</Col>
+    </Row>
+    <Row>
+      <Col>Category: {update.category}</Col>
+      
+    </Row>
+    </ListGroup.Item>);
+  }
 
 render() {
       const news_total = this.state.newsList.length;
@@ -413,7 +418,7 @@ render() {
               </Form>
               <hr/>
               
-          <Button onClick = {this.onClick}> Get Transaction Receipt </Button>
+          <Button onClick = {this.getTransactionReceipt}> Get Transaction Receipt </Button>
           <hr />
           <Table bordered responsive>
                 <thead>
