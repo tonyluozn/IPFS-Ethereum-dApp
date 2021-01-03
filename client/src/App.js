@@ -41,26 +41,29 @@ class App extends Component {
  
   constructor() {
     super();
-    //bring in user's metamask account address
+    //get user's metamask account address
     this.getWalletAddress();
+
     // this.getReputation();
+
     this.updateNews();
+
     // approve the spender to spend on contract creator's behalf, calling this only once
     //this.approve();
-    
   }
 
   //loading the list of hash from the deployed storeHash contract
   updateNews = async() => {
-    const pp = await storehash.methods.getUpdate().call().then(
+    const newsfeed = await storehash.methods.getUpdate().call()
+    .then(
       (result) => {
-        //console.log(result)
-        return result
+        return result;
       }
     )
-    console.log(this.state.newsList)
-    this.setState({newsList: pp})
-    console.log(this.state.newsList)
+    
+    console.log("Before update:" + this.state.newsList)
+    this.setState({newsList: newsfeed})
+    console.log("After update:" + this.state.newsList)
   }
 
 
@@ -78,10 +81,8 @@ class App extends Component {
     // two buffer for two seperate files
     textBuffer:'',
     imageBuffer:'',
-
     //value for post category
     category: '',
-
     blockNumber:'',
     transactionHash:'',
     gasUsed:'',
@@ -93,8 +94,6 @@ class App extends Component {
     //Byte32 for 'NUHT'
     tokenByte: '0x4e55485400000000000000000000000000000000000000000000000000000000',
     required_token:10*1000000000000000000,
-    
-
   };  
 
  // approve = async () => {
@@ -109,15 +108,16 @@ class App extends Component {
   getWalletAddress = async() => {
     const accounts =  await web3.eth.getAccounts();
     this.setState({walletAddress: accounts[0]});
-    console.log('print out address '+this.state.walletAddress);
-    console.log('current address', this.state.walletAddress);
+    console.log('Fetching address '+this.state.walletAddress);
 
+    // Check if wallet address exists
     if (this.state.walletAddress != '') {
-      this.getReputation()
-      this.getTokenBalance()
+      this.getReputation();
+      this.getTokenBalance();
     }
   }
 
+  // what is this?
   textSubmit(event) {
     event.preventDefault();
     const element = document.createElement("a");
@@ -132,7 +132,7 @@ class App extends Component {
   }
 
   // Image saved to imageBuffer once we select the file
-  //for the text however, they are saved to the textBuffer once we click submit.
+  // For the text however, they are saved to the textBuffer once we click submit.
   captureFile = (event) => {
         event.stopPropagation()
         event.preventDefault()
@@ -158,34 +158,43 @@ class App extends Component {
   
   //first, convert the report text to buffer, then send the combined update to blockchain. 
   updateSubmit = async (event) => {
-    console.log('set category to' + this.state.category);
+    console.log('Set report category to: ' + this.state.category);
     event.preventDefault();
     //convert the text report to buffer
     const file = new Blob([this.state.value], {type: 'text/plain'});
-    console.log("state.value: "+this.state.value);
-    let reader = new window.FileReader()
-    reader.readAsArrayBuffer(file)
-    reader.onloadend = () => this.convertTextToBuffer(reader)    
+
+    console.log("Text input value: " + this.state.value);
+
+    // read text input as buffer
+    let reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onloadend = () => this.convertTextToBuffer(reader);
 
     //obtain contract address from storehash.js
     const ethAddress= await storehash.options.address;
+    console.log("ETH address is:" + ethAddress);
     this.setState({ethAddress});
 
+    // check if verified
     if (this.state.token_balance >= 10){
-      this.setState({verified: true})
+      this.setState({verified: true});
     }
-    console.log(this.state.verified)
+    console.log("User is verified? " + this.state.verified);
+
     //submit both image and text to ipfs network, save two returned hashes to states.
     
     //If there is no image, the buffer is ''
     if(this.state.imageBuffer !== ''){
-      console.log(this.state.textBuffer) 
+      console.log(this.state.textBuffer);
+
       await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
         console.log("error message:"+err);
         this.setState({ ipfsHash:ipfsHash[0].hash });
+
         await ipfs.add(this.state.imageBuffer, (err, imageHash) => {
             this.setState({ imageHash:imageHash[0].hash });
             const time = new Date().toLocaleString();
+
             if(this.state.verified)  {
               storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
                 time,this.state.imageHash,this.state.category).send({
@@ -193,6 +202,7 @@ class App extends Component {
               }, (error, transactionHash) => {
                 this.setState({transactionHash});
               }); //storehash 
+              
               this.testGetToken(this.state.walletAddress);
             }
           });
@@ -351,8 +361,7 @@ render() {
                 </div>
                 </Tab>
               </Tabs>
-                                     
-                
+                                      
             </Col>
             <Col>
             <Container>
