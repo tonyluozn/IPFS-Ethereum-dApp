@@ -331,16 +331,24 @@ class App extends Component {
             image = {update.imageHash == ''}
           />
       </Col>
-      <Col xs={1}>
-        <DownOutlined style={{ fontSize: '20px' }} onClick = {()=>this.reportPost(update.user)}/>
-      </Col>
-      <Col xs={1}>
-        <UpOutlined style={{ fontSize: '20px' }} onClick = {()=>this.upvotePost(update.user)}/>
-      </Col>
+      <div style={{
+        display:'inline', 
+        marginLeft: "16px", 
+        marginRight: "16px", 
+        backgroundColor:"#8080807a", 
+        borderRadius: "5px", 
+        textAlign: 'center', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center'}}
+      >
+        <DownOutlined style={{ fontSize: '16px', marginLeft:"4px"}} onClick = {()=>this.reportPost(update.user)}/>
+        <UpOutlined style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px" }} onClick = {()=>this.upvotePost(update.user)}/>  
+      </div>
     </Row>
     <Row>
       <Col style={{ display: "flex"}}>Location: {update.location}</Col>
-      <Col offset={5} style={{ display: "flex"}}>Submitted on: {update.timeStamp}</Col>
+      <Col offset={6} style={{ textAlign: "center" }}>Submitted on: {update.timeStamp}</Col>
     </Row>
     {/* <Row>
       <Col>Category: {update.category}</Col>
@@ -383,42 +391,48 @@ render() {
                   <p> Your reputation: {this.state.reputation} </p> 
                   <p> Your NUHT token balance: {this.state.token_balance} </p> 
                 </Col>
-                <div className="button"><Button bsStyle="primary"style={{width:"130px"}} type="submit" onClick = {this.getToken} > Get Token</Button></div>
+                <div className="button"><Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick = {this.getToken} >Get Token</Button></div>
               </Row>
               <hr />
 
               <Form onSubmit={this.updateSubmit}>
-              <Row>
-              <Col span={3}>Report</Col>
-              <Col span={8}><textarea className="textInputBox" onChange={e=>{this.setState({value:e.target.value});}}/></Col>
-              </Row>
+                <Row>
+                  <Col xs={3}>Report</Col>
+                  <Col xs={8}><textarea className="textInputBox" onChange={e=>{this.setState({value:e.target.value});}}/></Col>
+                </Row>
 
-              <Row>
-              <Col span={3}>Location</Col>
-              <Col span={8}><textarea className="locationInputBox" onChange={e=>{this.setState({location:e.target.value});}}/></Col>
-              </Row>
-              <Row>
-              <Col>
-              <Form.Control
-                as="select"
-                custom
-                onChange={e=>{this.setState({category:e.target.value}); console.log(this.state.category)}}
-              >
-                <option value="choose">Choose a category: </option>
-                <option value="free">Free</option>
-                <option value="premium">Premium</option>
-              </Form.Control>
-              </Col>
-              </Row>
-              <br/>
-              <Row>
-                <Col span={5}></Col>
-                <Col><input className="input" type = "file" onChange = {this.captureFile}/></Col>
-                <Col><div className="button"><Button bsStyle="primary" style={{width:"130px"}}type="submit" > Submit </Button></div>
-                </Col>
-              </Row>
-            
-                
+                <Row>
+                  <Col xs={3}>Location</Col>
+                  <Col xs={8}><textarea className="locationInputBox" onChange={e=>{this.setState({location:e.target.value});}}/></Col>
+                </Row>
+
+                <Row>
+                  <Col xs={{span:10, offset: 1}} style={{ display: "flex"}}>
+                    <Form.Control
+                      as="select"
+                      custom
+                      onChange={e=>{this.setState({category:e.target.value}); console.log(this.state.category)}}
+                    >
+                      <option value="choose">Choose a category: </option>
+                      <option value="free">Free</option>
+                      <option value="premium">Premium</option>
+                    </Form.Control>
+                  </Col>
+                </Row>
+
+                <br/>
+
+                <Row>
+                  <Col xs={9}>
+                    <input className="input" type = "file" onChange = {this.captureFile}/>
+                  </Col>
+                  <Col xs={3}>
+                    <div className="button">
+                      <Button bsStyle="primary" style={{width:"130px"}}type="submit" > Submit 
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
               </Form>
               <hr/>
               
