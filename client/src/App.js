@@ -106,16 +106,16 @@ class App extends Component {
  //   }); 
  // }
 
-  getWalletAddress = async() =>{
+  getWalletAddress = async() => {
     const accounts =  await web3.eth.getAccounts();
     this.setState({walletAddress: accounts[0]});
     console.log('print out address '+this.state.walletAddress);
     console.log('current address', this.state.walletAddress);
+
     if (this.state.walletAddress != '') {
       this.getReputation()
       this.getTokenBalance()
     }
-    
   }
 
   textSubmit(event) {
@@ -133,30 +133,32 @@ class App extends Component {
 
   // Image saved to imageBuffer once we select the file
   //for the text however, they are saved to the textBuffer once we click submit.
-  captureFile =(event) => {
+  captureFile = (event) => {
         event.stopPropagation()
         event.preventDefault()
         const file = event.target.files[0]
         let reader = new window.FileReader()
         reader.readAsArrayBuffer(file)
         reader.onloadend = () => this.convertImageToBuffer(reader)    
-      };
+  };
+
   convertImageToBuffer = async(reader) => {
       //file is converted to a buffer for upload to IPFS
         const buffer = await Buffer.from(reader.result);
       //set this buffer -using es6 syntax
         this.setState({imageBuffer: buffer});
   };
+
   convertTextToBuffer = async(reader) => {
     //file is converted to a buffer for upload to IPFS
       const buffer = await Buffer.from(reader.result);
     //set this buffer -using es6 syntax
       this.setState({textBuffer: buffer});
-};
+  };
   
   //first, convert the report text to buffer, then send the combined update to blockchain. 
   updateSubmit = async (event) => {
-    console.log('set category to'+this.state.category);
+    console.log('set category to' + this.state.category);
     event.preventDefault();
     //convert the text report to buffer
     const file = new Blob([this.state.value], {type: 'text/plain'});
@@ -179,6 +181,7 @@ class App extends Component {
     if(this.state.imageBuffer !== ''){
       console.log(this.state.textBuffer) 
       await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
+        console.log("error message:"+err);
         this.setState({ ipfsHash:ipfsHash[0].hash });
         await ipfs.add(this.state.imageBuffer, (err, imageHash) => {
             this.setState({ imageHash:imageHash[0].hash });
@@ -250,7 +253,7 @@ class App extends Component {
     }
 
     // get the user reputation
-    getReputation = async() =>{
+    getReputation = async() => {
       const address = this.state.walletAddress
       const repu = await storehash.methods.getReputation(address).call().then((result) => {
         console.log(result);
