@@ -11,7 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Table, Button, Form, Row,Col,ListGroup,Tabs,Tab,DropdownButton,Dropdown} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
 import {DownCircleTwoTone, UpCircleTwoTone,DownOutlined,UpOutlined}from '@ant-design/icons';
-
+import Receipt from "./Receipt";
 /* global BigInt */
 //force the browser to connect to metamask upon entering the site
 window.addEventListener('load', async () => {
@@ -438,42 +438,7 @@ render() {
               
           <Button onClick = {this.getTransactionReceipt}> Get Transaction Receipt </Button>
           <hr />
-          <Table bordered responsive>
-                <thead>
-                  <tr>
-                    <th>Transaction Receipt Category</th>
-                    <th>Values</th>
-                  </tr>
-                </thead>
-               
-                <tbody>
-                  <tr>
-                    <td>IPFS Hash of text stored on Eth Contract</td>
-                    <td>{this.state.ipfsHash}</td>
-                  </tr>
-                  <tr>
-                    <td>IPFS Hash of image stored on Eth Contract</td>
-                    <td>{this.state.imageHash}</td>
-                  </tr>
-                  <tr>
-                    <td>Ethereum Contract Address</td>
-                    <td>{this.state.ethAddress}</td>
-                  </tr>
-                  <tr>
-                    <td>Tx Hash # </td>
-                    <td>{this.state.transactionHash}</td>
-                  </tr>
-                  <tr>
-                    <td>Block Number # </td>
-                    <td>{this.state.blockNumber}</td>
-                  </tr>
-                  <tr>
-                    <td>Gas Used</td>
-                    <td>{this.state.gasUsed}</td>
-                  </tr>
-                
-                </tbody>
-            </Table>
+          <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash} ethAddress={this.state.ethAddress} transactionHash={this.state.transactionHash} blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed}/>
         </Container>
             </Col>
           </Row>
