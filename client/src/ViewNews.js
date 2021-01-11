@@ -10,7 +10,7 @@ export default function ViewNews(props) {
     const handleShow = () => setShow(true);
     const [content, setContent] = useState(null);
     // boolean indicating if the repu of the post author is too low.
-    const [repu, setRepu] = useState(true);
+    const [lowRepu, setLowRepu] = useState(false);
     const [reputation,setReputation] = useState(0);
 
     useEffect(() => {onLoad()}, []);
@@ -25,7 +25,7 @@ export default function ViewNews(props) {
         const address = props.user;
         await storehash.methods.getReputation(address).call().then((result) => {
           //console.log("This is the repu " + result + (result > 0));
-          setRepu(result>0);
+          setLowRepu(result<40);
           setReputation(result);
         });
     }
@@ -52,7 +52,9 @@ export default function ViewNews(props) {
               <Modal.Title>News - Reputation: {reputation}</Modal.Title>
             </Modal.Header>
               <Modal.Body>
-                {repu? 
+                {lowRepu? 
+                  <p>This post was uploaded by someone with low reputation, do you want to proceed?</p>
+                  :
                   <p>
                     {props.view? 
                       <Col>
@@ -62,19 +64,15 @@ export default function ViewNews(props) {
                     {props.image? <p/>:<Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash}>Image Link</a></Col>}
                       </Row>
                       </Col>
-                  :<p>you don't have enough tokens to view this news</p>}
+                    :<p>you don't have enough tokens to view this news</p>}
                   </p> 
-                : <p>This news was posted by someone with low reputation, you want to proceed?.</p>
-                    }
+                }
               </Modal.Body>
             <Modal.Footer>
-              {repu?               
-                <Button variant="outline-secondary" onClick={handleClose}>
-                  Close
-                </Button>:
+              {lowRepu?   
                 <Row>
                   <Col>
-                    <Button variant="outline-secondary" onClick={() => setRepu(true)}>
+                    <Button variant="outline-secondary" onClick={() => setLowRepu(false)}>
                       View
                     </Button>
                   </Col>
@@ -83,7 +81,12 @@ export default function ViewNews(props) {
                       Close
                     </Button>
                   </Col>
-                </Row>}
+                </Row> 
+                :           
+                <Button variant="outline-secondary" onClick={handleClose}>
+                  Close
+                </Button>
+              }
             </Modal.Footer>
           </Modal>
         </>
