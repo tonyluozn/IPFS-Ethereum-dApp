@@ -76,7 +76,8 @@ class App extends Component {
     value:'',
     //text box value for location
     location:'',
-    ethAddress:'',
+    // where we store address for deployed contract 
+    contractAddress:'',
     verified:true,
     // two buffer for two seperate files
     textBuffer:'',
@@ -171,9 +172,9 @@ class App extends Component {
     reader.onloadend = () => this.convertTextToBuffer(reader);
 
     //obtain contract address from storehash.js
-    const ethAddress= await storehash.options.address;
-    console.log("ETH address is:" + ethAddress);
-    this.setState({ethAddress});
+    const contractAddress= await storehash.options.address;
+    console.log("ETH address is:" + contractAddress);
+    this.setState({contractAddress});
 
     // check if verified
     if (this.state.token_balance >= 10){
@@ -438,7 +439,9 @@ render() {
               
           <Button onClick = {this.getTransactionReceipt}> Get Transaction Receipt </Button>
           <hr />
-          <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash} ethAddress={this.state.ethAddress} transactionHash={this.state.transactionHash} blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed}/>
+          <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash} 
+                   contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash} 
+                   blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed}/>
         </Container>
             </Col>
           </Row>

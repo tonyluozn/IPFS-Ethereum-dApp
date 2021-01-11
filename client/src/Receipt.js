@@ -24,7 +24,7 @@ export default function ViewNews(props) {
                 </tr>
                 <tr>
                 <td>Ethereum Contract Address</td>
-                <td>{props.ethAddress}</td>
+                <td>{props.contractAddress}</td>
                 </tr>
                 <tr>
                 <td>Tx Hash # </td>
