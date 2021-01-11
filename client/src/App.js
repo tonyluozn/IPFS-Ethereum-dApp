@@ -328,8 +328,8 @@ class App extends Component {
           <ViewNews 
             user = {update.user} 
             hash={update} 
-            view={index < 4 || this.state.verified} 
-            image = {update.imageHash == ''}
+            canView={index < 4 || this.state.verified} 
+            image = {update.imageHash}
           />
       </Col>
       <div style={{

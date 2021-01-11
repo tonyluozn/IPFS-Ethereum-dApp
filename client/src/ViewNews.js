@@ -31,10 +31,10 @@ export default function ViewNews(props) {
     }
 
     //place holder for the props.
-    function validImage(place){
+    function validImage(props){
         //return <img src={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash} width="300" height="300"/>
-        if(place.hash.imageHash !== ''){
-          return ["https://gateway.ipfs.io/ipfs/"+place.hash.imageHash, "300","300"]
+        if(props.hash.imageHash !== ''){
+          return ["https://gateway.ipfs.io/ipfs/"+props.hash.imageHash, "300","300"]
         }else{
           return ['',"0","0"]
         }
@@ -56,12 +56,12 @@ export default function ViewNews(props) {
                   <p>This post was uploaded by someone with low reputation, do you want to proceed?</p>
                   :
                   <p>
-                    {props.view? 
+                    {props.canView? 
                       <Col>
                       <Row><p>{content}</p></Row>
                     <img src={validImage(props)[0]} width= {validImage(props)[1]} height={validImage(props)[2]}/> 
                     <Row><Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.fileHash}>File Link</a></Col>
-                    {props.image? <p/>:<Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash}>Image Link</a></Col>}
+                    {props.image? <Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash}>Image Link</a></Col>:<p/>}
                       </Row>
                       </Col>
                     :<p>you don't have enough tokens to view this news</p>}
