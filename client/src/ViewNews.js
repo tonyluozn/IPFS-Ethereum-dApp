@@ -17,14 +17,19 @@ export default function ViewNews(props) {
     const [canView,setCanView] = useState(false);
 
     useEffect(() => {onLoad()}, []);
-    // first convert the fileHash to the string and save to the state
+    
     async function onLoad() {
+      // if the post is free, then user can view; if it's premium, then check if the user has paid or not
+      //
       if (props.update.category=="free"){
         setCanView(true);
+      } else{
+        await storehash.methods.checkAccess(props.update.fileHash,props.user).call().then((result) => {
+          setCanView(result);
+          console.log('user '+props.user+' has already paid for this post. '+ result)
+        });
       }
-      await storehash.methods.checkAccess(props.update.fileHash,props.user).call().then((result) => {
-        setCanView(result);
-      });
+      
       await fetch("https://gateway.ipfs.io/ipfs/"+props.update.fileHash).then(response => response.text())
       .then(data => {
           setContent(data);
@@ -54,11 +59,11 @@ export default function ViewNews(props) {
       const amount = BigInt(100000000000000000);
       await healthToken.methods.transfer(props.update.user,amount).send({
         from: props.user
-      },(error,tokenTransactionHash) => {
+      }, (error,tokenTransactionHash) => {
         //once the transaction is successful, update the view and give the access
         console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
         setCanView(true);
-        storehash.methods.grantAccess(props.update.fileHash,props.user).call();
+        storehash.methods.grantAccess(props.update.fileHash,props.user).send({from: props.user});
 
       });
       
