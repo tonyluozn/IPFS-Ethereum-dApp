@@ -325,12 +325,7 @@ class App extends Component {
         User: {update.user}
       </Col>
       <Col>
-          <ViewNews 
-            user = {update.user} 
-            hash={update} 
-            canView={index < 4 || this.state.verified} 
-            image = {update.imageHash}
-          />
+          <ViewNews update={update} user={this.state.walletAddress}/>
       </Col>
       <div style={{
         display:'inline', 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl} from "react-bootstrap";
 import storehash from './storehash';
+import healthToken from './healthToken';
+/* global BigInt */
 
 
 export default function ViewNews(props) {
@@ -12,33 +14,55 @@ export default function ViewNews(props) {
     // boolean indicating if the repu of the post author is too low.
     const [lowRepu, setLowRepu] = useState(false);
     const [reputation,setReputation] = useState(0);
+    const [canView,setCanView] = useState(false);
 
     useEffect(() => {onLoad()}, []);
     // first convert the fileHash to the string and save to the state
     async function onLoad() {
-        await fetch("https://gateway.ipfs.io/ipfs/"+props.hash.fileHash).then(response => response.text())
-        .then(data => {
-            setContent(data);
-            console.log("text loaded: "+data);
-        }
-        ) 
-        const address = props.user;
-        await storehash.methods.getReputation(address).call().then((result) => {
-          //console.log("This is the repu " + result + (result > 0));
-          setLowRepu(result<40);
-          setReputation(result);
-        });
+      if (props.update.category=="free"){
+        setCanView(true);
+      }
+      await storehash.methods.checkAccess(props.update.fileHash,props.user).call().then((result) => {
+        setCanView(result);
+      });
+      await fetch("https://gateway.ipfs.io/ipfs/"+props.update.fileHash).then(response => response.text())
+      .then(data => {
+          setContent(data);
+          console.log("text loaded: "+data);
+      }
+      ) 
+      const address = props.update.user;
+      await storehash.methods.getReputation(address).call().then((result) => {
+        //console.log("This is the repu " + result + (result > 0));
+        setLowRepu(result<40);
+        setReputation(result);
+      });
     }
 
     //place holder for the props.
     function validImage(props){
-        //return <img src={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash} width="300" height="300"/>
-        if(props.hash.imageHash !== ''){
-          return ["https://gateway.ipfs.io/ipfs/"+props.hash.imageHash, "300","300"]
-        }else{
-          return ['',"0","0"]
-        }
+      //return <img src={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash} width="300" height="300"/>
+      if(props.update.imageHash !== ''){
+        return ["https://gateway.ipfs.io/ipfs/"+props.update.imageHash, "300","300"]
+      }else{
+        return ['',"0","0"]
+      }
     }
+
+    // the current user pay 0.1 NUHT to the author of the post 
+    const handlePayment = async () => {
+      const amount = BigInt(100000000000000000);
+      await healthToken.methods.transfer(props.update.user,amount).send({
+        from: props.user
+      },(error,tokenTransactionHash) => {
+        //once the transaction is successful, update the view and give the access
+        console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
+        setCanView(true);
+        storehash.methods.grantAccess(props.update.fileHash,props.user).call();
+
+      });
+      
+    };
 
     // assuming the file is either text file or an image. Conditional rendering added 
     return (
@@ -56,15 +80,15 @@ export default function ViewNews(props) {
                   <p>This post was uploaded by someone with low reputation, do you want to proceed?</p>
                   :
                   <p>
-                    {props.canView? 
+                    {canView? 
                       <Col>
                       <Row><p>{content}</p></Row>
                     <img src={validImage(props)[0]} width= {validImage(props)[1]} height={validImage(props)[2]}/> 
-                    <Row><Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.fileHash}>File Link</a></Col>
-                    {props.image? <Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.hash.imageHash}>Image Link</a></Col>:<p/>}
+                    <Row><Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a></Col>
+                    {props.image? <Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a></Col>:<p/>}
                       </Row>
                       </Col>
-                    :<p>you don't have enough tokens to view this news</p>}
+                    :<p>You need to pay NUHT to access this post.</p>}
                   </p> 
                 }
               </Modal.Body>
@@ -82,10 +106,26 @@ export default function ViewNews(props) {
                     </Button>
                   </Col>
                 </Row> 
-                :           
-                <Button variant="outline-secondary" onClick={handleClose}>
-                  Close
-                </Button>
+                :<p>
+                  {canView?
+                    <Button variant="outline-secondary" onClick={handleClose}>
+                    Close
+                    </Button>
+                  :
+                  <Row>
+                  <Col>
+                    <Button variant="outline-secondary" onClick={handlePayment}>
+                      Pay
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button variant="outline-secondary" onClick={handleClose}>
+                      Close
+                    </Button>
+                  </Col>
+                </Row>
+                }
+                </p>           
               }
             </Modal.Footer>
           </Modal>
