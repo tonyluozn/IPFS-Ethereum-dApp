@@ -90,7 +90,7 @@ export default function ViewNews(props) {
                       <Row><p>{content}</p></Row>
                     <img src={validImage(props)[0]} width= {validImage(props)[1]} height={validImage(props)[2]}/> 
                     <Row><Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a></Col>
-                    {props.image? <Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a></Col>:<p/>}
+                    {props.update.imageHash? <Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a></Col>:<p/>}
                       </Row>
                       </Col>
                     :<p>You need to pay NUHT to access this post.</p>}

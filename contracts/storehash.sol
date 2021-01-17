@@ -15,6 +15,8 @@ contract StoreHash {
 
     newsUpdate[] public newsList;
     mapping(address => uint) public userReputation;
+    mapping(string => int) public postReputation;
+    mapping(string => mapping(address => bool)) public postToAccess;
 
     event storageUpdate(string newValue, address updatedBy);
     
@@ -27,6 +29,8 @@ contract StoreHash {
             imageHash: imageHash,
             category: category
         }));
+        //initialize the post vote to zero
+        postReputation[ipfsHash] = 0;
         if (userReputation[msg.sender] != 0x0){
              userReputation[msg.sender]+=10;
         }else{
@@ -52,6 +56,31 @@ contract StoreHash {
         require(userReputation[account]>amount);
         userReputation[account] -=amount;
     }
+
+    function increaseVote(string memory ipfsHash) public {
+        postReputation[ipfsHash]+=1;
+    }
+
+    function decreaseVote(string memory ipfsHash) public {
+        postReputation[ipfsHash]-=1;
+    }
+
+    function getVote(string memory ipfsHash) public view returns (int){
+        return postReputation[ipfsHash];
+    }
+    // to grant access to user to a specfic post
+
+    function grantAccess(string memory ipfsHash, address account) public{
+        postToAccess[ipfsHash][account] =true;
+    }
+
+    function checkAccess(string memory ipfsHash, address account) public view returns (bool){
+        if (postToAccess[ipfsHash][account] == true){
+            return true;
+        }
+        return false;
+    }
+
     
 }
 
