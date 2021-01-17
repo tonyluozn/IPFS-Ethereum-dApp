@@ -1,0 +1,5 @@
+.file-link, .img-link{
+    border: solid 1px #007bff;
+    border-radius: 5px;
+    padding: 3px;
+}

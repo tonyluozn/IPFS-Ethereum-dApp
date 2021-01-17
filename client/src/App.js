@@ -338,8 +338,14 @@ class App extends Component {
         justifyContent: 'center', 
         alignItems: 'center'}}
       >
-        <DownOutlined style={{ fontSize: '16px', marginLeft:"4px"}} onClick = {()=>this.reportPost(update.user)}/>
-        <UpOutlined style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px" }} onClick = {()=>this.upvotePost(update.user)}/>  
+        <DownOutlined 
+        style={{ fontSize: '16px', marginLeft:"4px"}} 
+        onClick = {()=>this.reportPost(update.user)}
+        />
+        <UpOutlined 
+        style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px" }} 
+        onClick = {()=>this.upvotePost(update.user)}
+        />  
       </div>
     </Row>
     <Row>

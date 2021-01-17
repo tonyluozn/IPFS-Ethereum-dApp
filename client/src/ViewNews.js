@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import './ViewNews.css'; 
 import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl} from "react-bootstrap";
 import storehash from './storehash';
 import healthToken from './healthToken';
@@ -27,7 +28,7 @@ export default function ViewNews(props) {
         await storehash.methods.checkAccess(props.update.fileHash,props.user).call()
         .then((result) => {
           setCanView(result);
-          
+
           console.log('user '+props.user+' has already paid for this post. '+ result)
         });
       }
@@ -92,9 +93,9 @@ export default function ViewNews(props) {
                         width={validImage(props)[1]} 
                         height={validImage(props)[2]}/> 
                         <Row>
-                          <Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a></Col>
+                          <Col><a className="file-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a></Col>
                           {props.update.imageHash? 
-                            <Col><a target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a></Col>
+                            <Col><a className="img-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a></Col>
                             :
                             <p/>
                           }
