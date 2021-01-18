@@ -11,6 +11,7 @@ contract StoreHash {
         string fileHash;
         string imageHash;
         string category;
+        string extension;
     }
 
     newsUpdate[] public newsList;
@@ -20,14 +21,15 @@ contract StoreHash {
 
     event storageUpdate(string newValue, address updatedBy);
     
-    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category) public {
+    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category, string memory extension) public {
         newsList.push(newsUpdate({
             user:msg.sender,
             timeStamp:time,
             location:location,
             fileHash: ipfsHash,
             imageHash: imageHash,
-            category: category
+            category: category,
+            extension: extension
         }));
         //initialize the post vote to zero
         postReputation[ipfsHash] = 0;

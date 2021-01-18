@@ -110,6 +110,11 @@ const abi = [
 				"internalType": "string",
 				"name": "category",
 				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "extension",
+				"type": "string"
 			}
 		],
 		"name": "sendUpdate",

@@ -76,6 +76,7 @@ class App extends Component {
     value:'',
     //text box value for location
     location:'',
+    extension: '',
     // where we store address for deployed contract 
     contractAddress:'',
     verified:true,
@@ -138,6 +139,9 @@ class App extends Component {
         event.stopPropagation()
         event.preventDefault()
         const file = event.target.files[0]
+        let fileExt = file.name.split('.').pop()
+        console.log("File name extension is:" + fileExt)
+        this.setState({ extension: fileExt})
         let reader = new window.FileReader()
         reader.readAsArrayBuffer(file)
         reader.onloadend = () => this.convertImageToBuffer(reader)    
@@ -198,7 +202,7 @@ class App extends Component {
 
             if(this.state.verified)  {
               storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-                time,this.state.imageHash,this.state.category).send({
+                time,this.state.imageHash,this.state.category, this.state.extension).send({
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({transactionHash});

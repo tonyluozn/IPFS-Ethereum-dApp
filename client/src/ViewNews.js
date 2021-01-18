@@ -35,7 +35,7 @@ export default function ViewNews(props) {
       
       await fetch("https://gateway.ipfs.io/ipfs/"+props.update.fileHash).then(response => response.text())
       .then(data => {
-          setContent(data);
+          setContent(data + props.update.extension);
           console.log("text loaded: "+data);
       }
       ) 
