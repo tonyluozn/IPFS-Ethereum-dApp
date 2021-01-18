@@ -307,17 +307,23 @@ class App extends Component {
   }
 
   // report post 
-  reportPost = async (address) => {
+  reportPost = async (address,hash) => {
     console.log('call reportPost function');
     storehash.methods.decreaseReputation(address, 1).send({
+      from: this.state.walletAddress
+    });
+    storehash.methods.decreaseVote(hash).send({
       from: this.state.walletAddress
     });
     this.updateReputation();
   }
 
-  upvotePost = async (address) => {
+  upvotePost = async (address,hash) => {
     console.log('call upVote function');
     storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress}); 
+    storehash.methods.increaseVote(hash).send({
+      from: this.state.walletAddress
+    });
     this.updateReputation();
   }
   
@@ -344,11 +350,11 @@ class App extends Component {
       >
         <DownOutlined 
         style={{ fontSize: '16px', marginLeft:"4px"}} 
-        onClick = {()=>this.reportPost(update.user)}
+        onClick = {()=>this.reportPost(update.user,update.ipfsHash)}
         />
         <UpOutlined 
         style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px" }} 
-        onClick = {()=>this.upvotePost(update.user)}
+        onClick = {()=>this.upvotePost(update.user,update.ipfsHash)}
         />  
       </div>
     </Row>
