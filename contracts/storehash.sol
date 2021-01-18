@@ -33,6 +33,7 @@ contract StoreHash {
         }));
         //initialize the post vote to zero
         postReputation[ipfsHash] = 0;
+        postToAccess[ipfsHash][msg.sender] =true;
         if (userReputation[msg.sender] != 0x0){
              userReputation[msg.sender]+=10;
         }else{

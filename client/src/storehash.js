@@ -1,7 +1,7 @@
 import web3 from './web3';
 //access our local copy to contract deployed on rinkeby testnet
 //use your own contract address
-const address = '0xb3e820ed3978343c6C7a75c0A1171638cf40FB04';
+const address = '0x288B8432658d4969B8ce5Fa39cB0f7c3b6227bE0';
 //use the ABI from your contract
 const abi = [
 	{
@@ -219,6 +219,11 @@ const abi = [
 						"internalType": "string",
 						"name": "category",
 						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "extension",
+						"type": "string"
 					}
 				],
 				"internalType": "struct StoreHash.newsUpdate[]",
@@ -286,6 +291,11 @@ const abi = [
 			{
 				"internalType": "string",
 				"name": "category",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "extension",
 				"type": "string"
 			}
 		],
