@@ -3,6 +3,7 @@ import './ViewNews.css';
 import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl} from "react-bootstrap";
 import storehash from './storehash';
 import healthToken from './healthToken';
+import ReactAudioPlayer from 'react-audio-player';
 /* global BigInt */
 
 
@@ -16,7 +17,7 @@ export default function ViewNews(props) {
     const [lowRepu, setLowRepu] = useState(false);
     const [reputation,setReputation] = useState(0);
     const [canView,setCanView] = useState(false);
-
+    const [media, setMedia] = useState(null);
     useEffect(() => {onLoad()}, []);
     
     async function onLoad() {
@@ -36,6 +37,28 @@ export default function ViewNews(props) {
       await fetch("https://gateway.ipfs.io/ipfs/"+props.update.fileHash).then(response => response.text())
       .then(data => {
           setContent(data + "." +props.update.extension);
+          console.log(data)
+          if (props.update.extension == 'mp3'){
+            console.log("this is mp3")
+            setMedia( 
+            <ReactAudioPlayer
+              src={"https://gateway.ipfs.io/ipfs/" + props.update.imageHash}
+              autoPlay
+              controls
+            />);
+          } else if (props.update.extension == 'jpg'){
+            console.log("this is jpg")
+            setMedia(<img 
+              src={validImage(props)[0]} 
+              width={validImage(props)[1]} 
+              height={validImage(props)[2]}
+              />)
+          } else if (props.update.extension == 'pdf'){
+            console.log("This is pdf")
+            setMedia(
+              <embed class="resume-frame" src={"https://gateway.ipfs.io/ipfs/" + props.update.imageHash}/>
+            )
+          }
           console.log("text loaded: "+data);
       }
       ) 
@@ -88,10 +111,7 @@ export default function ViewNews(props) {
                     {canView? 
                       <Col>
                         <Row><p>{content}</p></Row>
-                        <img 
-                        src={validImage(props)[0]} 
-                        width={validImage(props)[1]} 
-                        height={validImage(props)[2]}/> 
+                        {media}
                         <Row>
                           <Col><a className="file-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a></Col>
                           {props.update.imageHash? 
