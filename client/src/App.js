@@ -168,111 +168,114 @@ class App extends Component {
   };
 
   //first, convert the report text to buffer, then send the combined update to blockchain.
-  updateSubmit = async (event) => {
-    console.log('Set report category to: ' + this.state.category);
-    event.preventDefault();
-    //convert the text report to buffer
-    const file = new Blob([this.state.value], {type: 'text/plain'});
+    updateSubmit = async (event) => {
+      console.log('Set report category to: ' + this.state.category);
+      event.preventDefault();
+      //convert the text report to buffer
+      const file = new Blob([this.state.value], {type: 'text/plain'});
 
-    console.log("Text input value: " + this.state.value);
+      console.log("Text input value: " + this.state.value);
 
-    // read text input as buffer
-    let reader = new window.FileReader();
-    reader.readAsArrayBuffer(file);
-    reader.onloadend = () => this.convertTextToBuffer(reader);
+      // read text input as buffer
+      let reader = new window.FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onloadend = () => this.convertTextToBuffer(reader);
 
-    //obtain contract address from storehash.js
-    const contractAddress= await storehash.options.address;
-    console.log("ETH address is:" + contractAddress);
-    this.setState({contractAddress});
+      //obtain contract address from storehash.js
+      const contractAddress= await storehash.options.address;
+      console.log("ETH address is:" + contractAddress);
+      this.setState({contractAddress});
 
-    // check if verified
-    if (this.state.token_balance >= 10){
-      this.setState({verified: true});
-    }
-    console.log("User is verified? " + this.state.verified);
+      // check if verified
+      if (this.state.token_balance >= 10){
+        this.setState({verified: true});
+      }
+      console.log("User is verified? " + this.state.verified);
 
+      setTimeout(this.actualUpload(), 1000);
+
+    };
     //submit both image and text to ipfs network, save two returned hashes to states.
+    actualUpload = async () => {
+      //If there is no image, the buffer is ''
+      if(this.state.imageBuffer !== ''){
+        console.log(this.state.textBuffer);
 
-    //If there is no image, the buffer is ''
-    if(this.state.imageBuffer !== ''){
-      console.log(this.state.textBuffer);
+        await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
+          console.log("error message:"+err);
+          this.setState({ ipfsHash:ipfsHash[0].hash });
 
-      await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
-        console.log("error message:"+err);
-        this.setState({ ipfsHash:ipfsHash[0].hash });
+          await ipfs.add(this.state.imageBuffer, (err, imageHash) => {
+              this.setState({ imageHash:imageHash[0].hash });
+              const time = new Date().toLocaleString();
 
-        await ipfs.add(this.state.imageBuffer, (err, imageHash) => {
-            this.setState({ imageHash:imageHash[0].hash });
-            const time = new Date().toLocaleString();
+              if(this.state.verified)  {
+                storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
+                  time,this.state.imageHash,this.state.category, this.state.extension).send({
+                  from: this.state.walletAddress
+                }, (error, transactionHash) => {
+                  this.setState({transactionHash});
+                }); //storehash
 
-            if(this.state.verified)  {
-              storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-                time,this.state.imageHash,this.state.category, this.state.extension).send({
+                this.testGetToken(this.state.walletAddress);
+              }
+            });
+          })
+      }
+      else{ //we only want to send the text
+        console.log(this.state.textBuffer)
+        await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
+          this.setState({ ipfsHash:ipfsHash[0].hash });
+          const time = new Date().toLocaleString();
+          if(this.state.verified){
+            //Trying to use '' as an image hash/place holder
+            storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
+              time,'',this.state.category).send({
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({transactionHash});
               }); //storehash
-
-              this.testGetToken(this.state.walletAddress);
-            }
-          });
+          }
         })
-    }
-    else{ //we only want to send the text
-      console.log(this.state.textBuffer)
-      await ipfs.add(this.state.textBuffer, async (err, ipfsHash) => {
-        this.setState({ ipfsHash:ipfsHash[0].hash });
-        const time = new Date().toLocaleString();
-        if(this.state.verified){
-          //Trying to use '' as an image hash/place holder
-          storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-            time,'',this.state.category).send({
-              from: this.state.walletAddress
-            }, (error, transactionHash) => {
-              this.setState({transactionHash});
-            }); //storehash
-        }
-      })
+      }
     }
 
-  };
+    getTransactionReceipt = async () => {
+      try{
+        this.setState({
+          blockNumber: "waiting..",
+          gasUsed: "waiting..."
+        });
 
-  getTransactionReceipt = async () => {
-    try{
-      this.setState({
-        blockNumber: "waiting..",
-        gasUsed: "waiting..."
+        //get Transaction Receipt in console on click
+        //See: https://web3js.readthedocs.io/en/1.0/web3-eth.html#gettransactionreceipt
+        await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt) => {
+                console.log(err,txReceipt);
+                this.setState({txReceipt});
+              });
+
+        //await for getTransactionReceipt
+        await this.setState({blockNumber: this.state.txReceipt.blockNumber});
+        await this.setState({gasUsed: this.state.txReceipt.gasUsed});
+      }
+
+      catch(error){
+        console.log(error);
+      }
+
+    }
+
+
+    // for any user who has metamask, send the ERC-20 tokens to the account.
+    getToken = async () => {
+      const amount = BigInt(1000000000000000000);
+      healthToken.methods.transfer('0x3C9c010366aEd756647B83BC0120B925c41D9bf8', amount).send({
+        from: this.state.walletAddress
+      },(error,tokenTransactionHash) => {
+        console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
       });
-
-      //get Transaction Receipt in console on click
-      //See: https://web3js.readthedocs.io/en/1.0/web3-eth.html#gettransactionreceipt
-      await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt) => {
-              console.log(err,txReceipt);
-              this.setState({txReceipt});
-            });
-
-      //await for getTransactionReceipt
-      await this.setState({blockNumber: this.state.txReceipt.blockNumber});
-      await this.setState({gasUsed: this.state.txReceipt.gasUsed});
     }
 
-    catch(error){
-      console.log(error);
-    }
-
-  }
-
-
-  // for any user who has metamask, send the ERC-20 tokens to the account.
-  getToken = async () => {
-    const amount = BigInt(1000000000000000000);
-    healthToken.methods.transfer('0x3C9c010366aEd756647B83BC0120B925c41D9bf8', amount).send({
-      from: this.state.walletAddress
-    },(error,tokenTransactionHash) => {
-      console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
-    });
-  }
 
   // for testing purpose
   testGetToken = async (address) => {
