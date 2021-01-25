@@ -6,6 +6,7 @@ contract StoreHash {
 
     struct newsUpdate {
         address user;
+        string username;
         string timeStamp;
         string location;
         string fileHash;
@@ -19,11 +20,14 @@ contract StoreHash {
     mapping(string => int) public postReputation;
     mapping(string => mapping(address => bool)) public postToAccess;
 
+    mapping(address => bytes32) public userProfile;  // maps user address to a profile (username)
+
     event storageUpdate(string newValue, address updatedBy);
-    
+
     function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category, string memory extension) public {
         newsList.push(newsUpdate({
             user:msg.sender,
+            username: this.bytes32ToString(userProfile[msg.sender]),
             timeStamp:time,
             location:location,
             fileHash: ipfsHash,
@@ -39,8 +43,6 @@ contract StoreHash {
         }else{
             userReputation[msg.sender]=10;
         }
-       
-
     }
 
     function getUpdate() public view returns (newsUpdate[] memory) {
@@ -50,11 +52,11 @@ contract StoreHash {
     function getReputation(address account) public view returns (uint){
         return userReputation[account];
     }
-    
+
     function increaseReputation(address account, uint amount) public  {
         userReputation[account] +=amount;
     }
-    
+
     function decreaseReputation(address account, uint amount) public  {
         require(userReputation[account]>amount);
         userReputation[account] -=amount;
@@ -84,6 +86,24 @@ contract StoreHash {
         return false;
     }
 
-    
-}
+    function getUsername(address account) public view returns (bytes32){
+        return userProfile[account];
+    }
 
+    function setUsername(address account, bytes32 newName) public{
+        userProfile[account] = newName;
+    }
+
+    function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
+        uint8 i = 0;
+        while(i < 32 && _bytes32[i] != 0) {
+            i++;
+        }
+        bytes memory bytesArray = new bytes(i);
+        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
+            bytesArray[i] = _bytes32[i];
+        }
+        return string(bytesArray);
+    }
+
+}
