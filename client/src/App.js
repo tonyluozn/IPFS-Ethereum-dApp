@@ -106,7 +106,7 @@ class App extends Component {
  //     console.log("spender approved. Transaction hash: "+ transactionHash);
  //   }); 
  // }
-
+// get users' wallet address
   getWalletAddress = async() => {
     const accounts =  await web3.eth.getAccounts();
     this.setState({walletAddress: accounts[0]});
@@ -119,13 +119,15 @@ class App extends Component {
     }
   }
 
-  // what is this?
+  //use Blob to store text in the variable file
+  //submit users' typed text
   textSubmit(event) {
     event.preventDefault();
     const element = document.createElement("a");
     const file = new Blob([this.state.value], {type: 'text/plain'});
     console.log("state.value: "+this.state.value);
     let reader = new window.FileReader()
+    //read file
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
       this.convertToBuffer(reader);
@@ -309,18 +311,20 @@ class App extends Component {
   // report post 
   reportPost = async (address) => {
     console.log('call reportPost function');
+    //decrease user reputation
     storehash.methods.decreaseReputation(address, 1).send({
       from: this.state.walletAddress
     });
     this.updateReputation();
   }
-
+  //upvote post
   upvotePost = async (address) => {
     console.log('call upVote function');
+    //increase user reputation
     storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress}); 
     this.updateReputation();
   }
-  
+  //render news including html and css
   renderNews = (data) => {
     return data.slice(0).reverse().map((update,index) => 
     <ListGroup.Item key={index}>
@@ -363,10 +367,13 @@ class App extends Component {
   }
 
 render() {
+      //newsList length
       const news_total = this.state.newsList.length;
+      //free posts
       const free_posts = this.state.newsList.filter(e=>e.category=='free');
+      //premium posts
       const premium_posts = this.state.newsList.filter(e=>e.category=='premium');
-      
+      //render website
         return (
         <div className="App">
         <p className="App-header">Northwestern Covid-19 News-Sharing Platform</p>  

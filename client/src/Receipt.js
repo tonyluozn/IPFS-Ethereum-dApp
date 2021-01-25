@@ -1,3 +1,4 @@
+//When you use token to pay, generate the receipt
 import React, { useState, useEffect } from "react";
 import { Table} from "react-bootstrap";
 import './App.css';

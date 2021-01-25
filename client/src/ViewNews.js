@@ -14,7 +14,9 @@ export default function ViewNews(props) {
     const [content, setContent] = useState(null);
     // boolean indicating if the repu of the post author is too low.
     const [lowRepu, setLowRepu] = useState(false);
+    // set user reputation
     const [reputation,setReputation] = useState(0);
+    //if meet the requirement, show the content
     const [canView,setCanView] = useState(false);
 
     useEffect(() => {onLoad()}, []);
