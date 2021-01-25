@@ -186,8 +186,11 @@ class App extends Component {
     }
     console.log("User is verified? " + this.state.verified);
 
-    //submit both image and text to ipfs network, save two returned hashes to states.
+    setTimeout(this.actualUpload(), 1000);
     
+  };
+  //submit both image and text to ipfs network, save two returned hashes to states.
+  actualUpload = async () => {
     //If there is no image, the buffer is ''
     if(this.state.imageBuffer !== ''){
       console.log(this.state.textBuffer);
@@ -229,8 +232,7 @@ class App extends Component {
         }
       }) 
     }
-    
-  };
+  }
 
   getTransactionReceipt = async () => {
     try{

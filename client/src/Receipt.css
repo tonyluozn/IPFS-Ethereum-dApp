@@ -1,0 +1,7 @@
+table.fixed { 
+    table-layout:fixed; 
+}
+table.fixed td { 
+    overflow:scroll; 
+}
+
