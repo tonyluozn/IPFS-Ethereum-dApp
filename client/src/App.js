@@ -279,7 +279,9 @@ class App extends Component {
       const repu = await storehash.methods.getReputation(address).call().then((result) => {
         console.log(result);
         return result;
-      });
+      }).catch( error =>
+        console.log(error)
+      );
     // console.log(this.state.reputation);
     this.setState({reputation: repu});
     // console.log(this.state.reputation);
@@ -298,7 +300,9 @@ class App extends Component {
   //Update balance and verified state right after getting the token balance
   getTokenBalance = async() => {
     const address = this.state.walletAddress;
-    const balance = await healthToken.methods.balanceOf(address).call();
+    const balance = await healthToken.methods.balanceOf(address).call().then((result) => {
+      console.log("This is the current token balance " + result/1000000000000000000);
+      return result});;
     this.setState({token_balance: balance/1000000000000000000});
 
     if(this.state.token_balance > 5){
