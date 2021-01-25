@@ -366,7 +366,13 @@ class App extends Component {
       console.log('fetched name: '+result);
       return result;
     });
-    name = web3.utils.hexToAscii(name);
+    if (name == 0x0000000000000000000000000000000000000000000000000000000000000000){
+      console.log("no name");
+      // default userName is first 10 char of userAddress
+      name = address.substring(0,9);
+    } else{
+      name = web3.utils.hexToAscii(name);
+    }
     this.setState({username: name});
     return name;
   }
@@ -376,9 +382,10 @@ class App extends Component {
     return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
     <Row>
-      <Col xs={8} style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>
-        User: {update.username}
-      </Col>
+        <Col xs={8} style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+            User: {update.username}<br />
+            Acc: {update.user.substring(0,5)}-
+        </Col>
       <Col>
           <ViewNews update={update} user={this.state.walletAddress}/>
       </Col>
