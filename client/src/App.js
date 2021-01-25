@@ -38,7 +38,7 @@ window.addEventListener('load', async () => {
 });
 
 class App extends Component {
- 
+
   constructor() {
     super();
     //get user's metamask account address
@@ -60,7 +60,7 @@ class App extends Component {
         return result;
       }
     )
-    
+
     console.log("Before update:" + this.state.newsList)
     this.setState({newsList: newsfeed})
     console.log("After update:" + this.state.newsList)
@@ -77,7 +77,7 @@ class App extends Component {
     //text box value for location
     location:'',
     extension: '',
-    // where we store address for deployed contract 
+    // where we store address for deployed contract
     contractAddress:'',
     verified:true,
     // two buffer for two seperate files
@@ -93,10 +93,13 @@ class App extends Component {
     reputation:0,
     token_balance:0,
     newsList:[],
+    username: '',
+    // text box value for new userName
+    nameField:'',
     //Byte32 for 'NUHT'
     tokenByte: '0x4e55485400000000000000000000000000000000000000000000000000000000',
     required_token:10*1000000000000000000,
-  };  
+  };
 
  // approve = async () => {
  //   const amount = 1000000000;
@@ -104,7 +107,7 @@ class App extends Component {
  //     from: '0x65bA114024121a991865e9130B196cA9E504E262'
  //   }, (error, transactionHash) => {
  //     console.log("spender approved. Transaction hash: "+ transactionHash);
- //   }); 
+ //   });
  // }
 // get users' wallet address
   getWalletAddress = async() => {
@@ -116,6 +119,7 @@ class App extends Component {
     if (this.state.walletAddress != '') {
       this.updateReputation();
       this.getTokenBalance();
+      this.getUsername(accounts[0]);
     }
   }
 
@@ -146,7 +150,7 @@ class App extends Component {
         this.setState({ extension: fileExt})
         let reader = new window.FileReader()
         reader.readAsArrayBuffer(file)
-        reader.onloadend = () => this.convertImageToBuffer(reader)    
+        reader.onloadend = () => this.convertImageToBuffer(reader)
   };
 
   convertImageToBuffer = async(reader) => {
@@ -162,8 +166,8 @@ class App extends Component {
     //set this buffer -using es6 syntax
       this.setState({textBuffer: buffer});
   };
-  
-  //first, convert the report text to buffer, then send the combined update to blockchain. 
+
+  //first, convert the report text to buffer, then send the combined update to blockchain.
   updateSubmit = async (event) => {
     console.log('Set report category to: ' + this.state.category);
     event.preventDefault();
@@ -193,6 +197,7 @@ class App extends Component {
   };
   //submit both image and text to ipfs network, save two returned hashes to states.
   actualUpload = async () => {
+
     //If there is no image, the buffer is ''
     if(this.state.imageBuffer !== ''){
       console.log(this.state.textBuffer);
@@ -211,12 +216,12 @@ class App extends Component {
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({transactionHash});
-              }); //storehash 
+              }); //storehash
 
               this.testGetToken(this.state.walletAddress);
             }
           });
-        }) 
+        })
     }
     else{ //we only want to send the text
       console.log(this.state.textBuffer)
@@ -230,9 +235,9 @@ class App extends Component {
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({transactionHash});
-            }); //storehash 
+            }); //storehash
         }
-      }) 
+      })
     }
   }
 
@@ -248,20 +253,20 @@ class App extends Component {
       await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt) => {
               console.log(err,txReceipt);
               this.setState({txReceipt});
-            }); 
+            });
 
       //await for getTransactionReceipt
       await this.setState({blockNumber: this.state.txReceipt.blockNumber});
-      await this.setState({gasUsed: this.state.txReceipt.gasUsed});    
+      await this.setState({gasUsed: this.state.txReceipt.gasUsed});
     }
 
     catch(error){
       console.log(error);
-    } 
+    }
 
-  } 
+  }
 
-    
+
   // for any user who has metamask, send the ERC-20 tokens to the account.
   getToken = async () => {
     const amount = BigInt(1000000000000000000);
@@ -314,7 +319,7 @@ class App extends Component {
     }
   }
 
-  // report post 
+  // report post
   reportPost = async (address,hash) => {
     console.log('call reportPost function');
     //decrease user reputation
@@ -336,36 +341,82 @@ class App extends Component {
     });
     this.updateReputation();
   }
-  //render news including html and css
+
+//render news including html and css
+  // get the user name
+  updateUsername = async() => {
+      const address = this.state.walletAddress;
+      console.log('call updateUsername function');
+      const name = await storehash.methods.getUsername(address).call().then((result) => {
+        // console.log(result);
+        return result;
+      });
+     console.log("before update: "+this.state.username);
+     this.setState({username: web3.utils.hexToAscii(name)});
+     console.log("after update: "+name);
+  }
+
+  editUsername = async () => {
+    const address = this.state.walletAddress;
+    const name = this.state.nameField;
+    console.log('call editUsername function');
+    console.log("state: "+name+" field: "+this.state.username);
+    // change username on chain only if textField is nonempty and not the same as username
+    if (!(!name || 0 === name.length)){
+      console.log('name being processed: '+name);
+      storehash.methods.setUsername(address, web3.utils.asciiToHex(name)).send({from: this.state.walletAddress});
+    }
+    this.updateUsername();
+  }
+
+  getUsername = async(address) => {
+
+    var name = await storehash.methods.getUsername(address).call().then((result) => {
+      console.log('fetched name: '+result);
+      return result;
+    });
+    if (name == 0x0000000000000000000000000000000000000000000000000000000000000000){
+      console.log("no name");
+      // default userName is first 10 char of userAddress
+      name = address.substring(0,9);
+    } else{
+      name = web3.utils.hexToAscii(name);
+    }
+    this.setState({username: name});
+    return name;
+  }
+
+
   renderNews = (data) => {
-    return data.slice(0).reverse().map((update,index) => 
+    return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
     <Row>
-      <Col xs={8} style={{ display: "flex", alignItems:"center",textOverflow: "clip" }}>
-        User: {update.user}
-      </Col>
+        <Col xs={8} style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+            User: {update.username}<br />
+            Acc: {update.user.substring(0,5)}...
+        </Col>
       <Col>
           <ViewNews update={update} user={this.state.walletAddress}/>
       </Col>
       <div style={{
-        display:'inline', 
-        marginLeft: "16px", 
-        marginRight: "16px", 
-        backgroundColor:"#8080807a", 
-        borderRadius: "5px", 
-        textAlign: 'center', 
-        display: 'flex', 
-        justifyContent: 'center', 
+        display:'inline',
+        marginLeft: "16px",
+        marginRight: "16px",
+        backgroundColor:"#8080807a",
+        borderRadius: "5px",
+        textAlign: 'center',
+        display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center'}}
       >
-        <DownOutlined 
-        style={{ fontSize: '16px', marginLeft:"4px"}} 
+        <DownOutlined
+        style={{ fontSize: '16px', marginLeft:"4px"}}
         onClick = {()=>this.reportPost(update.user,update.ipfsHash)}
         />
-        <UpOutlined 
-        style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px" }} 
+        <UpOutlined
+        style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px" }}
         onClick = {()=>this.upvotePost(update.user,update.ipfsHash)}
-        />  
+        />
       </div>
     </Row>
     <Row>
@@ -388,7 +439,7 @@ render() {
       //render website
         return (
         <div className="App">
-        <p className="App-header">Northwestern Covid-19 News-Sharing Platform</p>  
+        <p className="App-header">Northwestern Covid-19 News-Sharing Platform</p>
           <hr />
           <Row>
             <Col>
@@ -406,18 +457,35 @@ render() {
                 </div>
                 </Tab>
               </Tabs>
-                                      
+
             </Col>
             <Col>
             <Container>
               <Row>
                 <Col span={8}>
-                  <p>Your Metamask account: {this.state.walletAddress}</p>
-                  <p> Your reputation: {this.state.reputation} </p> 
-                  <p> Your NUHT token balance: {this.state.token_balance} </p> 
+                  <p> Metamask account: {this.state.walletAddress}</p>
+                  <p> Username: {this.state.username}</p>
+                  <p> reputation: {this.state.reputation} </p>
+                  <p> NUHT token balance: {this.state.token_balance} </p>
                 </Col>
-                <div className="button"><Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick = {this.getToken} >Get Token</Button></div>
+                <div className="button">
+                  <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick = {this.getToken} >Get Token</Button>
+                </div>
               </Row>
+
+              <hr />
+
+                <Row>
+                  <Col xs={8}>
+                    <textarea className="nameInputBox" rows="1" cols="30" onChange={e=>{this.setState({nameField:e.target.value});}}/>
+                  </Col>
+                  <Col xs={3}>
+                    <div className="button">
+                      <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editUsername}> Set Name</Button>
+                      </div>
+                  </Col>
+                </Row>
+
               <hr />
 
               <Form onSubmit={this.updateSubmit}>
@@ -453,25 +521,25 @@ render() {
                   </Col>
                   <Col xs={3}>
                     <div className="button">
-                      <Button bsStyle="primary" style={{width:"130px"}}type="submit" > Submit 
+                      <Button bsStyle="primary" style={{width:"130px"}}type="submit" > Submit
                       </Button>
                     </div>
                   </Col>
                 </Row>
               </Form>
               <hr/>
-              
+
           <Button onClick = {this.getTransactionReceipt}> Get Transaction Receipt </Button>
           <hr />
-          <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash} 
-                   contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash} 
+          <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash}
+                   contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash}
                    blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed}/>
         </Container>
             </Col>
           </Row>
 
         <p className="App-header">About</p>
-          
+
           <hr />
      </div>
       );
