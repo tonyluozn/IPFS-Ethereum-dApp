@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Table} from "react-bootstrap";
 import './App.css';
+import './Receipt.css';
 
 
 export default function ViewNews(props) {
     return (
-        <Table bordered responsive>
+        <Table bordered class="fixed">
             <thead>
                 <tr>
                 <th>Transaction Receipt Category</th>
