@@ -7,7 +7,7 @@ networks: {
    development: {
       network_id: "*",
       host: 'localhost',
-      port: 8545,
+      port: 7545,
       gas: 6721975,
       gasPrice: 20000000000
    }
