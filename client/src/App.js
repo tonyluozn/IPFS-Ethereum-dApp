@@ -319,8 +319,8 @@ class App extends Component {
     }
   }
 
-  // report post
-  reportPost = async (address,hash) => {
+  // report post (downvote)
+  downvotePost = async (address, hash) => {
     console.log('call reportPost function');
     //decrease user reputation
     storehash.methods.decreaseReputation(address, 1).send({
@@ -332,7 +332,7 @@ class App extends Component {
     this.updateReputation();
   }
 //upvote post
-  upvotePost = async (address,hash) => {
+  upvotePost = async (address, hash) => {
     console.log('call upVote function');
     //increase user reputation
     storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress}); 
@@ -411,11 +411,11 @@ class App extends Component {
       >
         <DownOutlined
         style={{ fontSize: '16px', marginLeft:"4px"}}
-        onClick = {()=>this.reportPost(update.user,update.ipfsHash)}
+        onClick = {()=>this.downvotePost(update.user, update.ipfsHash)}
         />
         <UpOutlined
-        style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px" }}
-        onClick = {()=>this.upvotePost(update.user,update.ipfsHash)}
+        style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px"}}
+        onClick = {()=>this.upvotePost(update.user, update.ipfsHash)}
         />
       </div>
     </Row>
