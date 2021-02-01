@@ -60,6 +60,26 @@ export default function ViewNews(props) {
             setMedia(
               <embed class="resume-frame" src={"https://gateway.ipfs.io/ipfs/" + props.update.imageHash}/>
             )
+          } else if (props.update.extension == 'mp4'){
+            setMedia(
+              <video
+                id="my-video"
+                class="video-js"
+                controls
+                preload="auto"
+                width="360"
+                height="264"
+                data-setup="{}"
+              >
+              <source src={"https://gateway.ipfs.io/ipfs/" + props.update.imageHash} type="video/mp4" />
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a
+                web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank"
+                  >supports HTML5 video</a
+                >
+              </p>
+            </video>)
           }
           console.log("text loaded: "+data);
       }
