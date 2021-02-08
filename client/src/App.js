@@ -94,8 +94,10 @@ class App extends Component {
     token_balance:0,
     newsList:[],
     username: '',
+    bio: '',
     // text box value for new userName
     nameField:'',
+    bioField:'',
     //Byte32 for 'NUHT'
     tokenByte: '0x4e55485400000000000000000000000000000000000000000000000000000000',
     required_token:10*1000000000000000000,
@@ -120,6 +122,7 @@ class App extends Component {
       this.updateReputation();
       this.getTokenBalance();
       this.getUsername(accounts[0]);
+      this.getBio(accounts[0]);
     }
   }
 
@@ -193,7 +196,7 @@ class App extends Component {
     console.log("User is verified? " + this.state.verified);
 
     setTimeout(this.actualUpload(), 1000);
-    
+
   };
   //submit both image and text to ipfs network, save two returned hashes to states.
   actualUpload = async () => {
@@ -231,7 +234,7 @@ class App extends Component {
         if(this.state.verified){
           //Trying to use '' as an image hash/place holder
           storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-            time,'',this.state.category).send({
+            time,'',this.state.category, this.state.extension).send({
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({transactionHash});
@@ -335,7 +338,7 @@ class App extends Component {
   upvotePost = async (address, hash) => {
     console.log('call upVote function');
     //increase user reputation
-    storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress}); 
+    storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress});
     storehash.methods.increaseVote(hash).send({
       from: this.state.walletAddress
     });
@@ -386,12 +389,59 @@ class App extends Component {
     return name;
   }
 
+  updateBio = async() => {
+      const address = this.state.walletAddress;
+      console.log('call updateBio function');
+      const bio = await storehash.methods.getBio(address).call().then((result) => {
+        // console.log(result);
+        return result;
+      });
+     console.log("before update: "+this.state.bio);
+     this.setState({bio: web3.utils.hexToAscii(bio)});
+     console.log("after update: "+bio);
+  }
+
+  editBio = async () => {
+    const address = this.state.walletAddress;
+    const bio = this.state.bioField;
+    console.log('call editBio function');
+    console.log("state: "+bio+" field: "+this.state.bio);
+    // change username on chain only if textField is nonempty and not the same as username
+    if (!(!bio || 0 === bio.length)){
+      console.log('bio being processed: '+bio);
+      storehash.methods.setBio(address, web3.utils.asciiToHex(bio)).send({from: this.state.walletAddress});
+    }
+    this.updateBio();
+  }
+
+  getBio = async(address) => {
+
+    var bio = await storehash.methods.getBio(address).call().then((result) => {
+      console.log('fetched bio: '+result);
+      return result;
+    });
+    if (bio == 0x0000000000000000000000000000000000000000000000000000000000000000){
+      console.log("no bio");
+      // default userName is first 10 char of userAddress
+      bio = address.substring(0,9);
+    } else{
+      bio = web3.utils.hexToAscii(bio);
+    }
+    this.setState({bio: bio});
+    return bio;
+  }
+
+  // editProfile = async () => {
+  //   editBio();
+  //   editUsername();
+  // }
+
 
   renderNews = (data) => {
     return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
     <Row>
-        <Col xs={8} style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+        <Col xs={8} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
             User: {update.username}<br />
             Acc: {update.user.substring(0,5)}...
         </Col>
@@ -457,83 +507,113 @@ render() {
                 </div>
                 </Tab>
               </Tabs>
-
             </Col>
             <Col>
             <Container>
-              <Row>
-                <Col span={8}>
-                  <p> Metamask account: {this.state.walletAddress}</p>
-                  <p> Username: {this.state.username}</p>
-                  <p> reputation: {this.state.reputation} </p>
-                  <p> NUHT token balance: {this.state.token_balance} </p>
-                </Col>
-                <div className="button">
-                  <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick = {this.getToken} >Get Token</Button>
-                </div>
-              </Row>
-
+              <strong>Post and Profile</strong>
               <hr />
-
-                <Row>
-                  <Col xs={8}>
-                    <textarea className="nameInputBox" rows="1" cols="30" onChange={e=>{this.setState({nameField:e.target.value});}}/>
-                  </Col>
-                  <Col xs={3}>
+              <Tabs defaultActiveKey="profile" id="profile-tab">
+                <Tab eventKey="post" title="Post">
+                  <br />
+                  <Row>
+                    <Col span={8}>
+                      <p> Metamask account: {this.state.walletAddress}</p>
+                    </Col>
                     <div className="button">
-                      <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editUsername}> Set Name</Button>
-                      </div>
-                  </Col>
-                </Row>
-
-              <hr />
-
-              <Form onSubmit={this.updateSubmit}>
-                <Row>
-                  <Col xs={3}>Report</Col>
-                  <Col xs={8}><textarea className="textInputBox" onChange={e=>{this.setState({value:e.target.value});}}/></Col>
-                </Row>
-
-                <Row>
-                  <Col xs={3}>Location</Col>
-                  <Col xs={8}><textarea className="locationInputBox" onChange={e=>{this.setState({location:e.target.value});}}/></Col>
-                </Row>
-
-                <Row>
-                  <Col xs={{span:10, offset: 1}} style={{ display: "flex"}}>
-                    <Form.Control
-                      as="select"
-                      custom
-                      onChange={e=>{this.setState({category:e.target.value}); console.log(this.state.category)}}
-                    >
-                      <option value="choose">Choose a category: </option>
-                      <option value="free">Free</option>
-                      <option value="premium">Premium</option>
-                    </Form.Control>
-                  </Col>
-                </Row>
-
-                <br/>
-
-                <Row>
-                  <Col xs={9}>
-                    <input className="input" type = "file" onChange = {this.captureFile}/>
-                  </Col>
-                  <Col xs={3}>
-                    <div className="button">
-                      <Button bsStyle="primary" style={{width:"130px"}}type="submit" > Submit
-                      </Button>
+                      <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick = {this.getToken} >Get Token</Button>
                     </div>
-                  </Col>
-                </Row>
-              </Form>
-              <hr/>
+                  </Row>
+                  <hr />
+                  <Form onSubmit={this.updateSubmit}>
+                    <Row>
+                      <Col xs={3}>Report</Col>
+                      <Col xs={8}><textarea className="textInputBox" onChange={e=>{this.setState({value:e.target.value});}}/></Col>
+                    </Row>
 
-          <Button onClick = {this.getTransactionReceipt}> Get Transaction Receipt </Button>
-          <hr />
-          <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash}
-                   contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash}
-                   blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed}/>
+                    <Row>
+                      <Col xs={3}>Location</Col>
+                      <Col xs={8}><textarea className="locationInputBox" onChange={e=>{this.setState({location:e.target.value});}}/></Col>
+                    </Row>
+
+                    <Row>
+                      <Col xs={{span:10, offset: 1}} style={{ display: "flex"}}>
+                        <Form.Control
+                          as="select"
+                          custom
+                          onChange={e=>{this.setState({category:e.target.value}); console.log(this.state.category)}}
+                        >
+                          <option value="choose">Choose a category: </option>
+                          <option value="free">Free</option>
+                          <option value="premium">Premium</option>
+                        </Form.Control>
+                      </Col>
+                    </Row>
+
+                    <br/>
+
+                    <Row>
+                      <Col xs={9}>
+                        <input className="input" type = "file" onChange = {this.captureFile}/>
+                      </Col>
+                      <Col xs={3}>
+                        <div className="button">
+                          <Button bsStyle="primary" style={{width:"130px"}}type="submit" > Submit
+                          </Button>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Form>
+                  <hr/>
+
+                  <Button onClick = {this.getTransactionReceipt}> Get Transaction Receipt </Button>
+                  <hr />
+                  <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash}
+                       contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash}
+                       blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed}/>
+                </Tab>
+                <Tab eventKey="profile" title="Profile">
+                <br />
+                  <Row>
+                    <Col xs={3} align="left">
+                      <p> Address: </p>
+                      <p> Username: </p>
+                      <p> Reputation:  </p>
+                      <p> NUHT Balance: </p>
+                      <p> Bio: </p>
+                    </Col>
+                    <Col xs={8} align="left">
+                      <p> {this.state.walletAddress}</p>
+                      <p> {this.state.username} </p>
+                      <p> {this.state.reputation} </p>
+                      <p> {this.state.token_balance} </p>
+                      <p> {this.state.bio} </p>
+                    </Col>
+                  </Row>
+                  <hr />
+                    <Row>
+                      <Col xs={8}>
+                        <textarea className="nameInputBox" rows="1" cols="30" onChange={e=>{this.setState({nameField:e.target.value});}}/>
+                      </Col>
+                      <Col xs={3}>
+                        <div className="button">
+                          <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editUsername}> Set Name</Button>
+                          </div>
+                      </Col>
+                    </Row>
+                  <hr />
+                    <Row>
+                      <Col xs={8}>
+                        <textarea className="bioInputBox" rows="3" cols="30" onChange={e=>{this.setState({bioField:e.target.value});}}/>
+                      </Col>
+                      <Col xs={3}>
+                        <div className="button">
+                          <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editBio}> Set Bio</Button>
+                          </div>
+                      </Col>
+                    </Row>
+                  <hr />
+                </Tab>
+              </Tabs>
         </Container>
             </Col>
           </Row>

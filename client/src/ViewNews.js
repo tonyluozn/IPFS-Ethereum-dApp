@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import './ViewNews.css'; 
+import './ViewNews.css';
 import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl} from "react-bootstrap";
 import storehash from './storehash';
 import healthToken from './healthToken';
@@ -8,7 +8,7 @@ import ReactAudioPlayer from 'react-audio-player';
 
 
 export default function ViewNews(props) {
-  
+
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -21,7 +21,7 @@ export default function ViewNews(props) {
     const [canView,setCanView] = useState(false);
     const [media, setMedia] = useState(null);
     useEffect(() => {onLoad()}, []);
-    
+
     async function onLoad() {
       // if the post is free, then user can view; if it's premium, then check if the user has paid or not
       //
@@ -35,14 +35,14 @@ export default function ViewNews(props) {
           console.log('user '+props.user+' has already paid for this post. '+ result)
         });
       }
-      
+
       await fetch("https://gateway.ipfs.io/ipfs/"+props.update.fileHash).then(response => response.text())
       .then(data => {
           setContent(data + "." +props.update.extension);
           console.log(data)
           if (props.update.extension == 'mp3'){
             console.log("this is mp3")
-            setMedia( 
+            setMedia(
             <ReactAudioPlayer
               src={"https://gateway.ipfs.io/ipfs/" + props.update.imageHash}
               autoPlay
@@ -50,9 +50,9 @@ export default function ViewNews(props) {
             />);
           } else if (props.update.extension == 'jpg'){
             console.log("this is jpg")
-            setMedia(<img 
-              src={validImage(props)[0]} 
-              width={validImage(props)[1]} 
+            setMedia(<img
+              src={validImage(props)[0]}
+              width={validImage(props)[1]}
               height={validImage(props)[2]}
               />)
           } else if (props.update.extension == 'pdf'){
@@ -83,7 +83,7 @@ export default function ViewNews(props) {
           }
           console.log("text loaded: "+data);
       }
-      ) 
+      )
       const address = props.update.user;
       await storehash.methods.getReputation(address).call().then((result) => {
         //console.log("This is the repu " + result + (result > 0));
@@ -102,7 +102,7 @@ export default function ViewNews(props) {
       }
     }
 
-    // the current user pay 0.1 NUHT to the author of the post 
+    // the current user pay 0.1 NUHT to the author of the post
     const handlePayment = async () => {
       const amount = BigInt(100000000000000000);
       await healthToken.methods.transfer(props.update.user,amount).send({
@@ -115,7 +115,7 @@ export default function ViewNews(props) {
       });
     };
 
-    // assuming the file is either text file or an image. Conditional rendering added 
+    // assuming the file is either text file or an image. Conditional rendering added
     return (
         <>
           <Button block variant="outline-primary" onClick={handleShow}>
@@ -126,31 +126,37 @@ export default function ViewNews(props) {
               <Modal.Title>News - Reputation: {reputation}</Modal.Title>
             </Modal.Header>
               <Modal.Body>
-                {lowRepu? 
+                {lowRepu?
                   <p>This post was uploaded by someone with low reputation, do you want to proceed?</p>
                   :
                   <p>
-                    {canView? 
+                    {canView?
                       <Col>
                         <Row><p>{content}</p></Row>
                         {media}
                         <Row>
                           <Col><a className="file-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a></Col>
-                          {props.update.imageHash? 
+                          {props.update.imageHash?
                             <Col><a className="img-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a></Col>
                             :
                             <p/>
                           }
                         </Row>
+                        <hr />
+                          <p>
+                            Posted by {props.update.username} <br />
+                            @ {props.update.user} <br/>
+                            bio: {props.update.bio}
+                          </p>
                       </Col>
                     :
                     <p>You need to pay NUHT to access this post.</p>
                     }
-                  </p> 
+                  </p>
                 }
               </Modal.Body>
             <Modal.Footer>
-              {lowRepu?   
+              {lowRepu?
                 <Row>
                   <Col>
                     <Button variant="outline-secondary" onClick={() => setLowRepu(false)}>
@@ -162,7 +168,7 @@ export default function ViewNews(props) {
                       Close
                     </Button>
                   </Col>
-                </Row> 
+                </Row>
                 :
                 <p>
                   {canView?
@@ -183,7 +189,7 @@ export default function ViewNews(props) {
                     </Col>
                   </Row>
                   }
-                </p>           
+                </p>
               }
             </Modal.Footer>
           </Modal>

@@ -1,7 +1,7 @@
 import web3 from './web3';
 //access our local copy to contract deployed on rinkeby testnet
 //use your own contract address
-const address = '0x46f47CDa76De2CDB0Aa1d8f98EA65231C2bB618A';
+const address = '0xdf67cC0e3997E986B4DBdCC7D9F27A6A1E1dC449';
 //use the ABI from your contract
 const abi = [
 	{
@@ -105,6 +105,25 @@ const abi = [
 				"type": "address"
 			}
 		],
+		"name": "getBio",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
 		"name": "getReputation",
 		"outputs": [
 			{
@@ -130,6 +149,11 @@ const abi = [
 					{
 						"internalType": "string",
 						"name": "username",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "bio",
 						"type": "string"
 					},
 					{
@@ -280,6 +304,11 @@ const abi = [
 			},
 			{
 				"internalType": "string",
+				"name": "bio",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
 				"name": "timeStamp",
 				"type": "string"
 			},
@@ -402,6 +431,24 @@ const abi = [
 			},
 			{
 				"internalType": "bytes32",
+				"name": "newBio",
+				"type": "bytes32"
+			}
+		],
+		"name": "setBio",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
 				"name": "newName",
 				"type": "bytes32"
 			}
@@ -409,6 +456,25 @@ const abi = [
 		"name": "setUsername",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "userBio",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
