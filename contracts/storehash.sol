@@ -7,6 +7,7 @@ contract StoreHash {
     struct newsUpdate {
         address user;
         string username;
+        string bio;
         string timeStamp;
         string location;
         string fileHash;
@@ -20,7 +21,8 @@ contract StoreHash {
     mapping(string => int) public postReputation;
     mapping(string => mapping(address => bool)) public postToAccess;
 
-    mapping(address => bytes32) public userProfile;  // maps user address to a profile (username)
+    mapping(address => bytes32) public userProfile;
+    mapping(address => bytes32) public userBio;  // maps user address to a profile (username)
 
     event storageUpdate(string newValue, address updatedBy);
 
@@ -28,6 +30,7 @@ contract StoreHash {
         newsList.push(newsUpdate({
             user:msg.sender,
             username: this.bytes32ToString(userProfile[msg.sender]),
+            bio: this.bytes32ToString(userBio[msg.sender]),
             timeStamp:time,
             location:location,
             fileHash: ipfsHash,
@@ -83,8 +86,7 @@ contract StoreHash {
         if (postToAccess[ipfsHash][account] == true){
             return true;
         }
-        return false;
-    }
+        return false;    }
 
     function getUsername(address account) public view returns (bytes32){
         return userProfile[account];
@@ -92,6 +94,14 @@ contract StoreHash {
 
     function setUsername(address account, bytes32 newName) public{
         userProfile[account] = newName;
+    }
+
+    function getBio(address account) public view returns (bytes32){
+        return userBio[account];
+    }
+
+    function setBio(address account, bytes32 newBio) public{
+        userBio[account] = newBio;
     }
 
     function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
