@@ -61,9 +61,9 @@ class App extends Component {
       }
     )
 
-    console.log("Before update:" + this.state.newsList)
+    console.log("Before update news:" + this.state.newsList)
     this.setState({newsList: newsfeed})
-    console.log("After update:" + this.state.newsList)
+    console.log("After update news:" + this.state.newsList)
   }
 
 
@@ -354,22 +354,9 @@ class App extends Component {
         // console.log(result);
         return result;
       });
-     console.log("before update: "+this.state.username);
+     console.log("before update name: "+this.state.username);
      this.setState({username: web3.utils.hexToAscii(name)});
-     console.log("after update: "+name);
-  }
-
-  editUsername = async () => {
-    const address = this.state.walletAddress;
-    const name = this.state.nameField;
-    console.log('call editUsername function');
-    console.log("state: "+name+" field: "+this.state.username);
-    // change username on chain only if textField is nonempty and not the same as username
-    if (!(!name || 0 === name.length)){
-      console.log('name being processed: '+name);
-      storehash.methods.setUsername(address, web3.utils.asciiToHex(name)).send({from: this.state.walletAddress});
-    }
-    this.updateUsername();
+     console.log("after update name: "+name);
   }
 
   getUsername = async(address) => {
@@ -396,22 +383,9 @@ class App extends Component {
         // console.log(result);
         return result;
       });
-     console.log("before update: "+this.state.bio);
+     console.log("before update bio: "+this.state.bio);
      this.setState({bio: web3.utils.hexToAscii(bio)});
-     console.log("after update: "+bio);
-  }
-
-  editBio = async () => {
-    const address = this.state.walletAddress;
-    const bio = this.state.bioField;
-    console.log('call editBio function');
-    console.log("state: "+bio+" field: "+this.state.bio);
-    // change username on chain only if textField is nonempty and not the same as username
-    if (!(!bio || 0 === bio.length)){
-      console.log('bio being processed: '+bio);
-      storehash.methods.setBio(address, web3.utils.asciiToHex(bio)).send({from: this.state.walletAddress});
-    }
-    this.updateBio();
+     console.log("after update bio: "+bio);
   }
 
   getBio = async(address) => {
@@ -423,7 +397,7 @@ class App extends Component {
     if (bio == 0x0000000000000000000000000000000000000000000000000000000000000000){
       console.log("no bio");
       // default userName is first 10 char of userAddress
-      bio = address.substring(0,9);
+      bio = "I am a Northwestern Student";
     } else{
       bio = web3.utils.hexToAscii(bio);
     }
@@ -431,10 +405,28 @@ class App extends Component {
     return bio;
   }
 
-  // editProfile = async () => {
-  //   editBio();
-  //   editUsername();
-  // }
+  editProfile = async () => {
+    const address = this.state.walletAddress;
+    const name = this.state.nameField;
+    console.log('call editProfile function');
+    const bio = this.state.bioField;
+
+    console.log("state: "+name+" field: "+this.state.username);
+    console.log("state: "+bio+" field: "+this.state.bio);
+    // change username/bio on chain only if textField is nonempty and not the same as username
+    if (!(!name || 0 === name.length) && !(!bio || 0 === bio.length)){
+      console.log('Profile being processed; name: '+name+' bio: '+bio);
+      storehash.methods.setProfile(address, web3.utils.asciiToHex(bio), web3.utils.asciiToHex(name)).send({from: this.state.walletAddress});
+    } else if (!(!bio || 0 === bio.length)) {
+      console.log('bio being processed: '+bio);
+      storehash.methods.setBio(address, web3.utils.asciiToHex(bio)).send({from: this.state.walletAddress});
+    } else if (!(!name || 0 === name.length)) {
+      console.log('name being processed: '+name);
+      storehash.methods.setUsername(address, web3.utils.asciiToHex(name)).send({from: this.state.walletAddress});
+    }
+    this.updateUsername();
+    this.updateBio();
+  }
 
 
   renderNews = (data) => {
@@ -591,27 +583,26 @@ render() {
                   </Row>
                   <hr />
                     <Row>
-                      <Col xs={8}>
-                        <textarea className="nameInputBox" rows="1" cols="30" onChange={e=>{this.setState({nameField:e.target.value});}}/>
-                      </Col>
                       <Col xs={3}>
-                        <div className="button">
-                          <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editUsername}> Set Name</Button>
-                          </div>
+                        New Username:
+                      </Col>
+                      <Col xs={8}>
+                        <textarea className="nameInputBox" rows="1" cols="50" onChange={e=>{this.setState({nameField:e.target.value});}}/>
                       </Col>
                     </Row>
                   <hr />
                     <Row>
-                      <Col xs={8}>
-                        <textarea className="bioInputBox" rows="3" cols="30" onChange={e=>{this.setState({bioField:e.target.value});}}/>
-                      </Col>
                       <Col xs={3}>
-                        <div className="button">
-                          <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editBio}> Set Bio</Button>
-                          </div>
+                        New Bio:
+                      </Col>
+                      <Col xs={8}>
+                        <textarea className="bioInputBox" rows="3" cols="50" onChange={e=>{this.setState({bioField:e.target.value});}}/>
                       </Col>
                     </Row>
                   <hr />
+                  <div className="button">
+                    <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editProfile}> Edit Profile</Button>
+                  </div>
                 </Tab>
               </Tabs>
         </Container>

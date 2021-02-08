@@ -104,6 +104,11 @@ contract StoreHash {
         userBio[account] = newBio;
     }
 
+    function setProfile(address account, bytes32 newBio, bytes32 newName) public{
+        userBio[account] = newBio;
+        userProfile[account] = newName;
+    }
+
     function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
         uint8 i = 0;
         while(i < 32 && _bytes32[i] != 0) {
