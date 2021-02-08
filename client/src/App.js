@@ -101,6 +101,7 @@ class App extends Component {
     //Byte32 for 'NUHT'
     tokenByte: '0x4e55485400000000000000000000000000000000000000000000000000000000',
     required_token:10*1000000000000000000,
+    token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f'
   };
 
  // approve = async () => {
@@ -221,7 +222,7 @@ class App extends Component {
                 this.setState({transactionHash});
               }); //storehash
 
-              this.testGetToken(this.state.walletAddress);
+              this.getToken();
             }
           });
         })
@@ -273,16 +274,11 @@ class App extends Component {
   // for any user who has metamask, send the ERC-20 tokens to the account.
   getToken = async () => {
     const amount = BigInt(1000000000000000000);
-    healthToken.methods.transfer('0x3C9c010366aEd756647B83BC0120B925c41D9bf8', amount).send({
+    MemeToken.methods.buy(amount).send({
       from: this.state.walletAddress
     },(error,tokenTransactionHash) => {
-      console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
+      console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
     });
-  }
-
-  // for testing purpose
-  testGetToken = async (address) => {
-    console.log(`user ${address} at adress will get token`);
   }
 
   // get the user reputation
@@ -312,7 +308,8 @@ class App extends Component {
   //Update balance and verified state right after getting the token balance
   getTokenBalance = async() => {
     const address = this.state.walletAddress;
-    const balance = await healthToken.methods.balanceOf(address).call().then((result) => {
+    const balance = await MemeToken.methods.checkBalance().call(
+      {from: this.state.walletAddress}).then((result) => {
       console.log("This is the current token balance " + result/1000000000000000000);
       return result});;
     this.setState({token_balance: balance/1000000000000000000});
@@ -570,7 +567,7 @@ render() {
                       <p> Address: </p>
                       <p> Username: </p>
                       <p> Reputation:  </p>
-                      <p> NUHT Balance: </p>
+                      <p> NUMT Balance: </p>
                       <p> Bio: </p>
                     </Col>
                     <Col xs={8} align="left">
