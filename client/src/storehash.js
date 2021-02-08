@@ -1,7 +1,7 @@
 import web3 from './web3';
 //access our local copy to contract deployed on rinkeby testnet
 //use your own contract address
-const address = '0xdf67cC0e3997E986B4DBdCC7D9F27A6A1E1dC449';
+const address = '0x59e8B30f0a0C1C7e863430acB9E920Dc80e1e35F';
 //use the ABI from your contract
 const abi = [
 	{
@@ -436,6 +436,29 @@ const abi = [
 			}
 		],
 		"name": "setBio",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "newBio",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "newName",
+				"type": "bytes32"
+			}
+		],
+		"name": "setProfile",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
