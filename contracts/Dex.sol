@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
 interface IERC20 {
@@ -31,7 +32,7 @@ contract ERC20Basic is IERC20 {
 
     using SafeMath for uint256;
 
-    constructor() public {
+    constructor() {
         balances[msg.sender] = totalSupply_;
     }
 
@@ -94,14 +95,15 @@ contract Dex {
 
     IERC20 public token;
 
-    constructor() public {
+    constructor() {
         token = new ERC20Basic();
     }
+
 
     function checkBalance() public view returns (uint256){
         return token.balanceOf(msg.sender);
     }
-
+    
     function buy(uint256 amount) payable public {
         uint256 dexBalance = token.balanceOf(address(this));
         require(amount <= dexBalance, "Not enough tokens in the reserve");
