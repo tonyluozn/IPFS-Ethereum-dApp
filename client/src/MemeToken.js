@@ -1,7 +1,7 @@
 import web3 from './web3';
 //access our local copy to contract deployed on rinkeby testnet
 //use your own contract address
-const address = '0x13741904f5EbC783ba0bD90154eE9Ea87E661FA1';
+const address = '0x5ef8a725D025110b6BCaD4b15FdFfeaFDE12D7Fb';
 //use the ABI from your contract
 const abi = [
 	{
@@ -60,6 +60,19 @@ const abi = [
 		],
 		"name": "SendBack",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "checkBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [],
