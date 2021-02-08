@@ -6,7 +6,7 @@ import Web3 from 'web3';
 import ipfs from './ipfs';
 import storehash from './storehash';
 import healthToken from './healthToken';
-import transferToken from './transferToken';
+import MemeToken from './MemeToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Table, Button, Form, Row,Col,ListGroup,Tabs,Tab,DropdownButton,Dropdown} from 'react-bootstrap';
 import ViewNews from "./ViewNews";
