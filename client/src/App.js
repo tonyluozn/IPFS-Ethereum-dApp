@@ -567,7 +567,7 @@ render() {
                       <p> Address: </p>
                       <p> Username: </p>
                       <p> Reputation:  </p>
-                      <p> NUHT Balance: </p>
+                      <p> NUMT Balance: </p>
                       <p> Bio: </p>
                     </Col>
                     <Col xs={8} align="left">
