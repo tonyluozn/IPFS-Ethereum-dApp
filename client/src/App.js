@@ -490,12 +490,12 @@ render() {
       // grabs query from serach bar
       const { search } = window.location;
       const query = new URLSearchParams(search).get('s').toLowerCase();
-      // for search button searching
-      // const filtered_posts = this.state.newsList
-      //   .filter(e => e.username.toLowerCase().includes(query));
-      // for live search searching
-      const filtered_posts = this.state.newsList
-        .filter(e => e.username.toLowerCase().includes(this.state.searchField));
+      // for button searching: replace "this.state.searchField" with "query"
+      const filtered_free_posts = this.state.newsList
+        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='free');
+
+      const filtered_premium_posts = this.state.newsList
+        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='premium');
 
       //render website
         return (
@@ -513,12 +513,12 @@ render() {
                 <Tabs defaultActiveKey="free" id="tab">
                 <Tab eventKey="free" title="Free">
                 <div className="list-wrapper">
-                  <p>{this.renderNews(filtered_posts)}</p>
+                  <p>{this.renderNews(filtered_free_posts)}</p>
                 </div>
                 </Tab>
                 <Tab eventKey="premium" title="Premium">
                 <div className="list-wrapper">
-                  <p>{this.renderNews(premium_posts)}</p>
+                  <p>{this.renderNews(filtered_premium_posts)}</p>
                 </div>
                 </Tab>
               </Tabs>
@@ -610,7 +610,10 @@ render() {
                         New Username:
                       </Col>
                       <Col xs={8}>
-                        <textarea className="nameInputBox" rows="1" cols="50" onChange={e=>{this.setState({nameField:e.target.value});}}/>
+                        <textarea className="nameInputBox"
+                                  maxlength="32"
+                                  rows="1" cols="50"
+                                  onChange={e=>{this.setState({nameField:e.target.value});}}/>
                       </Col>
                     </Row>
                   <hr />
@@ -619,7 +622,10 @@ render() {
                         New Bio:
                       </Col>
                       <Col xs={8}>
-                        <textarea className="bioInputBox" rows="3" cols="50" onChange={e=>{this.setState({bioField:e.target.value});}}/>
+                        <textarea className="bioInputBox"
+                                  rows="1" cols="50"
+                                  maxlength="32"
+                                  onChange={e=>{this.setState({bioField:e.target.value});}}/>
                       </Col>
                     </Row>
                   <hr />
