@@ -12,6 +12,8 @@ import { Container, Table, Button, Form, Row,Col,ListGroup,Tabs,Tab,DropdownButt
 import ViewNews from "./ViewNews";
 import {DownCircleTwoTone, UpCircleTwoTone,DownOutlined,UpOutlined}from '@ant-design/icons';
 import Receipt from "./Receipt";
+import Search from "./search"
+import { useState } from 'react';
 /* global BigInt */
 //force the browser to connect to metamask upon entering the site
 window.addEventListener('load', async () => {
@@ -98,10 +100,18 @@ class App extends Component {
     // text box value for new userName
     nameField:'',
     bioField:'',
+    // for search bar
+    searchField: '',
     //Byte32 for 'NUHT'
     tokenByte: '0x4e55485400000000000000000000000000000000000000000000000000000000',
     required_token:10*1000000000000000000,
     token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f'
+  };
+
+  onSearchBarInput = e => {
+    this.setState({
+      searchField: e.target.value
+    });
   };
 
  // approve = async () => {
@@ -426,6 +436,7 @@ class App extends Component {
   }
 
 
+
   renderNews = (data) => {
     return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
@@ -468,6 +479,7 @@ class App extends Component {
     </ListGroup.Item>);
   }
 
+
 render() {
       //newsList length
       const news_total = this.state.newsList.length;
@@ -475,6 +487,16 @@ render() {
       const free_posts = this.state.newsList.filter(e=>e.category=='free');
       //premium posts
       const premium_posts = this.state.newsList.filter(e=>e.category=='premium');
+      // grabs query from serach bar
+      const { search } = window.location;
+      const query = new URLSearchParams(search).get('s').toLowerCase();
+      // for search button searching
+      // const filtered_posts = this.state.newsList
+      //   .filter(e => e.username.toLowerCase().includes(query));
+      // for live search searching
+      const filtered_posts = this.state.newsList
+        .filter(e => e.username.toLowerCase().includes(this.state.searchField));
+
       //render website
         return (
         <div className="App">
@@ -484,10 +506,14 @@ render() {
             <Col>
                 <strong>News update</strong>
                 <hr />
+                <Search
+                  searchQuery={this.state.searchField}
+                  setSearchQuery = {this.onSearchBarInput}
+                />
                 <Tabs defaultActiveKey="free" id="tab">
                 <Tab eventKey="free" title="Free">
                 <div className="list-wrapper">
-                  <p>{this.renderNews(free_posts)}</p>
+                  <p>{this.renderNews(filtered_posts)}</p>
                 </div>
                 </Tab>
                 <Tab eventKey="premium" title="Premium">
@@ -501,7 +527,7 @@ render() {
             <Container>
               <strong>Post and Profile</strong>
               <hr />
-              <Tabs defaultActiveKey="profile" id="profile-tab">
+              <Tabs defaultActiveKey="post" id="profile-tab">
                 <Tab eventKey="post" title="Post">
                   <br />
                   <Row>
@@ -598,7 +624,7 @@ render() {
                     </Row>
                   <hr />
                   <div className="button">
-                    <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editProfile}> Edit Profile</Button>
+                    <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={this.editProfile}> Set Profile</Button>
                   </div>
                 </Tab>
               </Tabs>
