@@ -489,7 +489,7 @@ render() {
       const premium_posts = this.state.newsList.filter(e=>e.category=='premium');
       // grabs query from serach bar
       const { search } = window.location;
-      const query = new URLSearchParams(search).get('s').toLowerCase();
+      // const query = new URLSearchParams(search).get('s').toLowerCase();
       // for button searching: replace "this.state.searchField" with "query"
       const filtered_free_posts = this.state.newsList
         .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='free');
