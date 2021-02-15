@@ -42,12 +42,19 @@ contract StoreHash {
         postReputation[ipfsHash] = 0;
         postToAccess[ipfsHash][msg.sender] =true;
         if (userReputation[msg.sender] != 0x0){
-             userReputation[msg.sender]+=10;
+            // give them tokens if they are first time users.
+
+            // 
+            userReputation[msg.sender]+=10;
         }else{
             userReputation[msg.sender]=10;
         }
     }
 
+    // check if they are first-time users 
+
+
+    
     function getUpdate() public view returns (newsUpdate[] memory) {
         return newsList;
     }
