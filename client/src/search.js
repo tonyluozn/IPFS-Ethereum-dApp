@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl} from "react-bootstrap";
 import storehash from './storehash';
+import './search.css';
 
 const SearchBar = ({ searchQuery, setSearchQuery }) => (
     <form action="/" method="get">
@@ -20,7 +21,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => (
                 rows="1" cols="40"
             />
         </Col>
-        <Col xs={2}>
+        <Col xs={4}>
           <Button
             variant="primary"
             style={{height:"35px"}}
