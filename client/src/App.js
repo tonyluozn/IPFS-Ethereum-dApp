@@ -330,26 +330,27 @@ class App extends Component {
   }
 
   // report post (downvote)
-  downvotePost = async (address, hash) => {
+  downvotePost = async (address, hash, id) => {
     console.log('call reportPost function');
     //decrease user reputation
     storehash.methods.decreaseReputation(address, 1).send({
       from: this.state.walletAddress
     });
-    storehash.methods.decreaseVote(hash).send({
+    storehash.methods.decreaseVote(hash, id).send({
       from: this.state.walletAddress
     });
     this.updateReputation();
   }
 //upvote post
-  upvotePost = async (address, hash) => {
+  upvotePost = async (address, hash, id) => {
     console.log('call upVote function');
     //increase user reputation
     storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress});
-    storehash.methods.increaseVote(hash).send({
+    storehash.methods.increaseVote(hash, id).send({
       from: this.state.walletAddress
     });
     this.updateReputation();
+    this.updateNews();
   }
 
 //render news including html and css
@@ -459,15 +460,16 @@ class App extends Component {
         justifyContent: 'center',
         alignItems: 'center'}}
       >
-        <DownOutlined
-        style={{ fontSize: '16px', marginLeft:"4px"}}
-        onClick = {()=>this.downvotePost(update.user, update.ipfsHash)}
-        />
-        <UpOutlined
-        style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px"}}
-        onClick = {()=>this.upvotePost(update.user, update.ipfsHash)}
-        />
+          <DownOutlined
+          style={{ fontSize: '16px', marginLeft:"4px"}}
+          onClick = {()=>this.downvotePost(update.user, update.fileHash, update.id)}
+          />
+          <UpOutlined
+          style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px"}}
+          onClick = {()=>this.upvotePost(update.user, update.fileHash, update.id)}
+          />
       </div>
+      {this.state.newsList[update.id].post_repu}
     </Row>
     <Row>
       <Col style={{ display: "flex"}}>Location: {update.location}</Col>
