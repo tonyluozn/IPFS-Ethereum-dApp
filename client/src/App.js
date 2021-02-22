@@ -449,33 +449,6 @@ class App extends Component {
     this.updateBio();
   }
 
-  mergeSort = async(array) => {
-    const half = array.length / 2
-    if(array.length < 2){
-      return array
-    }
-
-    const left = array.splice(0, half)
-    return this.merge(this.mergeSort(left), this.mergeSort(array))
-  }
-
-  merge = async(left, right) => {
-    let arr = []
-    // Break out of loop if any one of the array gets empty
-    while (left.length && right.length) {
-        // Pick the smaller among the smallest element of left and right sub arrays
-        if (left[0].post_repu < right[0].post_repu) {
-            arr.push(left.shift())
-        } else {
-            arr.push(right.shift())
-        }
-    }
-
-    return [ ...arr, ...left, ...right ]
-}
-
-
-
   renderNews = (data) => {
     return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
