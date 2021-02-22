@@ -512,7 +512,8 @@ render() {
         .sort(function(a,b){return a.post_repu - b.post_repu});
 
       const filtered_premium_posts = this.state.newsList
-        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='premium');
+        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='premium')
+        .sort(function(a,b){return a.post_repu - b.post_repu});
 
       //render website
         return (
