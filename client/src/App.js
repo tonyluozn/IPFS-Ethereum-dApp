@@ -169,18 +169,18 @@ class App extends Component {
         reader.onloadend = () => this.convertImageToBuffer(reader)
   };
 
-  convertImageToBuffer = async(reader) => {
+  convertImageToBuffer = (reader) => {
       //file is converted to a buffer for upload to IPFS
-        const buffer = await Buffer.from(reader.result);
+        const buffer = Buffer.from(reader.result);
       //set this buffer -using es6 syntax
         this.setState({imageBuffer: buffer});
   };
 
-  convertTextToBuffer = async(reader) => {
+  convertTextToBuffer = (reader) => {
     //file is converted to a buffer for upload to IPFS
-      const buffer = await Buffer.from(reader.result);
-    //set this buffer -using es6 syntax
-      this.setState({textBuffer: buffer});
+      this.setState({textBuffer: Buffer.from(reader.result)});
+      console.log(this.state.textBuffer);
+      this.actualUpload();
   };
 
   //first, convert the report text to buffer, then send the combined update to blockchain.
@@ -191,11 +191,6 @@ class App extends Component {
     const file = new Blob([this.state.value], {type: 'text/plain'});
 
     console.log("Text input value: " + this.state.value);
-
-    // read text input as buffer
-    let reader = new window.FileReader();
-    reader.readAsArrayBuffer(file);
-    reader.onloadend = () => this.convertTextToBuffer(reader);
 
     //obtain contract address from storehash.js
     const contractAddress= await storehash.options.address;
@@ -208,9 +203,12 @@ class App extends Component {
     }
     console.log("User is verified? " + this.state.verified);
 
-    setTimeout(this.actualUpload(), 1000);
-
+    // read text input as buffer
+    let reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = () => this.convertTextToBuffer(reader);
   };
+
   //submit both image and text to ipfs network, save two returned hashes to states.
   actualUpload = async () => {
 
@@ -331,30 +329,34 @@ class App extends Component {
   }
 
   // report post (downvote)
-  downvotePost = async (address, hash) => {
+  downvotePost = async (address, hash, id) => {
     console.log('call reportPost function');
     //decrease user reputation
     storehash.methods.decreaseReputation(address, 1).send({
       from: this.state.walletAddress
     });
-    storehash.methods.decreaseVote(hash).send({
+    storehash.methods.decreaseVote(hash, id).send({
       from: this.state.walletAddress
     });
     this.updateReputation();
   }
 //upvote post
-  upvotePost = async (address, hash) => {
+  upvotePost = async (address, hash, id) => {
     console.log('call upVote function');
     //increase user reputation
     storehash.methods.increaseReputation(address, 1).send({from: this.state.walletAddress});
-    storehash.methods.increaseVote(hash).send({
+    storehash.methods.increaseVote(hash, id).send({
       from: this.state.walletAddress
     });
     this.updateReputation();
+<<<<<<< HEAD
     //*To implement scaling*: let postReputation = await storehash.methods.getVote(hash).call().then((result) => {return result});
     //Edit scaledTokens with postReputation to implement scaling
     let scaledTokens = 1;
     this.getToken(scaledTokens);
+=======
+    this.updateNews();
+>>>>>>> 2d9427ec41d88752080f8619bc1107f9d18abadb
   }
 
 //render news including html and css
@@ -464,15 +466,16 @@ class App extends Component {
         justifyContent: 'center',
         alignItems: 'center'}}
       >
-        <DownOutlined
-        style={{ fontSize: '16px', marginLeft:"4px"}}
-        onClick = {()=>this.downvotePost(update.user, update.ipfsHash)}
-        />
-        <UpOutlined
-        style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px"}}
-        onClick = {()=>this.upvotePost(update.user, update.ipfsHash)}
-        />
+          <DownOutlined
+          style={{ fontSize: '16px', marginLeft:"4px"}}
+          onClick = {()=>this.downvotePost(update.user, update.fileHash, update.id)}
+          />
+          <UpOutlined
+          style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px"}}
+          onClick = {()=>this.upvotePost(update.user, update.fileHash, update.id)}
+          />
       </div>
+      {this.state.newsList[update.id].post_repu}
     </Row>
     <Row>
       <Col style={{ display: "flex"}}>Location: {update.location}</Col>

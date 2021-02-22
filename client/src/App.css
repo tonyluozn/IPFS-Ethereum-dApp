@@ -68,3 +68,10 @@
     transform: rotate(360deg);
   }
 }
+
+.nameInputBox, .bioInputBox {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box; 
+    display:block;/*reset from inline*/
+    width:100%;
+}

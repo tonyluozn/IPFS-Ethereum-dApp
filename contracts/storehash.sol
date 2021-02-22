@@ -14,6 +14,8 @@ contract StoreHash {
         string imageHash;
         string category;
         string extension;
+        int post_repu;
+        uint id;
     }
 
     newsUpdate[] public newsList;
@@ -36,7 +38,9 @@ contract StoreHash {
             fileHash: ipfsHash,
             imageHash: imageHash,
             category: category,
-            extension: extension
+            extension: extension,
+            post_repu: 0,
+            id: newsList.length - 1
         }));
         //initialize the post vote to zero
         postReputation[ipfsHash] = 0;
@@ -44,17 +48,17 @@ contract StoreHash {
         if (userReputation[msg.sender] != 0x0){
             // give them tokens if they are first time users.
 
-            // 
+            //
             userReputation[msg.sender]+=10;
         }else{
             userReputation[msg.sender]=10;
         }
     }
 
-    // check if they are first-time users 
+    // check if they are first-time users
 
 
-    
+
     function getUpdate() public view returns (newsUpdate[] memory) {
         return newsList;
     }
@@ -72,11 +76,13 @@ contract StoreHash {
         userReputation[account] -=amount;
     }
 
-    function increaseVote(string memory ipfsHash) public {
+    function increaseVote(string memory ipfsHash, uint id) public {
+        newsList[id].post_repu += 1;
         postReputation[ipfsHash]+=1;
     }
 
-    function decreaseVote(string memory ipfsHash) public {
+    function decreaseVote(string memory ipfsHash, uint id) public {
+        newsList[id].post_repu -= 1;
         postReputation[ipfsHash]-=1;
     }
 
