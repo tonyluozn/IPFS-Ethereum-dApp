@@ -134,6 +134,21 @@ class App extends Component {
       this.getTokenBalance();
       this.getUsername(accounts[0]);
       this.getBio(accounts[0]);
+
+      // send tokens to the first time users
+      // const amount = BigInt(1000000000000000000);
+      // await storehash.methods.checkFirstTimeUser(this.state.walletAddress).call().then((result) => {
+      //   if(result){
+      //     MemeToken.methods.buy(amount).send({
+      //       from: this.state.walletAddress
+      //     },(error,tokenTransactionHash) => {
+      //       console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
+      //     });
+      //   }
+      // }).catch( error =>
+      //   console.log(error)
+      // );
+
     }
   }
 
