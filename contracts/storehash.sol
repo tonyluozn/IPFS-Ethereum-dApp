@@ -16,6 +16,7 @@ contract StoreHash {
         string extension;
         int post_repu;
         uint id;
+
     }
 
     newsUpdate[] public newsList;
@@ -46,9 +47,6 @@ contract StoreHash {
         postReputation[ipfsHash] = 0;
         postToAccess[ipfsHash][msg.sender] =true;
         if (userReputation[msg.sender] != 0x0){
-            // give them tokens if they are first time users.
-
-            //
             userReputation[msg.sender]+=10;
         }else{
             userReputation[msg.sender]=10;
@@ -56,8 +54,13 @@ contract StoreHash {
     }
 
     // check if they are first-time users
-
-
+    function checkFirstTimeUser(address account) public view returns (bool) {
+        if (userReputation[account] != 0x0){
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     function getUpdate() public view returns (newsUpdate[] memory) {
         return newsList;
