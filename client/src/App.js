@@ -449,17 +449,42 @@ class App extends Component {
     this.updateBio();
   }
 
+  mergeSort = async(array) => {
+    const half = array.length / 2
+    if(array.length < 2){
+      return array
+    }
+
+    const left = array.splice(0, half)
+    return this.merge(this.mergeSort(left), this.mergeSort(array))
+  }
+
+  merge = async(left, right) => {
+    let arr = []
+    // Break out of loop if any one of the array gets empty
+    while (left.length && right.length) {
+        // Pick the smaller among the smallest element of left and right sub arrays
+        if (left[0].post_repu < right[0].post_repu) {
+            arr.push(left.shift())
+        } else {
+            arr.push(right.shift())
+        }
+    }
+
+    return [ ...arr, ...left, ...right ]
+}
+
 
 
   renderNews = (data) => {
     return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
     <Row>
-        <Col xs={8} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
-            User: {update.username}<br />
-            Acc: {update.user.substring(0,5)}...
-        </Col>
-      <Col>
+      <Col xs={8} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+          User: {update.username}<br />
+          Acc: {update.user.substring(0,5)}...
+      </Col>
+      <Col xs={2}>
           <ViewNews update={update} user={this.state.walletAddress}/>
       </Col>
       <div style={{
@@ -471,6 +496,7 @@ class App extends Component {
         textAlign: 'center',
         display: 'flex',
         justifyContent: 'center',
+        height:'40px',
         alignItems: 'center'}}
       >
           <DownOutlined
@@ -482,7 +508,9 @@ class App extends Component {
           onClick = {()=>this.upvotePost(update.user, update.fileHash, update.id)}
           />
       </div>
+      <Col xs={0.1} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
       {this.state.newsList[update.id].post_repu}
+      </Col>
     </Row>
     <Row>
       <Col style={{ display: "flex"}}>Location: {update.location}</Col>
@@ -507,7 +535,8 @@ render() {
       // const query = new URLSearchParams(search).get('s').toLowerCase();
       // for button searching: replace "this.state.searchField" with "query"
       const filtered_free_posts = this.state.newsList
-        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='free');
+        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='free')
+        .sort(function(a,b){return a.post_repu - b.post_repu});
 
       const filtered_premium_posts = this.state.newsList
         .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='premium');
