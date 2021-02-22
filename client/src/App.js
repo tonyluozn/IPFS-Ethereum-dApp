@@ -167,18 +167,18 @@ class App extends Component {
         reader.onloadend = () => this.convertImageToBuffer(reader)
   };
 
-  convertImageToBuffer = async(reader) => {
+  convertImageToBuffer = (reader) => {
       //file is converted to a buffer for upload to IPFS
-        const buffer = await Buffer.from(reader.result);
+        const buffer = Buffer.from(reader.result);
       //set this buffer -using es6 syntax
         this.setState({imageBuffer: buffer});
   };
 
-  convertTextToBuffer = async(reader) => {
+  convertTextToBuffer = (reader) => {
     //file is converted to a buffer for upload to IPFS
-      const buffer = await Buffer.from(reader.result);
-    //set this buffer -using es6 syntax
-      this.setState({textBuffer: buffer});
+      this.setState({textBuffer: Buffer.from(reader.result)});
+      console.log(this.state.textBuffer);
+      this.actualUpload();
   };
 
   //first, convert the report text to buffer, then send the combined update to blockchain.
@@ -189,11 +189,6 @@ class App extends Component {
     const file = new Blob([this.state.value], {type: 'text/plain'});
 
     console.log("Text input value: " + this.state.value);
-
-    // read text input as buffer
-    let reader = new window.FileReader();
-    reader.readAsArrayBuffer(file);
-    reader.onloadend = () => this.convertTextToBuffer(reader);
 
     //obtain contract address from storehash.js
     const contractAddress= await storehash.options.address;
@@ -206,9 +201,12 @@ class App extends Component {
     }
     console.log("User is verified? " + this.state.verified);
 
-    setTimeout(this.actualUpload(), 1000);
-
+    // read text input as buffer
+    let reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = () => this.convertTextToBuffer(reader);
   };
+
   //submit both image and text to ipfs network, save two returned hashes to states.
   actualUpload = async () => {
 
