@@ -16,6 +16,7 @@ contract StoreHash {
         string extension;
         int post_repu;
         uint id;
+        string tag;
     }
 
     newsUpdate[] public newsList;
@@ -28,7 +29,7 @@ contract StoreHash {
 
     event storageUpdate(string newValue, address updatedBy);
 
-    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category, string memory extension) public {
+    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category, string memory extension, string memory tag) public {
         newsList.push(newsUpdate({
             user:msg.sender,
             username: this.bytes32ToString(userProfile[msg.sender]),
@@ -40,7 +41,8 @@ contract StoreHash {
             category: category,
             extension: extension,
             post_repu: 0,
-            id: newsList.length - 1
+            id: newsList.length - 1,
+            tag: tag
         }));
         //initialize the post vote to zero
         postReputation[ipfsHash] = 0;
