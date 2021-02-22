@@ -103,7 +103,7 @@ contract Dex {
     function checkBalance() public view returns (uint256){
         return token.balanceOf(msg.sender);
     }
-    
+
     function buy(uint256 amount) payable public {
         uint256 dexBalance = token.balanceOf(address(this));
         require(amount <= dexBalance, "Not enough tokens in the reserve");
