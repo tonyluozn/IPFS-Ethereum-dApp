@@ -41,7 +41,7 @@ contract StoreHash {
             category: category,
             extension: extension,
             post_repu: 0,
-            id: newsList.length - 1
+            id: newsList.length
         }));
         //initialize the post vote to zero
         postReputation[ipfsHash] = 0;
