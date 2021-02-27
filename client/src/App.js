@@ -105,7 +105,9 @@ class App extends Component {
     //Byte32 for 'NUHT'
     tokenByte: '0x4e55485400000000000000000000000000000000000000000000000000000000',
     required_token:10*1000000000000000000,
-    token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f'
+    token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f',
+    //for getting tokens
+    tokensRequested: 1
   };
 
   onSearchBarInput = e => {
@@ -295,12 +297,12 @@ class App extends Component {
 
 
   // for any user who has metamask, send the ERC-20 tokens to the account.
-  getToken = async () => {
-    const amount = BigInt(1000000000000000000);
+  getToken = async (tokens = 1) => {
+    const amount = BigInt(1000000000000000000 * tokens);
     MemeToken.methods.buy(amount).send({
       from: this.state.walletAddress
     },(error,tokenTransactionHash) => {
-      console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
+      console.log('token received successfully with the transaction hash: ' + tokenTransactionHash);
     });
   }
 
@@ -364,6 +366,9 @@ class App extends Component {
     });
     this.updateReputation();
     this.updateNews();
+
+    let scaledTokens = 1;
+    this.getToken(scaledTokens);
   }
 
 //render news including html and css
@@ -552,10 +557,21 @@ render() {
                     <Col span={8}>
                       <p> Metamask account: {this.state.walletAddress}</p>
                     </Col>
-                    <div className="button">
-                      <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick = {this.getToken} >Get Token</Button>
-                    </div>
                   </Row>
+                    <div className="button">
+                      <Row>
+                        <Col xs={3}>
+                          <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={()=>this.getToken(this.state.tokensRequested)}>Get Tokens</Button>
+                        </Col>
+                        <Col xs={8}>
+                          <Form.Control
+                            type = "number"
+                            placeholder="Number of Tokens"
+                            onChange={e=>{this.setState({tokensRequested:e.target.value});}}>
+                          </Form.Control>
+                        </Col>
+                      </Row>
+                    </div>
                   <hr />
                   <Form onSubmit={this.updateSubmit}>
                     <Row>
