@@ -105,7 +105,9 @@ class App extends Component {
     //Byte32 for 'NUHT'
     tokenByte: '0x4e55485400000000000000000000000000000000000000000000000000000000',
     required_token:10*1000000000000000000,
-    token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f'
+    token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f',
+    //for getting tokens
+    tokensRequested: 1
   };
 
   onSearchBarInput = e => {
@@ -134,6 +136,21 @@ class App extends Component {
       this.getTokenBalance();
       this.getUsername(accounts[0]);
       this.getBio(accounts[0]);
+
+      // send tokens to the first time users
+      // const amount = BigInt(1000000000000000000);
+      // await storehash.methods.checkFirstTimeUser(this.state.walletAddress).call().then((result) => {
+      //   if(result){
+      //     MemeToken.methods.buy(amount).send({
+      //       from: this.state.walletAddress
+      //     },(error,tokenTransactionHash) => {
+      //       console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
+      //     });
+      //   }
+      // }).catch( error =>
+      //   console.log(error)
+      // );
+
     }
   }
 
@@ -167,18 +184,18 @@ class App extends Component {
         reader.onloadend = () => this.convertImageToBuffer(reader)
   };
 
-  convertImageToBuffer = async(reader) => {
+  convertImageToBuffer = (reader) => {
       //file is converted to a buffer for upload to IPFS
-        const buffer = await Buffer.from(reader.result);
+        const buffer = Buffer.from(reader.result);
       //set this buffer -using es6 syntax
         this.setState({imageBuffer: buffer});
   };
 
-  convertTextToBuffer = async(reader) => {
+  convertTextToBuffer = (reader) => {
     //file is converted to a buffer for upload to IPFS
-      const buffer = await Buffer.from(reader.result);
-    //set this buffer -using es6 syntax
-      this.setState({textBuffer: buffer});
+      this.setState({textBuffer: Buffer.from(reader.result)});
+      console.log(this.state.textBuffer);
+      this.actualUpload();
   };
 
   //first, convert the report text to buffer, then send the combined update to blockchain.
@@ -189,11 +206,6 @@ class App extends Component {
     const file = new Blob([this.state.value], {type: 'text/plain'});
 
     console.log("Text input value: " + this.state.value);
-
-    // read text input as buffer
-    let reader = new window.FileReader();
-    reader.readAsArrayBuffer(file);
-    reader.onloadend = () => this.convertTextToBuffer(reader);
 
     //obtain contract address from storehash.js
     const contractAddress= await storehash.options.address;
@@ -206,9 +218,12 @@ class App extends Component {
     }
     console.log("User is verified? " + this.state.verified);
 
-    setTimeout(this.actualUpload(), 1000);
-
+    // read text input as buffer
+    let reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = () => this.convertTextToBuffer(reader);
   };
+
   //submit both image and text to ipfs network, save two returned hashes to states.
   actualUpload = async () => {
 
@@ -282,12 +297,12 @@ class App extends Component {
 
 
   // for any user who has metamask, send the ERC-20 tokens to the account.
-  getToken = async () => {
-    const amount = BigInt(1000000000000000000);
+  getToken = async (tokens = 1) => {
+    const amount = BigInt(1000000000000000000 * tokens);
     MemeToken.methods.buy(amount).send({
       from: this.state.walletAddress
     },(error,tokenTransactionHash) => {
-      console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
+      console.log('token received successfully with the transaction hash: ' + tokenTransactionHash);
     });
   }
 
@@ -351,6 +366,9 @@ class App extends Component {
     });
     this.updateReputation();
     this.updateNews();
+
+    let scaledTokens = 1;
+    this.getToken(scaledTokens);
   }
 
 //render news including html and css
@@ -436,17 +454,15 @@ class App extends Component {
     this.updateBio();
   }
 
-
-
   renderNews = (data) => {
     return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
     <Row>
-        <Col xs={8} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
-            User: {update.username}<br />
-            Acc: {update.user.substring(0,5)}...
-        </Col>
-      <Col>
+      <Col xs={8} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+          User: {update.username}<br />
+          Acc: {update.user.substring(0,5)}...
+      </Col>
+      <Col xs={2}>
           <ViewNews update={update} user={this.state.walletAddress}/>
       </Col>
       <div style={{
@@ -458,6 +474,7 @@ class App extends Component {
         textAlign: 'center',
         display: 'flex',
         justifyContent: 'center',
+        height:'40px',
         alignItems: 'center'}}
       >
           <DownOutlined
@@ -469,7 +486,9 @@ class App extends Component {
           onClick = {()=>this.upvotePost(update.user, update.fileHash, update.id)}
           />
       </div>
+      <Col xs={0.1} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
       {this.state.newsList[update.id].post_repu}
+      </Col>
     </Row>
     <Row>
       <Col style={{ display: "flex"}}>Location: {update.location}</Col>
@@ -494,10 +513,12 @@ render() {
       // const query = new URLSearchParams(search).get('s').toLowerCase();
       // for button searching: replace "this.state.searchField" with "query"
       const filtered_free_posts = this.state.newsList
-        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='free');
+        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='free')
+        .sort(function(a,b){return a.post_repu - b.post_repu});
 
       const filtered_premium_posts = this.state.newsList
-        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='premium');
+        .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category=='premium')
+        .sort(function(a,b){return a.post_repu - b.post_repu});
 
       //render website
         return (
@@ -536,10 +557,21 @@ render() {
                     <Col span={8}>
                       <p> Metamask account: {this.state.walletAddress}</p>
                     </Col>
-                    <div className="button">
-                      <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick = {this.getToken} >Get Token</Button>
-                    </div>
                   </Row>
+                    <div className="button">
+                      <Row>
+                        <Col xs={3}>
+                          <Button bsStyle="primary" style={{width:"130px"}} type="submit" onClick={()=>this.getToken(this.state.tokensRequested)}>Get Tokens</Button>
+                        </Col>
+                        <Col xs={8}>
+                          <Form.Control
+                            type = "number"
+                            placeholder="Number of Tokens"
+                            onChange={e=>{this.setState({tokensRequested:e.target.value});}}>
+                          </Form.Control>
+                        </Col>
+                      </Row>
+                    </div>
                   <hr />
                   <Form onSubmit={this.updateSubmit}>
                     <Row>
