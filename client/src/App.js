@@ -87,6 +87,7 @@ class App extends Component {
     imageBuffer:'',
     //value for post category
     category: '',
+    tag: '',
     blockNumber:'',
     transactionHash:'',
     gasUsed:'',
@@ -594,6 +595,20 @@ render() {
                           <option value="choose">Choose a category: </option>
                           <option value="free">Free</option>
                           <option value="premium">Premium</option>
+                        </Form.Control>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col xs={{span:10, offset: 1}} style={{ display: "flex", marginTop: 8}}>
+                        <Form.Control
+                          as="select"
+                          custom
+                          onChange={e=>{this.setState({tag: e.target.value}); console.log(this.state.tag)}}
+                        >
+                          <option value="choose">Choose a tag: </option>
+                          <option value="nu-meme">NU Meme</option>
+                          <option value="other-meme">Other Meme</option>
                         </Form.Control>
                       </Col>
                     </Row>
