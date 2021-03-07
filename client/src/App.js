@@ -459,11 +459,21 @@ class App extends Component {
     return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
     <Row>
-      <Col xs={8} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+      <Col xs={4} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
           User: {update.username}<br />
           Acc: {update.user.substring(0,5)}...
       </Col>
-      <Col xs={2}>
+      <Col>
+        {update.imageHash != "" &&
+          <img
+            className = "preview"
+            src={"https://gateway.ipfs.io/ipfs/" + update.imageHash}
+            width={150}
+            height={150}
+          />
+        }
+      </Col>
+      <Col >
           <ViewNews update={update} user={this.state.walletAddress}/>
       </Col>
       <div style={{
@@ -491,6 +501,7 @@ class App extends Component {
       {this.state.newsList[update.id].post_repu}
       </Col>
     </Row>
+
     <Row>
       <Col style={{ display: "flex"}}>Location: {update.location}</Col>
       <Col offset={6} style={{ textAlign: "center" }}>Submitted on: {update.timeStamp}</Col>

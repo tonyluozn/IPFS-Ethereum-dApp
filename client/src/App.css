@@ -75,3 +75,9 @@
     display:block;/*reset from inline*/
     width:100%;
 }
+
+
+.preview{
+  -webkit-filter: blur(3px); /* Safari 6.0 - 9.0 */
+  filter: blur(3px);
+}
