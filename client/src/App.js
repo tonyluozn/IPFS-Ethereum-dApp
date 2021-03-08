@@ -468,22 +468,26 @@ class App extends Component {
         borderRadius: "5px",
         textAlign: 'center',
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
-        height:'40px',
+        height:'60px',
+        width: '30px',
         alignItems: 'center'}}
       >
-          <DownOutlined
-          style={{ fontSize: '16px', marginLeft:"4px"}}
-          onClick = {()=>this.downvotePost(update.user, update.fileHash, update.id)}
-          />
           <UpOutlined
-          style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px"}}
+          style={{ fontSize: '16px', marginLeft:"4px"}}
           onClick = {()=>this.upvotePost(update.user, update.fileHash, update.id)}
           />
+
+          <Col xs={0.1} align="center" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+          {this.state.newsList[update.id].post_repu}
+          </Col>
+
+          <DownOutlined
+          style={{ fontSize: '16px', marginLeft:"4px",}}
+          onClick = {()=>this.downvotePost(update.user, update.fileHash, update.id)}
+          />
       </div>
-      <Col xs={0.1} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
-      {this.state.newsList[update.id].post_repu}
-      </Col>
     </Row>
     <Row>
       <Col style={{ display: "flex"}}>Location: {update.location}</Col>
