@@ -21,7 +21,6 @@ contract StoreHash {
 
     newsUpdate[] public newsList;
     mapping(address => uint) public userReputation;
-    mapping(string => int) public postReputation;
     mapping(string => mapping(address => bool)) public postToAccess;
 
     mapping(address => bytes32) public userProfile;
@@ -45,8 +44,6 @@ contract StoreHash {
             id: newsList.length,
             tag: tag
         }));
-        //initialize the post vote to zero
-        postReputation[ipfsHash] = 0;
         postToAccess[ipfsHash][msg.sender] =true;
         if (userReputation[msg.sender] != 0x0){
             userReputation[msg.sender]+=10;
@@ -63,7 +60,13 @@ contract StoreHash {
             return true;
         }
     }
-
+    function addSavedPosts(string memory ipfsHash) public {
+        if (userSavedPosts[ipfsHash] != 0x0){
+            userSavedPosts[ipfsHash] = string[];
+        } else{
+            userSavedPosts[ipfsHash].push(ipfsHash);
+        }
+    }
     function getUpdate() public view returns (newsUpdate[] memory) {
         return newsList;
     }
@@ -83,17 +86,12 @@ contract StoreHash {
 
     function increaseVote(string memory ipfsHash, uint id) public {
         newsList[id].post_repu += 1;
-        postReputation[ipfsHash]+=1;
     }
 
     function decreaseVote(string memory ipfsHash, uint id) public {
         newsList[id].post_repu -= 1;
-        postReputation[ipfsHash]-=1;
     }
 
-    function getVote(string memory ipfsHash) public view returns (int){
-        return postReputation[ipfsHash];
-    }
     // to grant access to user to a specfic post
 
     function grantAccess(string memory ipfsHash, address account) public{
