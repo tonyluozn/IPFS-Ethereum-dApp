@@ -466,7 +466,7 @@ class App extends Component {
       <Col>
         {update.imageHash != "" &&
           <img
-            className = "preview"
+            className = {update.category == "free" ? "preview-free" : "preview"}
             src={"https://gateway.ipfs.io/ipfs/" + update.imageHash}
             width={150}
             height={150}
