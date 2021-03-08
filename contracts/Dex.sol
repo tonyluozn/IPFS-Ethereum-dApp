@@ -110,6 +110,11 @@ contract Dex {
         token.transfer(msg.sender, amount);
         emit GetToken(amount);
     }
+    
+    // Access the transfer function in Dex contract
+    function transfer(address receiver, uint256 amount) public {
+        token.transferFrom(msg.sender,receiver,amount);
+    }
 
     function sell(uint256 amount) public {
         require(amount > 0, "You need to give back at least some tokens");

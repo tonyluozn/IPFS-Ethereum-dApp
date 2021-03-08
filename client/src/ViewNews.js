@@ -110,8 +110,10 @@ export default function ViewNews(props) {
       }, (error, tokenTransactionHash) => {
         //once the transaction is successful, update the view and give the access
         console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
-        setCanView(true);
-        storehash.methods.grantAccess(props.update.fileHash,props.user).send({from: props.user});
+        if (tokenTransactionHash){
+          setCanView(true);
+          storehash.methods.grantAccess(props.update.fileHash,props.user).send({from: props.user});
+        }
       });
     };
 

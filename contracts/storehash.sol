@@ -26,10 +26,11 @@ contract StoreHash {
 
     mapping(address => bytes32) public userProfile;
     mapping(address => bytes32) public userBio;  // maps user address to a profile (username)
+    mapping(address=>string[]) public userSavedPosts; 
 
     event storageUpdate(string newValue, address updatedBy);
 
-    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category, string memory extension, string memory tag) public {
+    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category, string memory tag, string memory extension) public {
         newsList.push(newsUpdate({
             user:msg.sender,
             username: this.bytes32ToString(userProfile[msg.sender]),
