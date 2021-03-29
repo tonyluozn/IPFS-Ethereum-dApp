@@ -317,7 +317,7 @@ class App extends Component {
     },(error,tokenTransactionHash) => {
       console.log('token received successfully with the transaction hash: ' + tokenTransactionHash);
     });
-    this.updateReadytime();
+    //this.updateReadytime();
   }
 
   // get the user reputation
