@@ -48,7 +48,7 @@ export default function ViewNews(props) {
               autoPlay
               controls
             />);
-          } else if (props.update.extension == 'jpg'){
+          } else if (props.update.extension == 'jpg' || props.update.extension == 'png'){
             console.log("this is jpg")
             setMedia(<img
               src={validImage(props)[0]}
@@ -110,8 +110,10 @@ export default function ViewNews(props) {
       }, (error, tokenTransactionHash) => {
         //once the transaction is successful, update the view and give the access
         console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
-        setCanView(true);
-        storehash.methods.grantAccess(props.update.fileHash,props.user).send({from: props.user});
+        if (tokenTransactionHash){
+          setCanView(true);
+          storehash.methods.grantAccess(props.update.fileHash,props.user).send({from: props.user});
+        }
       });
     };
 

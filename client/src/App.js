@@ -87,6 +87,7 @@ class App extends Component {
     imageBuffer:'',
     //value for post category
     category: '',
+    tag: '',
     blockNumber:'',
     transactionHash:'',
     gasUsed:'',
@@ -242,7 +243,7 @@ class App extends Component {
 
             if(this.state.verified)  {
               storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-                time,this.state.imageHash,this.state.category, this.state.extension).send({
+                time,this.state.imageHash,this.state.category, this.state.tag, this.state.extension).send({
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({transactionHash});
@@ -261,7 +262,7 @@ class App extends Component {
         if(this.state.verified){
           //Trying to use '' as an image hash/place holder
           storehash.methods.sendUpdate(this.state.ipfsHash,this.state.location,
-            time,'',this.state.category, this.state.extension).send({
+            time,'',this.state.category, this.state.tag, this.state.extension).send({
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({transactionHash});
@@ -471,11 +472,21 @@ class App extends Component {
     return data.slice(0).reverse().map((update,index) =>
     <ListGroup.Item key={index}>
     <Row>
-      <Col xs={8} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+      <Col xs={4} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
           User: {update.username}<br />
           Acc: {update.user.substring(0,5)}...
       </Col>
-      <Col xs={2}>
+      <Col>
+        {update.imageHash != "" &&
+          <img
+            className = {update.category == "free" ? "preview-free" : "preview"}
+            src={"https://gateway.ipfs.io/ipfs/" + update.imageHash}
+            width={150}
+            height={150}
+          />
+        }
+      </Col>
+      <Col >
           <ViewNews update={update} user={this.state.walletAddress}/>
       </Col>
       <div style={{
@@ -486,23 +497,28 @@ class App extends Component {
         borderRadius: "5px",
         textAlign: 'center',
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
-        height:'40px',
+        height:'60px',
+        width: '30px',
         alignItems: 'center'}}
       >
-          <DownOutlined
-          style={{ fontSize: '16px', marginLeft:"4px"}}
-          onClick = {()=>this.downvotePost(update.user, update.fileHash, update.id)}
-          />
           <UpOutlined
-          style={{ fontSize: '16px', marginLeft:"4px", marginRight:"4px"}}
+          style={{ fontSize: '16px', marginLeft:"4px"}}
           onClick = {()=>this.upvotePost(update.user, update.fileHash, update.id)}
           />
+
+          <Col xs={0.1} align="center" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
+          {this.state.newsList[update.id].post_repu}
+          </Col>
+
+          <DownOutlined
+          style={{ fontSize: '16px', marginLeft:"4px",}}
+          onClick = {()=>this.downvotePost(update.user, update.fileHash, update.id)}
+          />
       </div>
-      <Col xs={0.1} align="left" style={{ display: "flex", alignItems:"flex-start",textOverflow: "clip" }}>
-      {this.state.newsList[update.id].post_repu}
-      </Col>
     </Row>
+
     <Row>
       <Col style={{ display: "flex"}}>Location: {update.location}</Col>
       <Col offset={6} style={{ textAlign: "center" }}>Submitted on: {update.timeStamp}</Col>
@@ -607,6 +623,20 @@ render() {
                           <option value="choose">Choose a category: </option>
                           <option value="free">Free</option>
                           <option value="premium">Premium</option>
+                        </Form.Control>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col xs={{span:10, offset: 1}} style={{ display: "flex", marginTop: 8}}>
+                        <Form.Control
+                          as="select"
+                          custom
+                          onChange={e=>{this.setState({tag: e.target.value}); console.log(this.state.tag)}}
+                        >
+                          <option value="choose">Choose a tag: </option>
+                          <option value="nu-meme">NU Meme</option>
+                          <option value="other-meme">Other Meme</option>
                         </Form.Control>
                       </Col>
                     </Row>
