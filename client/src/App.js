@@ -107,7 +107,8 @@ class App extends Component {
     required_token:10*1000000000000000000,
     token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f',
     //for getting tokens
-    tokensRequested: 1
+    tokensRequested: 1,
+    //readyTime: 1
   };
 
   onSearchBarInput = e => {
@@ -295,6 +296,17 @@ class App extends Component {
 
   }
 
+/*   updateReadytime = async() => {
+    const address = this.state.walletAddress;
+    const rt = MemeToken.methods.getReadytime(address).call().then((result) => {
+      console.log(result);
+      return result;
+    }).catch( error =>
+      console.log(error)
+    );
+    this.setState({readyTime: rt});
+  } */
+
 
   // for any user who has metamask, send the ERC-20 tokens to the account.
   getToken = async (tokens = 1) => {
@@ -304,6 +316,7 @@ class App extends Component {
     },(error,tokenTransactionHash) => {
       console.log('token received successfully with the transaction hash: ' + tokenTransactionHash);
     });
+    this.updateReadytime();
   }
 
   // get the user reputation
@@ -367,7 +380,7 @@ class App extends Component {
     this.updateReputation();
     this.updateNews();
 
-    let scaledTokens = 1;
+    let scaledTokens = 0.05;
     this.getToken(scaledTokens);
   }
 

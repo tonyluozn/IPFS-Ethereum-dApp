@@ -22,11 +22,18 @@ contract ERC20Basic is IERC20 {
     string public constant name = "NUMemeToken";
     string public constant symbol = "NUMT";
     uint8 public constant decimals = 18;
+    uint public constant tokenCooldown = 1 days;
 
 
     mapping(address => uint256) balances;
 
     mapping(address => mapping (address => uint256)) allowed;
+
+    //keeps track of when users can next request a token
+    mapping(address => uint256) readyTime; 
+    //keeps track of how many tokens the user has requested in the last 24 hour period
+    mapping(address => uint256) tokensRequested;
+    uint8 tokenRequestLimit = 2;
 
     uint256 totalSupply_ = 10000 ether;
 
@@ -34,6 +41,7 @@ contract ERC20Basic is IERC20 {
 
     constructor() {
         balances[msg.sender] = totalSupply_;
+        readyTime[msg.sender] = block.timestamp;
     }
 
     function totalSupply() public override view returns (uint256) {
@@ -44,7 +52,38 @@ contract ERC20Basic is IERC20 {
         return balances[tokenOwner];
     }
 
+    function getReadytime(address account) public view returns (uint256){
+        return readyTime[account];
+    }
+
+    function _triggerCooldown(address account) internal {
+        readyTime[account] = uint32(block.timestamp + tokenCooldown);
+    }
+
+    function isReady(address account) public view returns (bool) {
+        return (readyTime[account] <= block.timestamp);
+    }
+    
+    //helper functions for transfer
+    function resetTokenRequest(address receiver) internal {
+        if(getReadytime(receiver) < (block.timestamp - 1 days)) {
+            tokensRequested[receiver] = 0;
+        }
+    }
+    
+    function manageLimitBreach(address receiver, uint256 numTokens) internal {
+        if ((tokensRequested[receiver] + numTokens) >= tokenRequestLimit) {
+            numTokens = tokenRequestLimit - tokensRequested[receiver];
+            tokensRequested[receiver] = 0;
+            _triggerCooldown(receiver);
+        } else {
+            tokensRequested[receiver] += numTokens;
+        }
+    }
+
     function transfer(address receiver, uint256 numTokens) public override returns (bool) {
+        resetTokenRequest(receiver);
+        manageLimitBreach(receiver, numTokens);
         require(numTokens <= balances[msg.sender]);
         balances[msg.sender] = balances[msg.sender].sub(numTokens);
         balances[receiver] = balances[receiver].add(numTokens);
@@ -93,7 +132,7 @@ contract Dex {
     event SendBack(uint256 amount);
 
 
-    IERC20 public token;
+    ERC20Basic public token;
 
     constructor() {
         token = new ERC20Basic();
@@ -107,6 +146,7 @@ contract Dex {
     function buy(uint256 amount) payable public {
         uint256 dexBalance = token.balanceOf(address(this));
         require(amount <= dexBalance, "Not enough tokens in the reserve");
+        require(token.isReady(msg.sender), "Can't request tokens now!");
         token.transfer(msg.sender, amount);
         emit GetToken(amount);
     }
