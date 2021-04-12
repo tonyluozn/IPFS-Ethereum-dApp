@@ -131,7 +131,8 @@ class App extends Component {
     required_token: 10 * 1000000000000000000,
     token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f',
     //for getting tokens
-    tokensRequested: 1
+    tokensRequested: 1,
+    isReady: true
   };
 
   onSearchBarInput = e => {
@@ -320,16 +321,16 @@ class App extends Component {
 
   }
 
-  /*   updateReadytime = async() => {
-      const address = this.state.walletAddress;
-      const rt = MemeToken.methods.getReadytime(address).call().then((result) => {
-        console.log(result);
-        return result;
-      }).catch( error =>
-        console.log(error)
-      );
-      this.setState({readyTime: rt});
-    } */
+/*   updateReadytime = async() => {
+    const address = this.state.walletAddress;
+    const isReady = await MemeToken.methods.isReady(address).call().then((result) => {
+      console.log(result);
+      return result;
+    }).catch( error =>
+      console.log(error)
+    );
+    this.setState({isReady: isReady});
+  } */
 
 
   // for any user who has metamask, send the ERC-20 tokens to the account.
@@ -616,7 +617,15 @@ class App extends Component {
                   <div className="button">
                     <Row>
                       <Col xs={3}>
-                        <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={() => this.getToken(this.state.tokensRequested)}>Get Tokens</Button>
+                        <Button
+                          bsStyle="primary" 
+                          title={this.state.isReady ? "Click to receive the specified amount of tokens" : "You cannot obtain tokens at this time!"}
+                          disabled={this.state.isReady ? false : true}
+                          style={{ width: "130px"}} 
+                          type="submit" 
+                          onClick={() => this.getToken(this.state.tokensRequested)}>
+                          Get Tokens
+                        </Button>
                       </Col>
                       <Col xs={8}>
                         <Form.Control
