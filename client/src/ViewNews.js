@@ -125,7 +125,7 @@ export default function ViewNews(props) {
           </Button>
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-              <Modal.Title>News - Reputation: {reputation}</Modal.Title>
+              <Modal.Title>{props.update.tag} - Reputation: {reputation}</Modal.Title>
             </Modal.Header>
               <Modal.Body>
                 {lowRepu?
@@ -134,7 +134,7 @@ export default function ViewNews(props) {
                   <p>
                     {canView?
                       <Col>
-                        <Row><p>{content}</p></Row>
+                        <Row><Col><p>{content}</p></Col></Row>
                         {media}
                         <Row>
                           <Col><a className="file-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a></Col>
@@ -148,7 +148,7 @@ export default function ViewNews(props) {
                           <p>
                             Posted by {props.update.username} <br />
                             @ {props.update.user} <br/>
-                            bio: {props.update.bio}
+                            bio: {props.update.bio} <br/>
                           </p>
                       </Col>
                     :

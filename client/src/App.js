@@ -14,6 +14,46 @@ import { DownCircleTwoTone, UpCircleTwoTone, DownOutlined, UpOutlined } from '@a
 import Receipt from "./Receipt";
 import Search from "./search"
 import { useState } from 'react';
+import { Picky } from 'react-picky';
+import 'react-picky/dist/picky.css';
+import ScrollMenu from 'react-horizontal-scrolling-menu';
+
+// components for the side scrolling menu
+const list = [
+  { name: "All 👾" },
+  { name: "NU 🟣" },
+  { name: "Funny 😂" },
+  { name: "WTF 🤨" },
+  { name: "Awesome 😎" },
+  { name: "Wholesome ❤️" },
+];
+
+const MenuItem = ({text, selected}) => {
+  return <div
+    className={`menu-item ${selected ? 'active' : ''}`}
+    >{text}</div>;
+};
+
+export const Menu = (list, selected) =>
+  list.map(el => {
+    const {name} = el;
+
+    return <MenuItem text={name} key={name} selected={selected} />;
+  });
+
+const Arrow = ({ text, className }) => {
+  return (
+    <div
+      className={className}
+    >{text}</div>
+  );
+};
+
+const ArrowLeft = Arrow({ text: '<', className: 'arrow-prev' });
+const ArrowRight = Arrow({ text: '>', className: 'arrow-next' });
+
+const selected = 'item1';
+
 /* global BigInt */
 //force the browser to connect to metamask upon entering the site
 window.addEventListener('load', async () => {
@@ -75,6 +115,8 @@ class App extends Component {
 
     // approve the spender to spend on contract creator's behalf, calling this only once
     //this.approve();
+
+    this.menuItems = Menu(list, selected);
   }
 
   //loading the list of hash from the deployed storeHash contract
@@ -108,9 +150,11 @@ class App extends Component {
     // two buffer for two seperate files
     textBuffer: '',
     imageBuffer: '',
+    // for side scroll menu
+    tag_selected: '',
     //value for post category
     category: '',
-    tag: '',
+    tags: '',
     blockNumber: '',
     transactionHash: '',
     gasUsed: '',
@@ -391,7 +435,7 @@ class App extends Component {
     storehash.methods.decreaseReputation(address, 1).send({
       from: this.state.walletAddress
     });
-    storehash.methods.decreaseVote(hash, id).send({
+    storehash.methods.decreaseVote(id).send({
       from: this.state.walletAddress
     });
     this.updateReputation();
@@ -401,7 +445,7 @@ class App extends Component {
     console.log('call upVote function');
     //increase user reputation
     storehash.methods.increaseReputation(address, 1).send({ from: this.state.walletAddress });
-    storehash.methods.increaseVote(hash, id).send({
+    storehash.methods.increaseVote(id).send({
       from: this.state.walletAddress
     });
     this.updateReputation();
@@ -463,7 +507,7 @@ class App extends Component {
     if (bio == 0x0000000000000000000000000000000000000000000000000000000000000000) {
       console.log("no bio");
       // default userName is first 10 char of userAddress
-      bio = "I am a Northwestern Student";
+      bio = "no bio";
     } else {
       bio = web3.utils.hexToAscii(bio);
     }
@@ -499,9 +543,9 @@ class App extends Component {
       <ListGroup.Item key={index}>
         <Row>
           <Col xs={4} align="left" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
-            User: {update.username}<br />
-            Acc: {update.user.substring(0, 5)}...
-      </Col>
+            User: {update.username == '' ? update.user.substring(0, 9) : update.username} <br/>
+            Location: {update.location}
+          </Col>
           <Col>
             {update.imageHash != "" &&
               <img
@@ -547,8 +591,8 @@ class App extends Component {
         </Row>
 
         <Row>
-          <Col style={{ display: "flex" }}>Location: {update.location}</Col>
-          <Col offset={6} style={{ textAlign: "center" }}>Submitted on: {update.timeStamp}</Col>
+          <Col style={{ display: "flex" }}>{update.tag}</Col>
+          <Col offset={6} style={{ textAlign: "center" }}>{update.timeStamp}</Col>
         </Row>
         {/* <Row>
       <Col>Category: {update.category}</Col>
@@ -568,31 +612,73 @@ class App extends Component {
     const { search } = window.location;
     // const query = new URLSearchParams(search).get('s').toLowerCase();
     // for button searching: replace "this.state.searchField" with "query"
-    const filtered_free_posts = this.state.newsList
-      .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category == 'free')
+    const fresh_free_posts = this.state.newsList
+      .filter(e =>
+        (e.username.toLowerCase().includes(this.state.searchField.toLowerCase())
+          || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
+          || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
+        )
+      && e.category == 'free'
+      && e.tag.includes(this.state.tag_selected));
+
+    const trending_free_posts = this.state.newsList
+      .filter(e =>
+        (e.username.toLowerCase().includes(this.state.searchField.toLowerCase())
+          || e.tag.includes(this.state.tag_selected)
+          || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
+          || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
+        )
+      && e.category == 'free'
+      && e.tag.includes(this.state.tag_selected))
       .sort(function (a, b) { return a.post_repu - b.post_repu });
 
     const filtered_premium_posts = this.state.newsList
-      .filter(e => e.username.toLowerCase().includes(this.state.searchField) && e.category == 'premium')
+      .filter(e =>
+        (e.username.toLowerCase().includes(this.state.searchField.toLowerCase())
+          || e.tag.includes(this.state.tag_selected)
+          || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
+          || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
+        )
+      && e.category == 'premium'
+      && e.tag.includes(this.state.tag_selected))
       .sort(function (a, b) { return a.post_repu - b.post_repu });
+
+    const cur_tag = this.state.tag_selected;
+    const menu = this.menuItems;
 
     //render website
     return (
       <div className="App">
-        <p className="App-header">Northwestern Covid-19 News-Sharing Platform</p>
+        <p className="App-header">Northwestern Meme Sharing Platform</p>
         <hr />
         <Row>
           <Col>
-            <strong>News update</strong>
+            <strong>Memes</strong>
             <hr />
             <Search
               searchQuery={this.state.searchField}
               setSearchQuery={this.onSearchBarInput}
             />
-            <Tabs defaultActiveKey="free" id="tab">
-              <Tab eventKey="free" title="Free">
+            <div style={{display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+              <ScrollMenu
+                data={menu}
+                arrowLeft={ArrowLeft}
+                arrowRight={ArrowRight}
+                onSelect={key => {this.setState({
+                      tag_selected: key.includes("All")? '' : key });
+                      console.log(this.state.tag_selected)}}
+              />
+            </div>
+            <hr />
+            <Tabs defaultActiveKey="trending" id="tab">
+              <Tab eventKey="trending" title="Trending">
                 <div className="list-wrapper">
-                  <p>{this.renderNews(filtered_free_posts)}</p>
+                  <p>{this.renderNews(trending_free_posts)}</p>
+                </div>
+              </Tab>
+              <Tab eventKey="fresh" title="Fresh">
+                <div className="list-wrapper">
+                  <p>{this.renderNews(fresh_free_posts)}</p>
                 </div>
               </Tab>
               <Tab eventKey="premium" title="Premium">
@@ -618,11 +704,11 @@ class App extends Component {
                     <Row>
                       <Col xs={3}>
                         <Button
-                          bsStyle="primary" 
+                          bsStyle="primary"
                           title={this.state.isReady ? "Click to receive the specified amount of tokens" : "You cannot obtain tokens at this time!"}
                           disabled={this.state.isReady ? false : true}
-                          style={{ width: "130px"}} 
-                          type="submit" 
+                          style={{ width: "130px"}}
+                          type="submit"
                           onClick={() => this.getToken(this.state.tokensRequested)}>
                           Get Tokens
                         </Button>
@@ -663,17 +749,20 @@ class App extends Component {
                     </Row>
 
                     <Row>
-                      <Col xs={{ span: 10, offset: 1 }} style={{ display: "flex", marginTop: 8 }}>
-                        <Form.Control
-                          as="select"
-                          custom
-                          onChange={e => { this.setState({ tag: e.target.value }); console.log(this.state.tag) }}
-                        >
-                          <option value="choose">Choose a tag: </option>
-                          <option value="nu-meme">NU Meme</option>
-                          <option value="other-meme">Other Meme</option>
-                        </Form.Control>
-                      </Col>
+                      <Col xs={{ span: 10, offset: 1 }} style={{ display: "flex" }}>
+                        <Picky
+                          id="tag picker"
+                          options={["NU 🟣", "Funny 😂", "WTF 🤨", "Awesome 😎", "Wholesome ❤️"]}
+                          value={this.state.tag}
+                          onChange={e => this.setState({ tag: e })}
+                          open={false}
+                          multiple={false}
+                          placeholder={"Select a tag"}
+                          includeSelectAll={false}
+                          includeFilter={true}
+                          dropdownHeight={200}
+                        />
+                        </Col>
                     </Row>
 
                     <br />
