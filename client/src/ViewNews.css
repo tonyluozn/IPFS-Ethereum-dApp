@@ -1,11 +1,15 @@
 /* ViewNews style*/
 .file-link, .img-link{
-    border: solid 1px #007bff;
-    border-radius: 5px;
-    padding: 3px;
+    padding: 4px;
+    vertical-align: middle;
 }
 
 .copy {
-    font-size:12px;
-    padding:3px;
+    font-size:1rem;
+    padding:4px;
+    vertical-align: middle;
+}
+
+.links {
+    margin-top: 5px;
 }

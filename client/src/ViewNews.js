@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import './ViewNews.css';
-import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl} from "react-bootstrap";
+import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl, ButtonGroup} from "react-bootstrap";
 import storehash from './storehash';
 import healthToken from './healthToken';
 import ReactAudioPlayer from 'react-audio-player';
@@ -138,13 +138,17 @@ export default function ViewNews(props) {
                         {media}
                         <Row>
                           <Col>
-                          <a className="file-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a>
-                          <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.fileHash)}}>Copy</Button>
+                            <ButtonGroup className="links">
+                              <Button className="file-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</Button>
+                              <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.fileHash)}}>Copy</Button>
+                            </ButtonGroup>
                           </Col>
                           {props.update.imageHash?
                             <Col>
-                            <a className="img-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a>
-                            <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.imageHash)}}>Copy</Button>
+                              <ButtonGroup className="links">
+                                <Button className="img-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</Button>
+                                <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.imageHash)}}>Copy</Button>
+                              </ButtonGroup>
                             </Col>
                             :
                             <p/>
