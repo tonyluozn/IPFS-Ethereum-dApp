@@ -19,12 +19,20 @@ contract StoreHash {
         string tag;
     }
 
+    struct votedPost {
+      uint id;
+      bool vote;
+    }
+
     newsUpdate[] public newsList;
+    votedPost[] public votedPosts;
     mapping(address => uint) public userReputation;
     mapping(string => mapping(address => bool)) public postToAccess;
 
     mapping(address => bytes32) public userProfile;
-    mapping(address => bytes32) public userBio;  // maps user address to a profile (username)
+    mapping(address => bytes32) public userBio;
+    // account => ipfshas => up/downvote => true/false
+    mapping(address => mapping(string => mapping(bool => bool))) public userVotedPosts;
     /* mapping(address=>string[]) public userSavedPosts; */
 
     event storageUpdate(string newValue, address updatedBy);
@@ -75,8 +83,31 @@ contract StoreHash {
         return newsList;
     }
 
+    function getVotedPosts() public view returns (votedPost[] memory) {
+        return votedPosts;
+    }
+
     function getReputation(address account) public view returns (uint){
         return userReputation[account];
+    }
+
+    function addVotedPosts(address account, string memory ipfsHash, bool vote) public{
+        userVotedPosts[account][ipfsHash][vote] = true;
+    }
+
+    function getVote(address account, string memory ipfsHash) public view returns (uint){
+        if (userVotedPosts[account][ipfsHash][true]){
+            return 1;
+        }
+        if (userVotedPosts[account][ipfsHash][false]){
+            return 2;
+        }
+        return 0;
+    }
+
+    function checkVotePostAccess(address account, string memory ipfsHash) public view returns (bool){
+        return !userVotedPosts[account][ipfsHash][true]
+            && !userVotedPosts[account][ipfsHash][false];
     }
 
     function increaseReputation(address account, uint amount) public  {
@@ -90,10 +121,36 @@ contract StoreHash {
 
     function increaseVote(uint id) public {
         newsList[id].post_repu += 1;
+        votedPost memory v = votedPost(id, true);
+        votedPosts.push(v);
     }
 
     function decreaseVote(uint id) public {
         newsList[id].post_repu -= 1;
+        votedPost memory v = votedPost(id, false);
+        votedPosts.push(v);
+    }
+
+    function upvote(address wallet, address account,
+      string memory ipfsHash, uint id) public returns (uint){
+        if (this.checkVotePostAccess(wallet, ipfsHash)){
+            this.increaseReputation(account, 1);
+            this.increaseVote(id);
+            this.addVotedPosts(wallet, ipfsHash, true);
+            return 0;
+        }
+        return 1;
+    }
+
+    function downvote(address wallet,
+      address account, string memory ipfsHash, uint id) public returns (uint) {
+        if (this.checkVotePostAccess(wallet, ipfsHash)){
+            this.decreaseReputation(account, 1);
+            this.decreaseVote(id);
+            this.addVotedPosts(wallet, ipfsHash, true);
+            return 0;
+        }
+        return 1;
     }
 
     // to grant access to user to a specfic post
