@@ -6,7 +6,7 @@ import './search.css';
 const SearchBar = ({ searchQuery, setSearchQuery }) => (
     <form action="/" method="get">
       <Row>
-        <Col xs={2}>
+        <Col xs={3}>
             <label htmlFor="header-search">
                 <span className="visually-hidden">Search posts</span>
             </label>
@@ -21,11 +21,8 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => (
                 rows="1" cols="40"
             />
         </Col>
-        <Col xs={4}>
-          <Button
-            variant="primary"
-            style={{height:"35px"}}
-            type="submit">Search</Button>
+        <Col xs={3}>
+
         </Col>
       </Row>
       <hr />

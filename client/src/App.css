@@ -71,7 +71,7 @@
 
 .nameInputBox, .bioInputBox {
     box-sizing: border-box;
-    -webkit-box-sizing: border-box; 
+    -webkit-box-sizing: border-box;
     display:block;/*reset from inline*/
     width:100%;
 }
@@ -80,4 +80,21 @@
 .preview{
   -webkit-filter: blur(3px); /* Safari 6.0 - 9.0 */
   filter: blur(3px);
+}
+
+.menu-item {
+  padding: 0 8px;
+  margin: 2px 4px;
+  user-select: none;
+  cursor: pointer;
+  border: none;
+}
+
+.menu-item-wrapper.active {
+  border: .5px blue solid;
+}
+
+.scroll-menu-arrow {
+  padding: 4px;
+  cursor: pointer;
 }

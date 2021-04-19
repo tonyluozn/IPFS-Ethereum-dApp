@@ -25,11 +25,13 @@ contract StoreHash {
 
     mapping(address => bytes32) public userProfile;
     mapping(address => bytes32) public userBio;  // maps user address to a profile (username)
-    mapping(address=>string[]) public userSavedPosts; 
+    /* mapping(address=>string[]) public userSavedPosts; */
 
     event storageUpdate(string newValue, address updatedBy);
 
-    function sendUpdate(string memory ipfsHash,string memory location, string memory time, string memory imageHash,string memory category, string memory tag, string memory extension) public {
+    function sendUpdate(string memory ipfsHash,string memory location, string memory time,
+      string memory imageHash, string memory category, string memory tag, string memory extension) public {
+
         newsList.push(newsUpdate({
             user:msg.sender,
             username: this.bytes32ToString(userProfile[msg.sender]),
@@ -60,13 +62,15 @@ contract StoreHash {
             return true;
         }
     }
-    function addSavedPosts(string memory ipfsHash) public {
-        if (userSavedPosts[ipfsHash] != 0x0){
+
+    /* function addSavedPosts(string memory ipfsHash) public {
+        if (userSavedPosts[ipfsHash].length == 0){
             userSavedPosts[ipfsHash] = string[];
         } else{
             userSavedPosts[ipfsHash].push(ipfsHash);
         }
-    }
+    } */
+
     function getUpdate() public view returns (newsUpdate[] memory) {
         return newsList;
     }
@@ -84,11 +88,11 @@ contract StoreHash {
         userReputation[account] -=amount;
     }
 
-    function increaseVote(string memory ipfsHash, uint id) public {
+    function increaseVote(uint id) public {
         newsList[id].post_repu += 1;
     }
 
-    function decreaseVote(string memory ipfsHash, uint id) public {
+    function decreaseVote(uint id) public {
         newsList[id].post_repu -= 1;
     }
 
