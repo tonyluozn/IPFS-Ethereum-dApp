@@ -183,7 +183,7 @@ export default function ViewNews(props) {
                 :
                 <p>
                   {canView?
-                    <Button variant="outline-secondary" onClick={handlePayment}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                     Close
                     </Button>
                   :
