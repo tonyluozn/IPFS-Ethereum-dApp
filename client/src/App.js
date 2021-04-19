@@ -624,7 +624,6 @@ class App extends Component {
     const trending_free_posts = this.state.newsList
       .filter(e =>
         (e.username.toLowerCase().includes(this.state.searchField.toLowerCase())
-          || e.tag.includes(this.state.tag_selected)
           || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
           || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
         )
@@ -635,7 +634,6 @@ class App extends Component {
     const filtered_premium_posts = this.state.newsList
       .filter(e =>
         (e.username.toLowerCase().includes(this.state.searchField.toLowerCase())
-          || e.tag.includes(this.state.tag_selected)
           || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
           || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
         )
