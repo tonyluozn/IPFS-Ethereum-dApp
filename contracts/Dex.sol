@@ -20,7 +20,7 @@ interface IERC20 {
 contract ERC20Basic is IERC20 {
 
     string public constant name = "NUMemeToken";
-    string public constant symbol = "NUMT-v2";
+    string public constant symbol = "NUMT-v3";
     uint8 public constant decimals = 18;
     uint public constant tokenCooldown = 1 days;
 
@@ -106,7 +106,7 @@ contract ERC20Basic is IERC20 {
         //require(numTokens <= allowed[owner][msg.sender]);
 
         balances[owner] = balances[owner].sub(numTokens);
-        allowed[owner][msg.sender] = allowed[owner][msg.sender].sub(numTokens);
+        //allowed[owner][msg.sender] = allowed[owner][msg.sender].sub(numTokens);
         balances[buyer] = balances[buyer].add(numTokens);
         emit Transfer(owner, buyer, numTokens);
         return true;

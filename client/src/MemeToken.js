@@ -1,36 +1,10 @@
 import web3 from './web3';
 //access our local copy to contract deployed on rinkeby testnet
-// NUMT-v2 address:  0x1220BC584d271bd26D43ba39614aD9A859E98F88
+// NUMT-v3 address:  0xEE772bCd7a78C2D28C1954FC7154Cd5CB9f58973
 //use your own contract address
-const address = '0x3bFd4127037e64266363fA5f9139dD9403A4BAfE';
+const address = '0xEAbAA0825e45AcE6BB0298e5290eB63f476730Ee';
 //use the ABI from your contract
 const abi = [
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "buy",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "sell",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -65,19 +39,14 @@ const abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "receiver",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
 			}
 		],
-		"name": "transfer",
+		"name": "buy",
 		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -132,6 +101,19 @@ const abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "sell",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "token",
 		"outputs": [
@@ -142,6 +124,24 @@ const abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "receiver",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ];
