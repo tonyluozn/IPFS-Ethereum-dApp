@@ -267,7 +267,7 @@ class App extends Component {
 
           if (this.state.verified) {
             storehash.methods.sendUpdate(this.state.ipfsHash, this.state.location,
-              time, this.state.imageHash, this.state.category, this.state.tag, this.state.extension).send({
+              time, this.state.imageHash, this.state.category, this.state.extension).send({
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({ transactionHash });
@@ -286,7 +286,7 @@ class App extends Component {
         if (this.state.verified) {
           //Trying to use '' as an image hash/place holder
           storehash.methods.sendUpdate(this.state.ipfsHash, this.state.location,
-            time, '', this.state.category, this.state.tag, this.state.extension).send({
+            time, '', this.state.category, this.state.extension).send({
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({ transactionHash });
