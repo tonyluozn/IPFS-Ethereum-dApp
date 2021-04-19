@@ -137,9 +137,15 @@ export default function ViewNews(props) {
                         <Row><p>{content}</p></Row>
                         {media}
                         <Row>
-                          <Col><a className="file-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a></Col>
+                          <Col>
+                          <a className="file-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</a>
+                          <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.fileHash)}}>Copy</Button>
+                          </Col>
                           {props.update.imageHash?
-                            <Col><a className="img-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a></Col>
+                            <Col>
+                            <a className="img-link" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</a>
+                            <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.imageHash)}}>Copy</Button>
+                            </Col>
                             :
                             <p/>
                           }
