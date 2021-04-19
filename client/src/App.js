@@ -126,11 +126,19 @@ class App extends Component {
         (result) => {
           return result;
         }
-      )
+      );
 
     console.log("Before update news:" + this.state.newsList)
     this.setState({ newsList: newsfeed })
     console.log("After update news:" + this.state.newsList)
+
+    const posts = await storehash.methods.getVotedPosts().call()
+      .then((result) => {
+        return result;
+      });
+
+    this.setState({ votedPosts: posts});
+    console.log("After update posts:" + this.state.votedPosts)
   }
 
 
@@ -153,7 +161,7 @@ class App extends Component {
     // for side scroll menu
     tag_selected: '',
     //value for post category
-    category: '',
+    category: 'Select a Category',
     tags: '',
     blockNumber: '',
     transactionHash: '',
@@ -163,6 +171,7 @@ class App extends Component {
     reputation: 0,
     token_balance: 0,
     newsList: [],
+    votedPosts: [],
     username: '',
     bio: '',
     // text box value for new userName
@@ -270,6 +279,13 @@ class App extends Component {
 
   //first, convert the report text to buffer, then send the combined update to blockchain.
   updateSubmit = async (event) => {
+
+    // check if inputs are empty or not
+    if (this.state.value.length == 0 || this.state.value.length.includes("S")
+      || this.state.tag.length == 0 || this.state.location.length == 0){
+        return;
+      }
+
     console.log('Set report category to: ' + this.state.category);
     event.preventDefault();
     //convert the text report to buffer
@@ -311,7 +327,7 @@ class App extends Component {
 
           if (this.state.verified) {
             storehash.methods.sendUpdate(this.state.ipfsHash, this.state.location,
-              time, this.state.imageHash, this.state.category, this.state.extension).send({
+              time, this.state.imageHash, this.state.category, this.state.tag, this.state.extension).send({
                 from: this.state.walletAddress
               }, (error, transactionHash) => {
                 this.setState({ transactionHash });
@@ -330,7 +346,7 @@ class App extends Component {
         if (this.state.verified) {
           //Trying to use '' as an image hash/place holder
           storehash.methods.sendUpdate(this.state.ipfsHash, this.state.location,
-            time, '', this.state.category, this.state.extension).send({
+            time, '', this.state.category, this.state.tag,this.state.extension).send({
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({ transactionHash });
@@ -431,28 +447,43 @@ class App extends Component {
   // report post (downvote)
   downvotePost = async (address, hash, id) => {
     console.log('call reportPost function');
-    //decrease user reputation
-    storehash.methods.decreaseReputation(address, 1).send({
+    var temp = storehash.methods
+        .downvote(this.state.walletAddress, address, hash, id).send({
       from: this.state.walletAddress
     });
-    storehash.methods.decreaseVote(id).send({
-      from: this.state.walletAddress
-    });
-    this.updateReputation();
+    const authorized = await storehash.methods
+    .checkVotePostAccess(this.state.walletAddress, hash).call().then((result) => {
+      return result;
+    });;
+
+    if (authorized){
+      this.updateNews();
+      console.log("authorized to vote")
+    } else {
+      console.log("not authorized to vote")
+    }
   }
+
   //upvote post
   upvotePost = async (address, hash, id) => {
     console.log('call upVote function');
-    //increase user reputation
-    storehash.methods.increaseReputation(address, 1).send({ from: this.state.walletAddress });
-    storehash.methods.increaseVote(id).send({
+    var temp = storehash.methods
+        .upvote(this.state.walletAddress, address, hash, id).send({
       from: this.state.walletAddress
     });
-    this.updateReputation();
-    this.updateNews();
+    const authorized = await storehash.methods
+    .checkVotePostAccess(this.state.walletAddress, hash).call().then((result) => {
+      return result;
+    });;
 
-    let scaledTokens = 0.05;
-    this.getToken(scaledTokens);
+    if (authorized){
+      this.updateNews();
+      let scaledTokens = 0.05;
+      this.getToken(scaledTokens);
+      console.log("authorized to vote")
+    } else {
+      console.log("not authorized to vote")
+    }
   }
 
   //render news including html and css
@@ -574,19 +605,36 @@ class App extends Component {
             alignItems: 'center'
           }}
           >
-            <UpOutlined
-              style={{ fontSize: '16px', marginLeft: "4px" }}
-              onClick={() => this.upvotePost(update.user, update.fileHash, update.id)}
-            />
+
+            {this.state.votedPosts.some(el => el.id === update.id )
+               && this.state.votedPosts[update.id].vote == true ?(
+              <UpOutlined
+                style={{ fontSize: '20px', marginLeft: "2px", color : "green"}}
+                onClick={() => this.upvotePost(update.user, update.fileHash, update.id)}
+              />
+            ) : (
+              <UpOutlined
+                style={{ fontSize: '16px', marginLeft: "4px" }}
+                onClick={() => this.upvotePost(update.user, update.fileHash, update.id)}
+              />
+            )}
 
             <Col xs={0.1} align="center" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
               {this.state.newsList[update.id].post_repu}
             </Col>
+            {this.state.votedPosts.some(el => el.id === update.id )
+               && this.state.votedPosts[update.id].vote == false ?(
+                 <DownOutlined
+                   style={{ fontSize: '20px', marginLeft: "2px", color : "red"}}
+                   onClick={() => this.downvotePost(update.user, update.fileHash, update.id)}
+                 />
+            ) : (
+              <DownOutlined
+                style={{ fontSize: '16px', marginLeft: "4px", }}
+                onClick={() => this.downvotePost(update.user, update.fileHash, update.id)}
+              />
+            )}
 
-            <DownOutlined
-              style={{ fontSize: '16px', marginLeft: "4px", }}
-              onClick={() => this.downvotePost(update.user, update.fileHash, update.id)}
-            />
           </div>
         </Row>
 
@@ -600,7 +648,14 @@ class App extends Component {
       </ListGroup.Item>);
   }
 
-
+  handleMessageBox(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        this.setState({
+          messageBox: ""
+        });
+      }
+    }
   render() {
     //newsList length
     const news_total = this.state.newsList.length;
@@ -690,7 +745,7 @@ class App extends Component {
             <Container>
               <strong>Post and Profile</strong>
               <hr />
-              <Tabs defaultActiveKey="post" id="profile-tab">
+              <Tabs defaultActiveKey="post" id="profile-post-tab">
                 <Tab eventKey="post" title="Post">
                   <br />
                   <Row>
@@ -723,7 +778,7 @@ class App extends Component {
                   <hr />
                   <Form onSubmit={this.updateSubmit}>
                     <Row>
-                      <Col xs={3}>Report</Col>
+                      <Col xs={3}>Content</Col>
                       <Col xs={8}><textarea className="textInputBox" onChange={e => { this.setState({ value: e.target.value }); }} /></Col>
                     </Row>
 
@@ -734,15 +789,19 @@ class App extends Component {
 
                     <Row>
                       <Col xs={{ span: 10, offset: 1 }} style={{ display: "flex" }}>
-                        <Form.Control
-                          as="select"
-                          custom
-                          onChange={e => { this.setState({ category: e.target.value }); console.log(this.state.category) }}
-                        >
-                          <option value="choose">Choose a category: </option>
-                          <option value="free">Free</option>
-                          <option value="premium">Premium</option>
-                        </Form.Control>
+                        <Picky
+                          id="category picker"
+                          options={["free", "premium"]}
+                          value={this.state.category}
+                          onChange={e => this.setState({ category: e })}
+                          open={false}
+                          multiple={false}
+                          placeholder={"Select a Category"}
+                          includeSelectAll={false}
+                          keepOpen={false}
+                          includeFilter={false}
+                          dropdownHeight={200}
+                        />
                       </Col>
                     </Row>
 
@@ -757,6 +816,7 @@ class App extends Component {
                           multiple={false}
                           placeholder={"Select a tag"}
                           includeSelectAll={false}
+                          keepOpen={false}
                           includeFilter={true}
                           dropdownHeight={200}
                         />
@@ -812,6 +872,7 @@ class App extends Component {
                       <textarea className="nameInputBox"
                         maxlength="32"
                         rows="1" cols="50"
+                        onKeyPress={(e) => { this.handleMessageBox(e) }}
                         onChange={e => { this.setState({ nameField: e.target.value }); }} />
                     </Col>
                   </Row>
@@ -824,6 +885,7 @@ class App extends Component {
                       <textarea className="bioInputBox"
                         rows="1" cols="50"
                         maxlength="32"
+                        onKeyPress={(e) => { this.handleMessageBox(e) }}
                         onChange={e => { this.setState({ bioField: e.target.value }); }} />
                     </Col>
                   </Row>
