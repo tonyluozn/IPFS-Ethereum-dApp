@@ -379,7 +379,15 @@ class App extends Component {
 
   // for any user who has metamask, send the ERC-20 tokens to the account.
   getToken = async (tokens = 1) => {
+    const address = this.state.walletAddress;
     const amount = BigInt(1000000000000000000 * tokens);
+    //MemeToken.methods.
+    MemeToken.methods.isReady(address).call().then((result)=>{
+      console.log("is ready? "+result);
+    });
+    MemeToken.methods.getReadytime(address).call().then((result)=>{
+      console.log("Ready time is "+result);
+    });
     MemeToken.methods.buy(amount).send({
       from: this.state.walletAddress
     }, (error, tokenTransactionHash) => {

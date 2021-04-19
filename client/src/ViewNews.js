@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import './ViewNews.css';
 import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl, ButtonGroup} from "react-bootstrap";
 import storehash from './storehash';
-import healthToken from './healthToken';
 import ReactAudioPlayer from 'react-audio-player';
+import MemeToken from "./MemeToken";
 /* global BigInt */
 
 
@@ -76,8 +76,7 @@ export default function ViewNews(props) {
                 To view this video please enable JavaScript, and consider upgrading to a
                 web browser that
                 <a href="https://videojs.com/html5-video-support/" target="_blank"
-                  >supports HTML5 video</a
-                >
+                  >supports HTML5 video</a>
               </p>
             </video>)
           }
@@ -105,7 +104,7 @@ export default function ViewNews(props) {
     // the current user pay 0.1 NUHT to the author of the post
     const handlePayment = async () => {
       const amount = BigInt(100000000000000000);
-      await healthToken.methods.transfer(props.update.user,amount).send({
+      await MemeToken.methods.transfer(props.update.user,amount).send({
         from: props.user
       }, (error, tokenTransactionHash) => {
         //once the transaction is successful, update the view and give the access
@@ -162,7 +161,7 @@ export default function ViewNews(props) {
                           </p>
                       </Col>
                     :
-                    <p>You need to pay NUHT to access this post.</p>
+                    <p>You need to pay NUMT to access this post.</p>
                     }
                   </p>
                 }
@@ -184,7 +183,7 @@ export default function ViewNews(props) {
                 :
                 <p>
                   {canView?
-                    <Button variant="outline-secondary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handlePayment}>
                     Close
                     </Button>
                   :

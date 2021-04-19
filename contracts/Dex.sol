@@ -20,7 +20,7 @@ interface IERC20 {
 contract ERC20Basic is IERC20 {
 
     string public constant name = "NUMemeToken";
-    string public constant symbol = "NUMT";
+    string public constant symbol = "NUMT-v2";
     uint8 public constant decimals = 18;
     uint public constant tokenCooldown = 1 days;
 
@@ -103,7 +103,7 @@ contract ERC20Basic is IERC20 {
 
     function transferFrom(address owner, address buyer, uint256 numTokens) public override returns (bool) {
         require(numTokens <= balances[owner]);
-        require(numTokens <= allowed[owner][msg.sender]);
+        //require(numTokens <= allowed[owner][msg.sender]);
 
         balances[owner] = balances[owner].sub(numTokens);
         allowed[owner][msg.sender] = allowed[owner][msg.sender].sub(numTokens);
@@ -163,6 +163,13 @@ contract Dex {
         token.transferFrom(msg.sender, address(this), amount);
         //msg.sender.transfer(amount);
         emit SendBack(amount);   
+    }
+    
+    function isReady(address account) public view returns (bool) {
+        return token.isReady(account);
+    }
+    function getReadytime(address account) public view returns (uint256){
+        return token.getReadytime(account);
     }
 
 }
