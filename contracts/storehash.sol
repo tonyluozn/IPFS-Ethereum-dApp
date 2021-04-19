@@ -25,9 +25,10 @@ contract StoreHash {
     }
 
     newsUpdate[] public newsList;
-    votedPost[] public votedPosts;
     mapping(address => uint) public userReputation;
     mapping(string => mapping(address => bool)) public postToAccess;
+
+    mapping(address => votedPost[]) public votedPostId;
 
     mapping(address => bytes32) public userProfile;
     mapping(address => bytes32) public userBio;
@@ -83,8 +84,8 @@ contract StoreHash {
         return newsList;
     }
 
-    function getVotedPosts() public view returns (votedPost[] memory) {
-        return votedPosts;
+    function getVotedPosts(address account) public view returns (votedPost[] memory) {
+        return votedPostId[account];
     }
 
     function getReputation(address account) public view returns (uint){
@@ -121,14 +122,10 @@ contract StoreHash {
 
     function increaseVote(uint id) public {
         newsList[id].post_repu += 1;
-        votedPost memory v = votedPost(id, true);
-        votedPosts.push(v);
     }
 
     function decreaseVote(uint id) public {
         newsList[id].post_repu -= 1;
-        votedPost memory v = votedPost(id, false);
-        votedPosts.push(v);
     }
 
     function upvote(address wallet, address account,
@@ -137,6 +134,8 @@ contract StoreHash {
             this.increaseReputation(account, 1);
             this.increaseVote(id);
             this.addVotedPosts(wallet, ipfsHash, true);
+            votedPost memory v = votedPost(id, true);
+            votedPostId[wallet].push(v);
             return 0;
         }
         return 1;
@@ -148,6 +147,8 @@ contract StoreHash {
             this.decreaseReputation(account, 1);
             this.decreaseVote(id);
             this.addVotedPosts(wallet, ipfsHash, true);
+            votedPost memory v = votedPost(id, false);
+            votedPostId[wallet].push(v);
             return 0;
         }
         return 1;

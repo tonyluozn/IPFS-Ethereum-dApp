@@ -106,17 +106,17 @@ class App extends Component {
         console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
       }
     });
+
+    this.updateNews();
+    this.menuItems = Menu(list, selected);
     //get user's metamask account address
     this.getWalletAddress();
 
     // this.getReputation();
 
-    this.updateNews();
-
     // approve the spender to spend on contract creator's behalf, calling this only once
     //this.approve();
 
-    this.menuItems = Menu(list, selected);
   }
 
   //loading the list of hash from the deployed storeHash contract
@@ -131,14 +131,6 @@ class App extends Component {
     console.log("Before update news:" + this.state.newsList)
     this.setState({ newsList: newsfeed })
     console.log("After update news:" + this.state.newsList)
-
-    const posts = await storehash.methods.getVotedPosts().call()
-      .then((result) => {
-        return result;
-      });
-
-    this.setState({ votedPosts: posts});
-    console.log("After update posts:" + this.state.votedPosts)
   }
 
 
@@ -204,7 +196,7 @@ class App extends Component {
   // }
   // get users' wallet address
   getWalletAddress = async () => {
-    web3.eth.getAccounts().then((accounts) => {
+    await web3.eth.getAccounts().then((accounts) => {
       this.setState({ walletAddress: accounts[0] });
       console.log('Fetching address ' + this.state.walletAddress);
 
@@ -230,7 +222,15 @@ class App extends Component {
         // );
       }
     });
+    if (this.state.walletAddress != ''){
+      const posts = await storehash.methods.getVotedPosts(this.state.walletAddress).call()
+        .then((result) => {
+          return result;
+        });
 
+      this.setState({ votedPosts: posts});
+      console.log("After update posts:" + this.state.votedPosts)
+    }
   }
 
   //use Blob to store text in the variable file
@@ -281,7 +281,7 @@ class App extends Component {
   updateSubmit = async (event) => {
 
     // check if inputs are empty or not
-    if (this.state.value.length == 0 || this.state.value.length.includes("S")
+    if (this.state.value.length == 0 || this.state.category.includes("S")
       || this.state.tag.length == 0 || this.state.location.length == 0){
         return;
       }
@@ -454,6 +454,10 @@ class App extends Component {
 
   // report post (downvote)
   downvotePost = async (address, hash, id) => {
+    if (this.state.votedPosts.some(el => el.id === id)){
+      console.log("user cannot vote twice")
+      return;
+    }
     console.log('call reportPost function');
     var temp = storehash.methods
         .downvote(this.state.walletAddress, address, hash, id).send({
@@ -475,6 +479,11 @@ class App extends Component {
   //upvote post
   upvotePost = async (address, hash, id) => {
     console.log('call upVote function');
+    if (this.state.votedPosts.some(el => el.id === id)){
+      console.log("user cannot vote twice")
+      return;
+    }
+
     var temp = storehash.methods
         .upvote(this.state.walletAddress, address, hash, id).send({
       from: this.state.walletAddress
@@ -482,7 +491,7 @@ class App extends Component {
     const authorized = await storehash.methods
     .checkVotePostAccess(this.state.walletAddress, hash).call().then((result) => {
       return result;
-    });;
+    });
 
     if (authorized){
       this.updateNews();
@@ -614,8 +623,7 @@ class App extends Component {
           }}
           >
 
-            {this.state.votedPosts.some(el => el.id === update.id )
-               && this.state.votedPosts[update.id].vote == true ?(
+            {this.state.votedPosts.some(el => el.id === update.id && el.vote == true)?(
               <UpOutlined
                 style={{ fontSize: '20px', marginLeft: "2px", color : "green"}}
                 onClick={() => this.upvotePost(update.user, update.fileHash, update.id)}
@@ -630,8 +638,7 @@ class App extends Component {
             <Col xs={0.1} align="center" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
               {this.state.newsList[update.id].post_repu}
             </Col>
-            {this.state.votedPosts.some(el => el.id === update.id )
-               && this.state.votedPosts[update.id].vote == false ?(
+            {this.state.votedPosts.some(el => el.id === update.id && el.vote == false)?(
                  <DownOutlined
                    style={{ fontSize: '20px', marginLeft: "2px", color : "red"}}
                    onClick={() => this.downvotePost(update.user, update.fileHash, update.id)}
