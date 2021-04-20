@@ -280,11 +280,6 @@ class App extends Component {
   //first, convert the report text to buffer, then send the combined update to blockchain.
   updateSubmit = async (event) => {
 
-    // check if inputs are empty or not
-    if (this.state.value.length == 0 || this.state.category.includes("S")
-      || this.state.tag.length == 0 || this.state.location.length == 0){
-        return;
-      }
 
     console.log('Set report category to: ' + this.state.category);
     event.preventDefault();
@@ -455,7 +450,7 @@ class App extends Component {
   // report post (downvote)
   downvotePost = async (address, hash, id) => {
     if (this.state.votedPosts.some(el => el.id === id)){
-      console.log("user cannot vote twice")
+      console.log("can't upvote twice")
       return;
     }
     console.log('call reportPost function');
@@ -478,12 +473,11 @@ class App extends Component {
 
   //upvote post
   upvotePost = async (address, hash, id) => {
-    console.log('call upVote function');
     if (this.state.votedPosts.some(el => el.id === id)){
-      console.log("user cannot vote twice")
+      console.log("can't downvote twice")
       return;
     }
-
+    console.log('call upVote function');
     var temp = storehash.methods
         .upvote(this.state.walletAddress, address, hash, id).send({
       from: this.state.walletAddress
@@ -591,13 +585,13 @@ class App extends Component {
       <ListGroup.Item key={index}>
         <Row>
           <Col xs={4} align="left" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
-            User: {update.username == '' ? update.user.substring(0, 9) : update.username} <br/>
+            User: {update.username === '' ? update.user.substring(0, 9) : update.username} <br/>
             Location: {update.location}
           </Col>
           <Col>
             {update.imageHash != "" &&
               <img
-                className={update.category == "free" ? "preview-free" : "preview"}
+                className={update.category === "free" ? "preview-free" : "preview"}
                 src={"https://gateway.ipfs.io/ipfs/" + update.imageHash}
                 width={150}
                 height={150}
@@ -623,14 +617,13 @@ class App extends Component {
           }}
           >
 
-            {this.state.votedPosts.some(el => el.id === update.id && el.vote == true)?(
-              <UpOutlined
-                style={{ fontSize: '20px', marginLeft: "2px", color : "green"}}
-                onClick={() => this.upvotePost(update.user, update.fileHash, update.id)}
+            {this.state.votedPosts.some(el => el.id === update.id && el.vote === true)?(
+              <UpOutlined style={{ fontSize: '20px', color : "forestgreen"}}
+                onClick={() => console.log("can't upvote twice")}
               />
             ) : (
               <UpOutlined
-                style={{ fontSize: '16px', marginLeft: "4px" }}
+                style={{ fontSize: '16px' }}
                 onClick={() => this.upvotePost(update.user, update.fileHash, update.id)}
               />
             )}
@@ -638,14 +631,14 @@ class App extends Component {
             <Col xs={0.1} align="center" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
               {this.state.newsList[update.id].post_repu}
             </Col>
-            {this.state.votedPosts.some(el => el.id === update.id && el.vote == false)?(
-                 <DownOutlined
-                   style={{ fontSize: '20px', marginLeft: "2px", color : "red"}}
-                   onClick={() => this.downvotePost(update.user, update.fileHash, update.id)}
-                 />
+
+            {this.state.votedPosts.some(el => el.id === update.id && el.vote === false)?(
+              <DownOutlined style={{ fontSize: '20px', color : "crimson"}}
+                onClick={() => console.log("can't downvote twice")}
+              />
             ) : (
               <DownOutlined
-                style={{ fontSize: '16px', marginLeft: "4px", }}
+                style={{ fontSize: '16px' }}
                 onClick={() => this.downvotePost(update.user, update.fileHash, update.id)}
               />
             )}
@@ -675,9 +668,9 @@ class App extends Component {
     //newsList length
     const news_total = this.state.newsList.length;
     //free posts
-    const free_posts = this.state.newsList.filter(e => e.category == 'free');
+    const free_posts = this.state.newsList.filter(e => e.category === 'free');
     //premium posts
-    const premium_posts = this.state.newsList.filter(e => e.category == 'premium');
+    const premium_posts = this.state.newsList.filter(e => e.category === 'premium');
     // grabs query from serach bar
     const { search } = window.location;
     // const query = new URLSearchParams(search).get('s').toLowerCase();
@@ -688,7 +681,7 @@ class App extends Component {
           || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
           || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
         )
-      && e.category == 'free'
+      && e.category === 'free'
       && e.tag.includes(this.state.tag_selected));
 
     const trending_free_posts = this.state.newsList
@@ -697,7 +690,7 @@ class App extends Component {
           || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
           || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
         )
-      && e.category == 'free'
+      && e.category === 'free'
       && e.tag.includes(this.state.tag_selected))
       .sort(function (a, b) { return a.post_repu - b.post_repu });
 
@@ -707,7 +700,7 @@ class App extends Component {
           || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
           || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
         )
-      && e.category == 'premium'
+      && e.category === 'premium'
       && e.tag.includes(this.state.tag_selected))
       .sort(function (a, b) { return a.post_repu - b.post_repu });
 
@@ -846,8 +839,14 @@ class App extends Component {
                       </Col>
                       <Col xs={3}>
                         <div className="button">
-                          <Button bsStyle="primary" style={{ width: "130px" }} type="submit" > Submit
-                          </Button>
+                          {(this.state.value.length === 0 || this.state.category.includes("S")
+                            || this.state.tag.length === 0 || this.state.location.length === 0) ? (
+                              <Button bsStyle="primary" style={{ width: "130px" }} type="submit" disabled> Submit
+                              </Button>
+                            ) : (
+                              <Button bsStyle="primary" style={{ width: "130px" }} type="submit" > Submit
+                              </Button>
+                          )}
                         </div>
                       </Col>
                     </Row>
