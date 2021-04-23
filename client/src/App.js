@@ -591,6 +591,7 @@ class App extends Component {
           <Col>
             {update.imageHash != "" &&
               <img
+                style={{filter: this.state.newsList[update.id].post_repu < 40 ? 'blur(8px)' : 'blur(0px)'}}
                 className={update.category === "free" ? "preview-free" : "preview"}
                 src={"https://gateway.ipfs.io/ipfs/" + update.imageHash}
                 width={150}

@@ -119,7 +119,7 @@ export default function ViewNews(props) {
     // assuming the file is either text file or an image. Conditional rendering added
     return (
         <>
-          <Button block variant="outline-primary" onClick={handleShow}>
+          <Button block variant="outline-primary" style={{color : lowRepu ? 'red' : ''}} onClick={handleShow}>
             {"View"}
           </Button>
           <Modal show={show} onHide={handleClose}>
