@@ -649,7 +649,7 @@ class App extends Component {
 
         <Row>
           <Col style={{ display: "flex" }}>{update.tag}</Col>
-          <Col offset={6} style={{ textAlign: "center" }}>{update.timeStamp}</Col>
+          <Col offset={6} style={{ textAlign: "right" }}>{update.timeStamp}</Col>
         </Row>
         {/* <Row>
       <Col>Category: {update.category}</Col>
