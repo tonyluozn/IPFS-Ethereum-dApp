@@ -48,7 +48,7 @@ export default function ViewNews(props) {
               autoPlay
               controls
             />);
-          } else if (props.update.extension == 'jpg' || props.update.extension == 'png'){
+          } else if (props.update.extension == 'jpg' || props.update.extension == 'jpeg' || props.update.extension == 'png'){
             console.log("this is jpg")
             setMedia(<img
               src={validImage(props)[0]}
