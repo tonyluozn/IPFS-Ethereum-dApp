@@ -17,6 +17,7 @@ contract StoreHash {
         int post_repu;
         uint id;
         string tag;
+        uint user_repu;
     }
 
     struct votedPost {
@@ -38,7 +39,7 @@ contract StoreHash {
 
     event storageUpdate(string newValue, address updatedBy);
 
-    function sendUpdate(string memory ipfsHash,string memory location, string memory time,
+    function sendUpdate(string memory ipfsHash, string memory location, string memory time,
       string memory imageHash, string memory category, string memory tag, string memory extension) public {
 
         newsList.push(newsUpdate({
@@ -53,7 +54,8 @@ contract StoreHash {
             extension: extension,
             post_repu: 0,
             id: newsList.length,
-            tag: tag
+            tag: tag,
+            user_repu: userReputation[msg.sender]
         }));
         postToAccess[ipfsHash][msg.sender] =true;
         if (userReputation[msg.sender] != 0x0){
