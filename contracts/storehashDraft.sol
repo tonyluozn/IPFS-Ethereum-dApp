@@ -35,6 +35,7 @@ contract StoreHash {
     mapping(address => bytes32) public userBio;
     // account => ipfshas => up/downvote => true/false
     mapping(address => mapping(string => mapping(bool => bool))) public userVotedPosts;
+    mapping(address=> mapping(uint => bool)) public userSavedPosts;
 
     event storageUpdate(string newValue, address updatedBy);
 
@@ -73,6 +74,19 @@ contract StoreHash {
         }
     }
 
+    function savePost(address account, uint id) public {
+        userSavedPosts[account][id] = true;
+    }
+
+    function unsavePost(address account, uint id) public {
+        userSavedPosts[account][id] = false;
+    }
+
+    function isPostSaved(address account, uint id) public view returns (bool) {
+        return (userSavedPosts[account][id] == true);
+    }
+
+
     function getUpdate() public view returns (newsUpdate[] memory) {
         return newsList;
     }
@@ -106,6 +120,7 @@ contract StoreHash {
 
     function increaseReputation(address account, uint amount) public  {
         userReputation[account] +=amount;
+        //
     }
 
     function decreaseReputation(address account, uint amount) public  {
