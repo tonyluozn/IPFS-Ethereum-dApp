@@ -111,6 +111,7 @@ class App extends Component {
     this.menuItems = Menu(list, selected);
     //get user's metamask account address
     this.getWalletAddress();
+    
 
     // this.getReputation();
 
@@ -587,8 +588,10 @@ class App extends Component {
           <Col xs={4} align="left" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
             User: {update.username === '' ? update.user.substring(0, 9) : update.username} <br/>
             Location: {update.location}
+            {/*Reputation: {update.user_repu} */}
           </Col>
           <Col>
+          {/*style={{filter: update.user_repu == 21 ? 'blur(8px)' : 'blur(0px)'}}*/}
             {update.imageHash != "" &&
               <img
                 className={update.category === "free" ? "preview-free" : "preview"}
@@ -629,7 +632,7 @@ class App extends Component {
             )}
 
             <Col xs={0.1} align="center" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
-              {this.state.newsList[update.id].post_repu}
+              {update.post_repu}
             </Col>
 
             {this.state.votedPosts.some(el => el.id === update.id && el.vote === false)?(
@@ -648,7 +651,7 @@ class App extends Component {
 
         <Row>
           <Col style={{ display: "flex" }}>{update.tag}</Col>
-          <Col offset={6} style={{ textAlign: "center" }}>{update.timeStamp}</Col>
+          <Col offset={6} style={{ textAlign: "right" }}>{update.timeStamp}</Col>
         </Row>
         {/* <Row>
       <Col>Category: {update.category}</Col>
