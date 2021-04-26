@@ -377,7 +377,7 @@ class App extends Component {
 
   }
 
-/*   updateReadytime = async() => {
+  updateReadytime = async() => {
     const address = this.state.walletAddress;
     const isReady = await MemeToken.methods.isReady(address).call().then((result) => {
       console.log(result);
@@ -386,7 +386,7 @@ class App extends Component {
       console.log(error)
     );
     this.setState({isReady: isReady});
-  } */
+  }
 
 
   // for any user who has metamask, send the ERC-20 tokens to the account.
