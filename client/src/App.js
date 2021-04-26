@@ -111,7 +111,7 @@ class App extends Component {
     this.menuItems = Menu(list, selected);
     //get user's metamask account address
     this.getWalletAddress();
-    
+
 
     // this.getReputation();
 
@@ -842,8 +842,8 @@ class App extends Component {
                       </Col>
                       <Col xs={3}>
                         <div className="button">
-                          {(this.state.value.length === 0 || this.state.category.includes("S")
-                            || this.state.tag.length === 0 || this.state.location.length === 0) ? (
+                          {(this.state.value == '' || this.state.category.includes("S")
+                            || this.state.tag == '' || this.state.location == '') ? (
                               <Button bsStyle="primary" style={{ width: "130px" }} type="submit" disabled> Submit
                               </Button>
                             ) : (
