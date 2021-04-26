@@ -35,7 +35,7 @@ contract StoreHash {
     mapping(address => bytes32) public userBio;
     // account => ipfshas => up/downvote => true/false
     mapping(address => mapping(string => mapping(bool => bool))) public userVotedPosts;
-    /* mapping(address=>string[]) public userSavedPosts; */
+    /* mapping(address=> mapping(string => bool)) public userSavedPosts; */
 
     event storageUpdate(string newValue, address updatedBy);
 
@@ -115,6 +115,7 @@ contract StoreHash {
 
     function increaseReputation(address account, uint amount) public  {
         userReputation[account] +=amount;
+        //
     }
 
     function decreaseReputation(address account, uint amount) public  {
