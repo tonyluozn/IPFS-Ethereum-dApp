@@ -178,7 +178,8 @@ class App extends Component {
     token_address: '0xdBF789d9f3203BFa3e872c245956A6131103789f',
     //for getting tokens
     tokensRequested: 1,
-    isReady: true
+    isReady: true,
+    isLoggedIn: false,
   };
 
   onSearchBarInput = e => {
@@ -201,8 +202,13 @@ class App extends Component {
       this.setState({ walletAddress: accounts[0] });
       console.log('Fetching address ' + this.state.walletAddress);
 
+      if (typeof this.state.walletAddress === 'string' && this.state.walletAddress != ''){
+          this.setState({ isLoggedIn: true});
+          console.log('Login successful');
+      }
+
       // Check if wallet address exists
-      if (this.state.walletAddress != '') {
+      if (this.state.isLoggedIn) {
         this.updateReputation();
         this.getTokenBalance();
         this.getUsername(accounts[0]);
@@ -223,7 +229,7 @@ class App extends Component {
         // );
       }
     });
-    if (this.state.walletAddress != ''){
+    if (this.state.isLoggedIn){
       const posts = await storehash.methods.getVotedPosts(this.state.walletAddress).call()
         .then((result) => {
           return result;
@@ -450,8 +456,13 @@ class App extends Component {
 
   // report post (downvote)
   downvotePost = async (address, hash, id) => {
+    if(!this.state.isLoggedIn){
+      console.log("can't downvote when logged out")
+      return;
+    }
+
     if (this.state.votedPosts.some(el => el.id === id)){
-      console.log("can't upvote twice")
+      console.log("can't downvote twice")
       return;
     }
     console.log('call reportPost function');
@@ -474,8 +485,12 @@ class App extends Component {
 
   //upvote post
   upvotePost = async (address, hash, id) => {
+    if(!this.state.isLoggedIn){
+      console.log("can't upvote when logged out")
+      return;
+    }
     if (this.state.votedPosts.some(el => el.id === id)){
-      console.log("can't downvote twice")
+      console.log("can't upvote twice")
       return;
     }
     console.log('call upVote function');
@@ -767,15 +782,24 @@ class App extends Component {
                   <div className="button">
                     <Row>
                       <Col xs={3}>
-                        <Button
-                          bsStyle="primary"
-                          title={this.state.isReady ? "Click to receive the specified amount of tokens" : "You cannot obtain tokens at this time!"}
-                          disabled={this.state.isReady ? false : true}
-                          style={{ width: "130px"}}
-                          type="submit"
-                          onClick={() => this.getToken(this.state.tokensRequested)}>
-                          Get Tokens
-                        </Button>
+                        {(this.state.isLoggedIn)?(
+                          <Button
+                            bsStyle="primary"
+                            title={this.state.isReady ? "Click to receive the specified amount of tokens" : "You cannot obtain tokens at this time!"}
+                            disabled={this.state.isReady ? false : true}
+                            style={{ width: "130px"}}
+                            type="submit"
+                            onClick={() => this.getToken(this.state.tokensRequested)}>
+                            Get Tokens
+                          </Button>
+                        ):(
+                          <Button
+                            bsStyle="primary"
+                            style={{ width: "130px"}}
+                            disabled>
+                            Get Tokens
+                          </Button>
+                        )}
                       </Col>
                       <Col xs={8}>
                         <Form.Control
@@ -842,8 +866,8 @@ class App extends Component {
                       </Col>
                       <Col xs={3}>
                         <div className="button">
-                          {(this.state.value == '' || this.state.category.includes("S")
-                            || this.state.tag == '' || this.state.location == '') ? (
+                          {(!this.state.isLoggedIn || (this.state.value == '' || this.state.category.includes("S")
+                            || this.state.tag == '' || this.state.location == '')) ? (
                               <Button bsStyle="primary" style={{ width: "130px" }} type="submit" disabled> Submit
                               </Button>
                             ) : (
@@ -855,61 +879,77 @@ class App extends Component {
                     </Row>
                   </Form>
                   <hr />
+                    {(this.state.isLoggedIn)?(
+                      <Button onClick={this.getTransactionReceipt}> Get Transaction Receipt </Button>
+                    ):(
+                      <Button disabled> Get Transaction Receipt </Button>
+                    )}
 
-                  <Button onClick={this.getTransactionReceipt}> Get Transaction Receipt </Button>
                   <hr />
                   <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash}
                     contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash}
                     blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed} />
                 </Tab>
                 <Tab eventKey="profile" title="Profile">
-                  <br />
-                  <Row>
-                    <Col xs={3} align="left">
-                      <p> Address: </p>
-                      <p> Username: </p>
-                      <p> Reputation:  </p>
-                      <p> NUMT Balance: </p>
-                      <p> Bio: </p>
-                    </Col>
-                    <Col xs={8} align="left">
-                      <p> {this.state.walletAddress}</p>
-                      <p> {this.state.username} </p>
-                      <p> {this.state.reputation} </p>
-                      <p> {this.state.token_balance} </p>
-                      <p> {this.state.bio} </p>
-                    </Col>
-                  </Row>
-                  <hr />
-                  <Row>
-                    <Col xs={3}>
-                      New Username:
+                  {(this.state.isLoggedIn)?(
+                    <div>
+                    <br />
+                    <Row>
+                      <Col xs={3} align="left">
+                        <p> Address: </p>
+                        <p> Username: </p>
+                        <p> Reputation:  </p>
+                        <p> NUMT Balance: </p>
+                        <p> Bio: </p>
                       </Col>
-                    <Col xs={8}>
-                      <textarea className="nameInputBox"
-                        maxlength="32"
-                        rows="1" cols="50"
-                        onKeyPress={(e) => { this.handleMessageBox(e) }}
-                        onChange={e => { this.setState({ nameField: e.target.value }); }} />
-                    </Col>
-                  </Row>
-                  <hr />
-                  <Row>
-                    <Col xs={3}>
-                      New Bio:
+                      <Col xs={8} align="left">
+                        <p> {this.state.walletAddress}</p>
+                        <p> {this.state.username} </p>
+                        <p> {this.state.reputation} </p>
+                        <p> {this.state.token_balance} </p>
+                        <p> {this.state.bio} </p>
                       </Col>
-                    <Col xs={8}>
-                      <textarea className="bioInputBox"
-                        rows="1" cols="50"
-                        maxlength="32"
-                        onKeyPress={(e) => { this.handleMessageBox(e) }}
-                        onChange={e => { this.setState({ bioField: e.target.value }); }} />
-                    </Col>
-                  </Row>
+                    </Row>
+                    <hr />
+                    <Row>
+                      <Col xs={3}>
+                        New Username:
+                        </Col>
+                      <Col xs={8}>
+                        <textarea className="nameInputBox"
+                          maxlength="32"
+                          rows="1" cols="50"
+                          onKeyPress={(e) => { this.handleMessageBox(e) }}
+                          onChange={e => { this.setState({ nameField: e.target.value }); }} />
+                      </Col>
+                    </Row>
+                    <hr />
+                    <Row>
+                      <Col xs={3}>
+                        New Bio:
+                        </Col>
+                      <Col xs={8}>
+                        <textarea className="bioInputBox"
+                          rows="1" cols="50"
+                          maxlength="32"
+                          onKeyPress={(e) => { this.handleMessageBox(e) }}
+                          onChange={e => { this.setState({ bioField: e.target.value }); }} />
+                      </Col>
+                    </Row>
+                    </div>
+                  ):(<div></div>)}
                   <hr />
                   <div className="button">
-                    <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.editProfile}> Set Profile</Button>
+                    {(this.state.isLoggedIn)?(
+                      <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.editProfile}> Set Profile</Button>
+                    ):(
+                      <div>
+                      <p><i>please connect browser to your MetaMask Account and press login or refresh the page. </i></p>
+                      <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.getWalletAddress}>Login</Button>
+                      </div>
+                    )}
                   </div>
+                  <hr />
                 </Tab>
               </Tabs>
             </Container>
