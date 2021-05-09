@@ -25,6 +25,7 @@ export default function AboutPage() {
             </Modal.Header>
               <Modal.Body>
                 <p>This is a meme sharing web app for northwestern students developed by NU Blockchain Group technical project team. Unlike typical applications, this web app runs on a blockchain network in a public, open source and decentralized environment. All the content uploaded by our users are stored in a decentralized way using IPFS and Ethereum Blockchain. </p>
+                <p>If you haven't used a dApp (decentralized app) before, follow the steps below and get started!</p>
                 <p>1. Install chrome extension of <a href="https://levelup.gitconnected.com/how-to-use-metamask-a-step-by-step-guide-f380a3943fb1" target="_blank"  >Metamask</a> and set up an account.</p>
                 <p>2. Connect Metamask to the site and choose “Rinkeby” network. Once connected, you are able to see the memes!</p>
                 <p>3. To upload memes and interact with the app (upvote a meme, set your profile, etc), you will need to get some free test ETHs for your account. This is because those actions are transactions on blockchain so it will charges gas fee. Please go to <a href="https://faucet.rinkeby.io/" target="_blank">this site</a> and follow the instructions to get some free ETHs.</p>

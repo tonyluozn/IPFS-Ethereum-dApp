@@ -959,9 +959,9 @@ class App extends Component {
                 <p class="footer-contact"></p>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
                 <div class="social-wrapper">
-                    <a aria-label="Socail media link: linkedin" href="https://www.linkedin.com/company/nu-blockchain-group/about/" class="fa fa-linkedin"></a>  
-                    <a aria-label="Socail media link: instagram" href="https://www.instagram.com/nublockchain/" class="fa fa-instagram"></a>
-                    <a aria-label="Socail media link: github" href="https://github.com/tonyluozn/IPFS-Ethereum-dApp" class="fa fa-github"></a>
+                    <a target="_blank" aria-label="Socail media link: linkedin" href="https://www.linkedin.com/company/nu-blockchain-group/about/" class="fa fa-linkedin"></a>  
+                    <a target="_blank" aria-label="Socail media link: instagram" href="https://www.instagram.com/nublockchain/" class="fa fa-instagram"></a>
+                    <a target="_blank" aria-label="Socail media link: github" href="https://github.com/tonyluozn/IPFS-Ethereum-dApp" class="fa fa-github"></a>
                 </div>  
         </div>
 
