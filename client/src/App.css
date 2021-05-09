@@ -102,7 +102,6 @@
 
 .top-nav {
   background-color:#957DAD;
-  position: fixed;
   top:0px;
   left:0px;
   right:0px;
@@ -110,9 +109,12 @@
   height: 70px;
   z-index: 1;
   display:flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center
 }
 .title{
-  flex:70%;
+  flex:80%;
   color:white;
   font-size: 25px;
   text-align: left;

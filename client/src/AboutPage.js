@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import './AboutPage.css';
+import stylesheet from './AboutPage.module.css';
 import { Modal, Button} from "react-bootstrap";
 
 
@@ -12,9 +12,12 @@ export default function AboutPage() {
     // assuming the file is either text file or an image. Conditional rendering added
     return (
         <>
-            <Button block variant="outline-primary" onClick={handleShow}>
-              {"About"}
-            </Button>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"center",height:"70px",justifyContent:"center"}}>
+                <button class={stylesheet.button} onClick={handleShow}>
+                {"About"}
+                </button>
+            </div>
+            
 
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
