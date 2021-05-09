@@ -99,9 +99,12 @@
   cursor: pointer;
 }
 
-
+.page{
+  padding-left: 30px;
+  padding-right: 30px;
+}
 .top-nav {
-  background-color:#957DAD;
+  background-color:#ecd6fc;
   top:0px;
   left:0px;
   right:0px;
@@ -115,7 +118,9 @@
 }
 .title{
   flex:80%;
-  color:white;
+  color:#af77d5;
+  text-shadow: #000 0px 0px 1px;
+  font-weight: bold;
   font-size: 25px;
   text-align: left;
 }

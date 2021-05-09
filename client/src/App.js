@@ -624,7 +624,7 @@ class App extends Component {
             display: 'inline',
             marginLeft: "16px",
             marginRight: "16px",
-            backgroundColor: "#8080807a",
+            backgroundColor: "#ececec",
             borderRadius: "5px",
             textAlign: 'center',
             display: 'flex',
@@ -734,10 +734,9 @@ class App extends Component {
           <div className="About"><AboutPage/></div>
         </div>
         <hr />
+        <div className="page">
         <Row>
           <Col>
-            <strong>Memes</strong>
-            <hr />
             <Search
               searchQuery={this.state.searchField}
               setSearchQuery={this.onSearchBarInput}
@@ -773,8 +772,6 @@ class App extends Component {
           </Col>
           <Col>
             <Container>
-              <strong>Post and Profile</strong>
-              <hr />
               <Tabs defaultActiveKey="post" id="profile-post-tab">
                 <Tab eventKey="post" title="Post">
                   <br />
@@ -817,17 +814,17 @@ class App extends Component {
                   <hr />
                   <Form onSubmit={this.updateSubmit}>
                     <Row>
-                      <Col xs={3}>Content</Col>
+                      <Col xs={3}>Caption</Col>
                       <Col xs={8}><textarea className="textInputBox" onChange={e => { this.setState({ value: e.target.value }); }} /></Col>
                     </Row>
 
                     <Row>
-                      <Col xs={3}>Location</Col>
+                      <Col xs={3}>Key words</Col>
                       <Col xs={8}><textarea className="locationInputBox" onChange={e => { this.setState({ location: e.target.value }); }} /></Col>
                     </Row>
-
+                    <hr />
                     <Row>
-                      <Col xs={{ span: 10, offset: 1 }} style={{ display: "flex" }}>
+                      <Col xs={{ span: 5, offset: 1 }} style={{ display: "flex" }}>
                         <Picky
                           id="category picker"
                           options={["free", "premium"]}
@@ -842,10 +839,7 @@ class App extends Component {
                           dropdownHeight={200}
                         />
                       </Col>
-                    </Row>
-
-                    <Row>
-                      <Col xs={{ span: 10, offset: 1 }} style={{ display: "flex" }}>
+                      <Col xs={{ span: 5, offset: 1 }} style={{ display: "flex" }}>
                         <Picky
                           id="tag picker"
                           options={["NU 🟣", "Funny 😂", "WTF 🤨", "Awesome 😎", "Wholesome ❤️"]}
@@ -889,7 +883,6 @@ class App extends Component {
                       <Button disabled> Get Transaction Receipt </Button>
                     )}
 
-                  <hr />
                   <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash}
                     contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash}
                     blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed} />
@@ -959,6 +952,7 @@ class App extends Component {
             </Container>
           </Col>
         </Row>
+        </div>
 
 
         <div class="app-footer">

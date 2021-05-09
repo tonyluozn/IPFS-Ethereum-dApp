@@ -5,3 +5,10 @@ table.fixed td {
     overflow:scroll; 
 }
 
+.wrapper{
+    margin-top:20px;
+}
+
+.left{
+    width:300px;
+}
