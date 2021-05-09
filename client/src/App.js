@@ -10,6 +10,7 @@ import MemeToken from './MemeToken';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Table, Button, Form, Row, Col, ListGroup, Tabs, Tab, DropdownButton, Dropdown } from 'react-bootstrap';
 import ViewNews from "./ViewNews";
+import AboutPage from "./AboutPage";
 import { DownCircleTwoTone, UpCircleTwoTone, DownOutlined, UpOutlined } from '@ant-design/icons';
 import Receipt from "./Receipt";
 import Search from "./search"
@@ -728,7 +729,10 @@ class App extends Component {
     //render website
     return (
       <div className="App">
-        <p className="App-header">Northwestern Meme Sharing Platform</p>
+        <div class="top-nav">
+          <p className="title">NU Meme Sharing</p>
+          <div className="About"><AboutPage/></div>
+        </div>
         <hr />
         <Row>
           <Col>
@@ -955,10 +959,6 @@ class App extends Component {
             </Container>
           </Col>
         </Row>
-
-        <p className="App-header">About</p>
-
-        <hr />
       </div>
     );
   } //render
