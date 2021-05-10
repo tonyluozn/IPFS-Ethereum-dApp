@@ -119,7 +119,7 @@ export default function ViewNews(props) {
       <Popover id="popover-basic">
         <Popover.Title as="h3">Successfully Copied!</Popover.Title>
         <Popover.Content>
-          Feel free to use this in discord (wherever you want)!
+          Feel free to use this in discord (or wherever you want)!
         </Popover.Content>
       </Popover>
     );
@@ -157,7 +157,7 @@ export default function ViewNews(props) {
                               <ButtonGroup className="links">
                                 <Button className="file-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</Button>
                               <OverlayTrigger trigger="focus" placement="top" overlay={copyPrompt}>
-                                <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.fileHash)}}>Copy</Button>
+                                <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("Sending this funny meme via NU Meme Platform(https://nu-meme-sharing-dapp.web.app/): https://gateway.ipfs.io/ipfs/"+props.update.fileHash)}}>Copy</Button>
                               </OverlayTrigger>
                                </ButtonGroup>
                           </Col>
@@ -166,7 +166,7 @@ export default function ViewNews(props) {
                               <ButtonGroup className="links">
                                 <Button className="img-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</Button>
                                 <OverlayTrigger trigger="focus" placement="top" overlay={copyPrompt}>
-                                  <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.imageHash)}}>Copy</Button>
+                                  <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("Sending this funny meme via NU Meme Platform(https://nu-meme-sharing-dapp.web.app/): https://gateway.ipfs.io/ipfs/"+props.update.imageHash)}}>Copy</Button>
                                 </OverlayTrigger>
                               </ButtonGroup>
                             </Col>
