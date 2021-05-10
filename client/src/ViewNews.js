@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import './ViewNews.css';
-import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl, ButtonGroup} from "react-bootstrap";
+import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl, ButtonGroup, Popover, OverlayTrigger} from "react-bootstrap";
 import storehash from './storehash';
 import ReactAudioPlayer from 'react-audio-player';
 import MemeToken from "./MemeToken";
@@ -115,6 +115,16 @@ export default function ViewNews(props) {
         }
       });
     };
+    const copyPrompt = (
+      <Popover id="popover-basic">
+        <Popover.Title as="h3">Successfully Copied!</Popover.Title>
+        <Popover.Content>
+          Feel free to use this in discord (wherever you want)!
+        </Popover.Content>
+      </Popover>
+    );
+      
+   
 
     // assuming the file is either text file or an image. Conditional rendering added
     return (
@@ -142,18 +152,22 @@ export default function ViewNews(props) {
                       <Col>
                         <Row><Col><p>{content}</p></Col></Row>
                         {media}
-                        <Row>
-                          <Col>
-                            <ButtonGroup className="links">
-                              <Button className="file-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</Button>
-                              <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.fileHash)}}>Copy</Button>
-                            </ButtonGroup>
+                          <Row>
+                            <Col>
+                              <ButtonGroup className="links">
+                                <Button className="file-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.fileHash}>File Link</Button>
+                              <OverlayTrigger trigger="focus" placement="top" overlay={copyPrompt}>
+                                <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.fileHash)}}>Copy</Button>
+                              </OverlayTrigger>
+                               </ButtonGroup>
                           </Col>
                           {props.update.imageHash?
                             <Col>
                               <ButtonGroup className="links">
                                 <Button className="img-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/"+props.update.imageHash}>Image Link</Button>
-                                <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.imageHash)}}>Copy</Button>
+                                <OverlayTrigger trigger="focus" placement="top" overlay={copyPrompt}>
+                                  <Button className="copy" variant="outline-primary" onClick={() => {navigator.clipboard.writeText("https://gateway.ipfs.io/ipfs/"+props.update.imageHash)}}>Copy</Button>
+                                </OverlayTrigger>
                               </ButtonGroup>
                             </Col>
                             :
