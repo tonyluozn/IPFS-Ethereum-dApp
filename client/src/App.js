@@ -603,7 +603,7 @@ class App extends Component {
         <Row>
           <Col xs={4} align="left" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
             User: {update.username === '' ? update.user.substring(0, 9) : update.username} <br/>
-            Location: {update.location}
+            Title: {update.location}
             {/*Reputation: {update.user_repu} */}
           </Col>
           <Col>
@@ -814,14 +814,14 @@ class App extends Component {
                   <hr />
                   <Form onSubmit={this.updateSubmit}>
                     <Row>
+                      <Col xs={3}>Title</Col>
+                      <Col xs={8}><textarea className="locationInputBox" onChange={e => { this.setState({ location: e.target.value }); }} /></Col>
+                    </Row>
+                    <Row>
                       <Col xs={3}>Caption</Col>
                       <Col xs={8}><textarea className="textInputBox" onChange={e => { this.setState({ value: e.target.value }); }} /></Col>
                     </Row>
 
-                    <Row>
-                      <Col xs={3}>Key words</Col>
-                      <Col xs={8}><textarea className="locationInputBox" onChange={e => { this.setState({ location: e.target.value }); }} /></Col>
-                    </Row>
                     <hr />
                     <Row>
                       <Col xs={{ span: 5, offset: 1 }} style={{ display: "flex" }}>
