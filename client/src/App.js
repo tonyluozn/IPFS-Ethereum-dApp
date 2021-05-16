@@ -29,15 +29,15 @@ const list = [
   { name: "Wholesome ❤️" },
 ];
 
-const MenuItem = ({text, selected}) => {
+const MenuItem = ({ text, selected }) => {
   return <div
     className={`menu-item ${selected ? 'active' : ''}`}
-    >{text}</div>;
+  >{text}</div>;
 };
 
 export const Menu = (list, selected) =>
   list.map(el => {
-    const {name} = el;
+    const { name } = el;
 
     return <MenuItem text={name} key={name} selected={selected} />;
   });
@@ -56,66 +56,16 @@ const ArrowRight = Arrow({ text: '>', className: 'arrow-next' });
 const selected = 'item1';
 
 /* global BigInt */
-//force the browser to connect to metamask upon entering the site
-window.addEventListener('load', async () => {
-  // Modern dapp browsers...
-  if (window.ethereum) {
-    window.web3 = new Web3(window.ethereum);
-    try {
-      // Acccounts now exposed
-      window.ethereum.enable();
-      const accounts = await web3.eth.requestAccounts();
-      web3.eth.sendTransaction({/* ... */ });
-    } catch (error) { }
-  }
-  // Legacy dapp browsers...
-  else if (window.web3) {
-    window.web3 = new Web3(web3.currentProvider);
-    // Acccounts always exposed
-    web3.eth.sendTransaction({/* ... */ });
-  }
-  // Non-dapp browsers...
-  else {
-    console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-  }
-});
 
 class App extends Component {
 
   constructor() {
     super();
-    //force the browser to connect to metamask upon entering the site
-    window.addEventListener('load', async () => {
-      // Modern dapp browsers...
-      if (window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-        try {
-          // Acccounts now exposed
-          window.ethereum.enable();
-          const accounts = await web3.eth.requestAccounts();
-          web3.eth.sendTransaction({/* ... */ });
-        } catch (error) { }
-      }
-      // Legacy dapp browsers...
-      else if (window.web3) {
-        window.web3 = new Web3(web3.currentProvider);
-        // Acccounts always exposed
-        web3.eth.sendTransaction({/* ... */ });
-      }
-      // Non-dapp browsers...
-      else {
-        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-      }
-    });
-
     this.updateNews();
     this.menuItems = Menu(list, selected);
     //get user's metamask account address
-    this.getWalletAddress();
-
-
+    //this.getWalletAddress();
     // this.getReputation();
-
     // approve the spender to spend on contract creator's behalf, calling this only once
     //this.approve();
 
@@ -199,13 +149,17 @@ class App extends Component {
   // }
   // get users' wallet address
   getWalletAddress = async () => {
+
+    window.web3 = new Web3(window.ethereum);
+    window.ethereum.enable();
+
     await web3.eth.getAccounts().then((accounts) => {
       this.setState({ walletAddress: accounts[0] });
       console.log('Fetching address ' + this.state.walletAddress);
 
-      if (typeof this.state.walletAddress === 'string' && this.state.walletAddress != ''){
-          this.setState({ isLoggedIn: true});
-          console.log('Login successful');
+      if (typeof this.state.walletAddress === 'string' && this.state.walletAddress != '') {
+        this.setState({ isLoggedIn: true });
+        console.log('Login successful');
       }
 
       // Check if wallet address exists
@@ -230,13 +184,13 @@ class App extends Component {
         // );
       }
     });
-    if (this.state.isLoggedIn){
+    if (this.state.isLoggedIn) {
       const posts = await storehash.methods.getVotedPosts(this.state.walletAddress).call()
         .then((result) => {
           return result;
         });
 
-      this.setState({ votedPosts: posts});
+      this.setState({ votedPosts: posts });
       console.log("After update posts:" + this.state.votedPosts)
     }
   }
@@ -349,7 +303,7 @@ class App extends Component {
         if (this.state.verified) {
           //Trying to use '' as an image hash/place holder
           storehash.methods.sendUpdate(this.state.ipfsHash, this.state.location,
-            time, '', this.state.category, this.state.tag,this.state.extension).send({
+            time, '', this.state.category, this.state.tag, this.state.extension).send({
               from: this.state.walletAddress
             }, (error, transactionHash) => {
               this.setState({ transactionHash });
@@ -384,15 +338,15 @@ class App extends Component {
 
   }
 
-  updateReadytime = async() => {
+  updateReadytime = async () => {
     const address = this.state.walletAddress;
     const isReady = await MemeToken.methods.isReady(address).call().then((result) => {
       console.log(result);
       return result;
-    }).catch( error =>
+    }).catch(error =>
       console.log(error)
     );
-    this.setState({isReady: isReady});
+    this.setState({ isReady: isReady });
   }
 
 
@@ -401,11 +355,11 @@ class App extends Component {
     const address = this.state.walletAddress;
     const amount = BigInt(1000000000000000000 * tokens);
     //MemeToken.methods.
-    MemeToken.methods.isReady(address).call().then((result)=>{
-      console.log("is ready? "+result);
+    MemeToken.methods.isReady(address).call().then((result) => {
+      console.log("is ready? " + result);
     });
-    MemeToken.methods.getReadytime(address).call().then((result)=>{
-      console.log("Ready time is "+result);
+    MemeToken.methods.getReadytime(address).call().then((result) => {
+      console.log("Ready time is " + result);
     });
     MemeToken.methods.buy(amount).send({
       from: this.state.walletAddress
@@ -457,26 +411,26 @@ class App extends Component {
 
   // report post (downvote)
   downvotePost = async (address, hash, id) => {
-    if(!this.state.isLoggedIn){
+    if (!this.state.isLoggedIn) {
       console.log("can't downvote when logged out")
       return;
     }
 
-    if (this.state.votedPosts.some(el => el.id === id)){
+    if (this.state.votedPosts.some(el => el.id === id)) {
       console.log("can't downvote twice")
       return;
     }
     console.log('call reportPost function');
     var temp = storehash.methods
-        .downvote(this.state.walletAddress, address, hash, id).send({
-      from: this.state.walletAddress
-    });
+      .downvote(this.state.walletAddress, address, hash, id).send({
+        from: this.state.walletAddress
+      });
     const authorized = await storehash.methods
-    .checkVotePostAccess(this.state.walletAddress, hash).call().then((result) => {
-      return result;
-    });;
+      .checkVotePostAccess(this.state.walletAddress, hash).call().then((result) => {
+        return result;
+      });;
 
-    if (authorized){
+    if (authorized) {
       this.updateNews();
       console.log("authorized to vote")
     } else {
@@ -486,25 +440,25 @@ class App extends Component {
 
   //upvote post
   upvotePost = async (address, hash, id) => {
-    if(!this.state.isLoggedIn){
+    if (!this.state.isLoggedIn) {
       console.log("can't upvote when logged out")
       return;
     }
-    if (this.state.votedPosts.some(el => el.id === id)){
+    if (this.state.votedPosts.some(el => el.id === id)) {
       console.log("can't upvote twice")
       return;
     }
     console.log('call upVote function');
     var temp = storehash.methods
-        .upvote(this.state.walletAddress, address, hash, id).send({
-      from: this.state.walletAddress
-    });
+      .upvote(this.state.walletAddress, address, hash, id).send({
+        from: this.state.walletAddress
+      });
     const authorized = await storehash.methods
-    .checkVotePostAccess(this.state.walletAddress, hash).call().then((result) => {
-      return result;
-    });
+      .checkVotePostAccess(this.state.walletAddress, hash).call().then((result) => {
+        return result;
+      });
 
-    if (authorized){
+    if (authorized) {
       this.updateNews();
       let scaledTokens = 0.05;
       this.getToken(scaledTokens);
@@ -602,12 +556,12 @@ class App extends Component {
       <ListGroup.Item key={index}>
         <Row>
           <Col xs={4} align="left" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
-            User: {update.username === '' ? update.user.substring(0, 9) : update.username} <br/>
+            User: {update.username === '' ? update.user.substring(0, 9) : update.username} <br />
             Title: {update.location}
             {/*Reputation: {update.user_repu} */}
           </Col>
           <Col>
-          {/*style={{filter: update.user_repu == 21 ? 'blur(8px)' : 'blur(0px)'}}*/}
+            {/*style={{filter: update.user_repu == 21 ? 'blur(8px)' : 'blur(0px)'}}*/}
             {update.imageHash != "" &&
               <img
                 className={update.category === "free" ? "preview-free" : "preview"}
@@ -618,7 +572,7 @@ class App extends Component {
             }
           </Col>
           <Col >
-            <ViewNews update={update} user={this.state.walletAddress} />
+            <ViewNews update={update} user={this.state.walletAddress} isLoggedIn={this.state.isLoggedIn} />
           </Col>
           <div style={{
             display: 'inline',
@@ -636,31 +590,31 @@ class App extends Component {
           }}
           >
 
-            {this.state.votedPosts.some(el => el.id === update.id && el.vote === true)?(
-              <UpOutlined style={{ fontSize: '20px', color : "forestgreen"}}
+            {this.state.votedPosts.some(el => el.id === update.id && el.vote === true) ? (
+              <UpOutlined style={{ fontSize: '20px', color: "forestgreen" }}
                 onClick={() => console.log("can't upvote twice")}
               />
             ) : (
-              <UpOutlined
-                style={{ fontSize: '16px' }}
-                onClick={() => this.upvotePost(update.user, update.fileHash, update.id)}
-              />
-            )}
+                <UpOutlined
+                  style={{ fontSize: '16px' }}
+                  onClick={() => this.upvotePost(update.user, update.fileHash, update.id)}
+                />
+              )}
 
             <Col xs={0.1} align="center" style={{ display: "flex", alignItems: "flex-start", textOverflow: "clip" }}>
               {update.post_repu}
             </Col>
 
-            {this.state.votedPosts.some(el => el.id === update.id && el.vote === false)?(
-              <DownOutlined style={{ fontSize: '20px', color : "crimson"}}
+            {this.state.votedPosts.some(el => el.id === update.id && el.vote === false) ? (
+              <DownOutlined style={{ fontSize: '20px', color: "crimson" }}
                 onClick={() => console.log("can't downvote twice")}
               />
             ) : (
-              <DownOutlined
-                style={{ fontSize: '16px' }}
-                onClick={() => this.downvotePost(update.user, update.fileHash, update.id)}
-              />
-            )}
+                <DownOutlined
+                  style={{ fontSize: '16px' }}
+                  onClick={() => this.downvotePost(update.user, update.fileHash, update.id)}
+                />
+              )}
 
           </div>
         </Row>
@@ -676,13 +630,13 @@ class App extends Component {
   }
 
   handleMessageBox(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        this.setState({
-          messageBox: ""
-        });
-      }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      this.setState({
+        messageBox: ""
+      });
     }
+  }
   render() {
     //newsList length
     const news_total = this.state.newsList.length;
@@ -700,8 +654,8 @@ class App extends Component {
           || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
           || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
         )
-      && e.category === 'free'
-      && e.tag.includes(this.state.tag_selected));
+        && e.category === 'free'
+        && e.tag.includes(this.state.tag_selected));
 
     const trending_free_posts = this.state.newsList
       .filter(e =>
@@ -709,8 +663,8 @@ class App extends Component {
           || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
           || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
         )
-      && e.category === 'free'
-      && e.tag.includes(this.state.tag_selected))
+        && e.category === 'free'
+        && e.tag.includes(this.state.tag_selected))
       .sort(function (a, b) { return a.post_repu - b.post_repu });
 
     const filtered_premium_posts = this.state.newsList
@@ -719,8 +673,8 @@ class App extends Component {
           || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
           || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
         )
-      && e.category === 'premium'
-      && e.tag.includes(this.state.tag_selected))
+        && e.category === 'premium'
+        && e.tag.includes(this.state.tag_selected))
       .sort(function (a, b) { return a.post_repu - b.post_repu });
 
     const cur_tag = this.state.tag_selected;
@@ -731,238 +685,246 @@ class App extends Component {
       <div className="App">
         <div class="top-nav">
           <p className="title">NU Meme Sharing</p>
-          <div className="About"><AboutPage/></div>
+          <div className="About"><AboutPage /></div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", height: "70px", justifyContent: "center" }}>
+            <button className="connectButton" onClick={this.getWalletAddress}>
+              {"Connect Wallet"}
+            </button>
+          </div>
         </div>
         <hr />
         <div className="page">
-        <Row>
-          <Col>
-            <Search
-              searchQuery={this.state.searchField}
-              setSearchQuery={this.onSearchBarInput}
-            />
-            <div style={{display: 'flex',  justifyContent:'center', alignItems:'center'}}>
-              <ScrollMenu
-                data={menu}
-                arrowLeft={ArrowLeft}
-                arrowRight={ArrowRight}
-                onSelect={key => {this.setState({
-                      tag_selected: key.includes("All")? '' : key });
-                      console.log(this.state.tag_selected)}}
+          <Row>
+            <Col>
+              <Search
+                searchQuery={this.state.searchField}
+                setSearchQuery={this.onSearchBarInput}
               />
-            </div>
-            <hr />
-            <Tabs defaultActiveKey="trending" id="tab">
-              <Tab eventKey="trending" title="Trending">
-                <div className="list-wrapper">
-                  <p>{this.renderNews(trending_free_posts)}</p>
-                </div>
-              </Tab>
-              <Tab eventKey="fresh" title="Fresh">
-                <div className="list-wrapper">
-                  <p>{this.renderNews(fresh_free_posts)}</p>
-                </div>
-              </Tab>
-              <Tab eventKey="premium" title="Premium">
-                <div className="list-wrapper">
-                  <p>{this.renderNews(filtered_premium_posts)}</p>
-                </div>
-              </Tab>
-            </Tabs>
-          </Col>
-          <Col>
-            <Container>
-              <Tabs defaultActiveKey="post" id="profile-post-tab">
-                <Tab eventKey="post" title="Post">
-                  <br />
-                  <Row>
-                    <Col span={8}>
-                      <p> Metamask account: {this.state.walletAddress}</p>
-                    </Col>
-                  </Row>
-                  <div className="button">
-                    <Row>
-                      <Col xs={3}>
-                        {(this.state.isLoggedIn)?(
-                          <Button
-                            bsStyle="primary"
-                            title={this.state.isReady ? "Click to receive the specified amount of tokens" : "You cannot obtain tokens at this time!"}
-                            disabled={this.state.isReady ? false : true}
-                            style={{ width: "130px"}}
-                            type="submit"
-                            onClick={() => this.getToken(this.state.tokensRequested)}>
-                            Get Tokens
-                          </Button>
-                        ):(
-                          <Button
-                            bsStyle="primary"
-                            style={{ width: "130px"}}
-                            disabled>
-                            Get Tokens
-                          </Button>
-                        )}
-                      </Col>
-                      <Col xs={8}>
-                        <Form.Control
-                          type="number"
-                          placeholder="Number of Tokens"
-                          onChange={e => { this.setState({ tokensRequested: e.target.value }); }}>
-                        </Form.Control>
-                      </Col>
-                    </Row>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <ScrollMenu
+                  data={menu}
+                  arrowLeft={ArrowLeft}
+                  arrowRight={ArrowRight}
+                  onSelect={key => {
+                    this.setState({
+                      tag_selected: key.includes("All") ? '' : key
+                    });
+                    console.log(this.state.tag_selected)
+                  }}
+                />
+              </div>
+              <hr />
+              <Tabs defaultActiveKey="trending" id="tab">
+                <Tab eventKey="trending" title="Trending">
+                  <div className="list-wrapper">
+                    <p>{this.renderNews(trending_free_posts)}</p>
                   </div>
-                  <hr />
-                  <Form onSubmit={this.updateSubmit}>
-                    <Row>
-                      <Col xs={3}>Title</Col>
-                      <Col xs={8}><textarea className="locationInputBox" onChange={e => { this.setState({ location: e.target.value }); }} /></Col>
-                    </Row>
-                    <Row>
-                      <Col xs={3}>Caption</Col>
-                      <Col xs={8}><textarea className="textInputBox" onChange={e => { this.setState({ value: e.target.value }); }} /></Col>
-                    </Row>
-
-                    <hr />
-                    <Row>
-                      <Col xs={{ span: 5, offset: 1 }} style={{ display: "flex" }}>
-                        <Picky
-                          id="category picker"
-                          options={["free", "premium"]}
-                          value={this.state.category}
-                          onChange={e => this.setState({ category: e })}
-                          open={false}
-                          multiple={false}
-                          placeholder={"Select a Category"}
-                          includeSelectAll={false}
-                          keepOpen={false}
-                          includeFilter={false}
-                          dropdownHeight={200}
-                        />
-                      </Col>
-                      <Col xs={{ span: 5, offset: 1 }} style={{ display: "flex" }}>
-                        <Picky
-                          id="tag picker"
-                          options={["NU 🟣", "Funny 😂", "WTF 🤨", "Awesome 😎", "Wholesome ❤️"]}
-                          value={this.state.tag}
-                          onChange={e => this.setState({ tag: e })}
-                          open={false}
-                          multiple={false}
-                          placeholder={"Select a tag"}
-                          includeSelectAll={false}
-                          keepOpen={false}
-                          includeFilter={true}
-                          dropdownHeight={200}
-                        />
-                        </Col>
-                    </Row>
-
-                    <br />
-
-                    <Row>
-                      <Col xs={9}>
-                        <input className="input" type="file" onChange={this.captureFile} />
-                      </Col>
-                      <Col xs={3}>
-                        <div className="button">
-                          {(!this.state.isLoggedIn || (this.state.value == '' || this.state.category.includes("S")
-                            || this.state.tag == '' || this.state.location == '')) ? (
-                              <Button bsStyle="primary" style={{ width: "130px" }} type="submit" disabled> Submit
-                              </Button>
-                            ) : (
-                              <Button bsStyle="primary" style={{ width: "130px" }} type="submit" > Submit
-                              </Button>
-                          )}
-                        </div>
-                      </Col>
-                    </Row>
-                  </Form>
-                  <hr />
-                    {(this.state.isLoggedIn)?(
-                      <Button onClick={this.getTransactionReceipt}> Get Transaction Receipt </Button>
-                    ):(
-                      <Button disabled> Get Transaction Receipt </Button>
-                    )}
-
-                  <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash}
-                    contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash}
-                    blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed} />
                 </Tab>
-                <Tab eventKey="profile" title="Profile">
-                  {(this.state.isLoggedIn)?(
-                    <div>
-                    <br />
-                    <Row>
-                      <Col xs={3} align="left">
-                        <p> Address: </p>
-                        <p> Username: </p>
-                        <p> Reputation:  </p>
-                        <p> NUMT Balance: </p>
-                        <p> Bio: </p>
-                      </Col>
-                      <Col xs={8} align="left">
-                        <p> {this.state.walletAddress}</p>
-                        <p> {this.state.username} </p>
-                        <p> {this.state.reputation} </p>
-                        <p> {this.state.token_balance} </p>
-                        <p> {this.state.bio} </p>
-                      </Col>
-                    </Row>
-                    <hr />
-                    <Row>
-                      <Col xs={3}>
-                        New Username:
-                        </Col>
-                      <Col xs={8}>
-                        <textarea className="nameInputBox"
-                          maxlength="32"
-                          rows="1" cols="50"
-                          onKeyPress={(e) => { this.handleMessageBox(e) }}
-                          onChange={e => { this.setState({ nameField: e.target.value }); }} />
-                      </Col>
-                    </Row>
-                    <hr />
-                    <Row>
-                      <Col xs={3}>
-                        New Bio:
-                        </Col>
-                      <Col xs={8}>
-                        <textarea className="bioInputBox"
-                          rows="1" cols="50"
-                          maxlength="32"
-                          onKeyPress={(e) => { this.handleMessageBox(e) }}
-                          onChange={e => { this.setState({ bioField: e.target.value }); }} />
-                      </Col>
-                    </Row>
-                    </div>
-                  ):(<div></div>)}
-                  <hr />
-                  <div className="button">
-                    {(this.state.isLoggedIn)?(
-                      <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.editProfile}> Set Profile</Button>
-                    ):(
-                      <div>
-                      <p><i>please connect browser to your MetaMask Account and press login or refresh the page. </i></p>
-                      <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.getWalletAddress}>Login</Button>
-                      </div>
-                    )}
+                <Tab eventKey="fresh" title="Fresh">
+                  <div className="list-wrapper">
+                    <p>{this.renderNews(fresh_free_posts)}</p>
                   </div>
-                  <hr />
+                </Tab>
+                <Tab eventKey="premium" title="Premium">
+                  <div className="list-wrapper">
+                    <p>{this.renderNews(filtered_premium_posts)}</p>
+                  </div>
                 </Tab>
               </Tabs>
-            </Container>
-          </Col>
-        </Row>
+            </Col>
+            <Col>
+              <Container>
+                <Tabs defaultActiveKey="post" id="profile-post-tab">
+                  <Tab eventKey="post" title="Post">
+                    <br />
+                    <Row>
+                      <Col span={8}>
+                        <p> Metamask account: {this.state.walletAddress}</p>
+                      </Col>
+                    </Row>
+                    <div className="button">
+                      <Row>
+                        <Col xs={3}>
+                          {(this.state.isLoggedIn) ? (
+                            <Button
+                              bsStyle="primary"
+                              title={this.state.isReady ? "Click to receive the specified amount of tokens" : "You cannot obtain tokens at this time!"}
+                              disabled={this.state.isReady ? false : true}
+                              style={{ width: "130px" }}
+                              type="submit"
+                              onClick={() => this.getToken(this.state.tokensRequested)}>
+                              Get Tokens
+                          </Button>
+                          ) : (
+                              <Button
+                                bsStyle="primary"
+                                style={{ width: "130px" }}
+                                disabled>
+                                Get Tokens
+                          </Button>
+                            )}
+                        </Col>
+                        <Col xs={8}>
+                          <Form.Control
+                            type="number"
+                            placeholder="Number of Tokens"
+                            onChange={e => { this.setState({ tokensRequested: e.target.value }); }}>
+                          </Form.Control>
+                        </Col>
+                      </Row>
+                    </div>
+                    <hr />
+                    <Form onSubmit={this.updateSubmit}>
+                      <Row>
+                        <Col xs={3}>Title</Col>
+                        <Col xs={8}><textarea className="locationInputBox" onChange={e => { this.setState({ location: e.target.value }); }} /></Col>
+                      </Row>
+                      <Row>
+                        <Col xs={3}>Caption</Col>
+                        <Col xs={8}><textarea className="textInputBox" onChange={e => { this.setState({ value: e.target.value }); }} /></Col>
+                      </Row>
+
+                      <hr />
+                      <Row>
+                        <Col xs={{ span: 5, offset: 1 }} style={{ display: "flex" }}>
+                          <Picky
+                            id="category picker"
+                            options={["free", "premium"]}
+                            value={this.state.category}
+                            onChange={e => this.setState({ category: e })}
+                            open={false}
+                            multiple={false}
+                            placeholder={"Select a Category"}
+                            includeSelectAll={false}
+                            keepOpen={false}
+                            includeFilter={false}
+                            dropdownHeight={200}
+                          />
+                        </Col>
+                        <Col xs={{ span: 5, offset: 1 }} style={{ display: "flex" }}>
+                          <Picky
+                            id="tag picker"
+                            options={["NU 🟣", "Funny 😂", "WTF 🤨", "Awesome 😎", "Wholesome ❤️"]}
+                            value={this.state.tag}
+                            onChange={e => this.setState({ tag: e })}
+                            open={false}
+                            multiple={false}
+                            placeholder={"Select a tag"}
+                            includeSelectAll={false}
+                            keepOpen={false}
+                            includeFilter={true}
+                            dropdownHeight={200}
+                          />
+                        </Col>
+                      </Row>
+
+                      <br />
+
+                      <Row>
+                        <Col xs={9}>
+                          <input className="input" type="file" onChange={this.captureFile} />
+                        </Col>
+                        <Col xs={3}>
+                          <div className="button">
+                            {(!this.state.isLoggedIn || (this.state.value == '' || this.state.category.includes("S")
+                              || this.state.tag == '' || this.state.location == '')) ? (
+                                <Button bsStyle="primary" style={{ width: "130px" }} type="submit" disabled> Submit
+                              </Button>
+                              ) : (
+                                <Button bsStyle="primary" style={{ width: "130px" }} type="submit" > Submit
+                              </Button>
+                              )}
+                          </div>
+                        </Col>
+                      </Row>
+                    </Form>
+                    <hr />
+                    {(this.state.isLoggedIn) ? (
+                      <Button onClick={this.getTransactionReceipt}> Get Transaction Receipt </Button>
+                    ) : (
+                        <Button disabled> Get Transaction Receipt </Button>
+                      )}
+
+                    <Receipt ipfsHash={this.state.ipfsHash} imageHash={this.state.imageHash}
+                      contractAddress={this.state.contractAddress} transactionHash={this.state.transactionHash}
+                      blockNumber={this.state.blockNumber} gasUsed={this.state.gasUsed} />
+                  </Tab>
+                  <Tab eventKey="profile" title="Profile">
+                    {(this.state.isLoggedIn) ? (
+                      <div>
+                        <br />
+                        <Row>
+                          <Col xs={3} align="left">
+                            <p> Address: </p>
+                            <p> Username: </p>
+                            <p> Reputation:  </p>
+                            <p> NUMT Balance: </p>
+                            <p> Bio: </p>
+                          </Col>
+                          <Col xs={8} align="left">
+                            <p> {this.state.walletAddress}</p>
+                            <p> {this.state.username} </p>
+                            <p> {this.state.reputation} </p>
+                            <p> {this.state.token_balance} </p>
+                            <p> {this.state.bio} </p>
+                          </Col>
+                        </Row>
+                        <hr />
+                        <Row>
+                          <Col xs={3}>
+                            New Username:
+                        </Col>
+                          <Col xs={8}>
+                            <textarea className="nameInputBox"
+                              maxlength="32"
+                              rows="1" cols="50"
+                              onKeyPress={(e) => { this.handleMessageBox(e) }}
+                              onChange={e => { this.setState({ nameField: e.target.value }); }} />
+                          </Col>
+                        </Row>
+                        <hr />
+                        <Row>
+                          <Col xs={3}>
+                            New Bio:
+                        </Col>
+                          <Col xs={8}>
+                            <textarea className="bioInputBox"
+                              rows="1" cols="50"
+                              maxlength="32"
+                              onKeyPress={(e) => { this.handleMessageBox(e) }}
+                              onChange={e => { this.setState({ bioField: e.target.value }); }} />
+                          </Col>
+                        </Row>
+                      </div>
+                    ) : (<div></div>)}
+                    <hr />
+                    <div className="button">
+                      {(this.state.isLoggedIn) ? (
+                        <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.editProfile}> Set Profile</Button>
+                      ) : (
+                          <div>
+                            <p><i>please connect browser to your MetaMask Account and press login or refresh the page. </i></p>
+                            <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.getWalletAddress}>Login</Button>
+                          </div>
+                        )}
+                    </div>
+                    <hr />
+                  </Tab>
+                </Tabs>
+              </Container>
+            </Col>
+          </Row>
         </div>
 
 
         <div class="app-footer">
-                <p class="footer-contact"></p>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-                <div class="social-wrapper">
-                    <a target="_blank" aria-label="Socail media link: linkedin" href="https://www.linkedin.com/company/nu-blockchain-group/about/" class="fa fa-linkedin"></a>  
-                    <a target="_blank" aria-label="Socail media link: instagram" href="https://www.instagram.com/nublockchain/" class="fa fa-instagram"></a>
-                    <a target="_blank" aria-label="Socail media link: github" href="https://github.com/tonyluozn/IPFS-Ethereum-dApp" class="fa fa-github"></a>
-                </div>  
+          <p class="footer-contact"></p>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+          <div class="social-wrapper">
+            <a target="_blank" aria-label="Socail media link: linkedin" href="https://www.linkedin.com/company/nu-blockchain-group/about/" class="fa fa-linkedin"></a>
+            <a target="_blank" aria-label="Socail media link: instagram" href="https://www.instagram.com/nublockchain/" class="fa fa-instagram"></a>
+            <a target="_blank" aria-label="Socail media link: github" href="https://github.com/tonyluozn/IPFS-Ethereum-dApp" class="fa fa-github"></a>
+          </div>
         </div>
 
       </div>

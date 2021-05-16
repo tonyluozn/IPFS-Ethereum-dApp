@@ -162,3 +162,20 @@ opacity: 0.5;
 a.fa:focus {
 opacity: 0.5;
 }
+
+.connectButton{
+  border:none;
+  appearance: none;
+  background: white;
+  color:black;
+  font-size: 15px;
+  line-height: 20px;
+  height: 25px;
+  width: 120px;
+  border-radius: 12.5px;
+  text-align: center;
+}
+
+.connectButton:hover{
+  background-color: #eeeaea
+}
