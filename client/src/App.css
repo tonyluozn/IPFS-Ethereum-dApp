@@ -171,7 +171,8 @@ opacity: 0.5;
   font-size: 15px;
   line-height: 20px;
   height: 25px;
-  width: 120px;
+  font-weight: bold;
+  width: 140px;
   border-radius: 12.5px;
   text-align: center;
   margin-right: 10px;
@@ -188,8 +189,8 @@ opacity: 0.5;
   color:black;
   font-size: 15px;
   line-height: 20px;
-  height: 30px;
-  width: 120px;
+  height: 40px;
+  width: 140px;
   border-radius: 15px;
   text-align: center;
   margin-right: 10px;
@@ -206,13 +207,13 @@ opacity: 0.5;
 }
 .connect-token{
   color:black;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 15px;
   font-weight: bold;
 }
 
 .connect-address{
   color:black;
-  font-size: 7px;
+  font-size: 10px;
   line-height: 10px;
 }
