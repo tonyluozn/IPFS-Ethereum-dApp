@@ -11,13 +11,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Table, Button, Form, Row, Col, ListGroup, Tabs, Tab, DropdownButton, Dropdown } from 'react-bootstrap';
 import ViewNews from "./ViewNews";
 import AboutPage from "./AboutPage";
-import { DownCircleTwoTone, UpCircleTwoTone, DownOutlined, UpOutlined } from '@ant-design/icons';
+import { UserOutlined, DownCircleTwoTone, UpCircleTwoTone, DownOutlined, UpOutlined } from '@ant-design/icons';
 import Receipt from "./Receipt";
 import Search from "./search"
 import { useState } from 'react';
 import { Picky } from 'react-picky';
 import 'react-picky/dist/picky.css';
 import ScrollMenu from 'react-horizontal-scrolling-menu';
+import { Avatar } from 'antd';
+import { bool } from 'prop-types';
+
 
 // components for the side scrolling menu
 const list = [
@@ -64,7 +67,7 @@ class App extends Component {
     this.updateNews();
     this.menuItems = Menu(list, selected);
     //get user's metamask account address
-    //this.getWalletAddress();
+    //this.connectWallet();
     // this.getReputation();
     // approve the spender to spend on contract creator's behalf, calling this only once
     //this.approve();
@@ -148,7 +151,11 @@ class App extends Component {
   //   });
   // }
   // get users' wallet address
-  getWalletAddress = async () => {
+  disconnectWallet = async () => {
+    window.ethereum.disabled();
+  }
+
+  connectWallet = async () => {
 
     window.web3 = new Web3(window.ethereum);
     window.ethereum.enable();
@@ -681,15 +688,36 @@ class App extends Component {
     const menu = this.menuItems;
 
     //render website
+    const noShow=false;
+
     return (
       <div className="App">
         <div class="top-nav">
           <p className="title">NU Meme Sharing</p>
           <div className="About"><AboutPage /></div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", height: "70px", justifyContent: "center" }}>
-            <button className="connectButton" onClick={this.getWalletAddress}>
-              {"Connect Wallet"}
-            </button>
+            {(this.state.isLoggedIn) ? (
+              <button className="connectedButton" onClick={this.disconnectWallet}>{
+                <div className="connect-row">
+                  <div className="connect-info" style={{display:"flex",flexDirection:"column"}}>
+                    <span className="connect-token">{this.state.token_balance} NUMT</span>
+                    <span className="connect-address">{this.state.walletAddress.substring(0,15)}</span>
+                  </div>
+                  <div className="avatar">
+                    <div style={{width:"25px",height:"25px",borderRadius:"12.5px",backgroundColor:"yellow",position:"relative"}}>
+                      <div style={noShow?{display:"none"}:{width:"10px",height:"10px",borderRadius:"5px",position:"absolute",top:14,left:0,backgroundColor:"#0f0",border:"1.5px solid white"}}/>
+                      <Avatar
+                        size={24}
+                        icon={<UserOutlined />}
+                      />
+                    </div>
+                    
+                  </div>
+                </div>
+              }</button>
+            ) : (
+                <button className="connectButton" onClick={this.connectWallet}>{"Connect Wallet"}</button>
+              )}
           </div>
         </div>
         <hr />
@@ -904,7 +932,7 @@ class App extends Component {
                       ) : (
                           <div>
                             <p><i>please connect browser to your MetaMask Account and press login or refresh the page. </i></p>
-                            <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.getWalletAddress}>Login</Button>
+                            <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.connectWallet}>Login</Button>
                           </div>
                         )}
                     </div>

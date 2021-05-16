@@ -124,7 +124,7 @@
   text-align: left;
 }
 .About{
-  flex:20%;
+  flex:6%;
 }
 
 
@@ -174,8 +174,45 @@ opacity: 0.5;
   width: 120px;
   border-radius: 12.5px;
   text-align: center;
+  margin-right: 10px;
 }
 
 .connectButton:hover{
   background-color: #eeeaea
+}
+
+.connectedButton{
+  border:none;
+  appearance: none;
+  background: white;
+  color:black;
+  font-size: 15px;
+  line-height: 20px;
+  height: 30px;
+  width: 120px;
+  border-radius: 15px;
+  text-align: center;
+  margin-right: 10px;
+}
+.connect-row{
+  display:flex;
+}
+.connect-info{
+  flex:110%;
+}
+
+.avatar{
+  flex:5%;
+}
+.connect-token{
+  color:black;
+  font-size: 10px;
+  line-height: 15px;
+  font-weight: bold;
+}
+
+.connect-address{
+  color:black;
+  font-size: 7px;
+  line-height: 10px;
 }
