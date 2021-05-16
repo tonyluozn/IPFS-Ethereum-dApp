@@ -71,7 +71,33 @@ class App extends Component {
     // this.getReputation();
     // approve the spender to spend on contract creator's behalf, calling this only once
     //this.approve();
+    this.refresh();
 
+  }
+
+  refresh = async () =>{
+    await web3.eth.getAccounts().then((accounts) => {
+      this.setState({ walletAddress: accounts[0] });
+      if (typeof this.state.walletAddress === 'string' && this.state.walletAddress != '') {
+        this.setState({ isLoggedIn: true });
+        console.log('Login successful');
+      }
+      // Check if wallet address exists
+      if (this.state.isLoggedIn) {
+        this.updateReputation();
+        this.getTokenBalance();
+        this.getUsername(accounts[0]);
+        this.getBio(accounts[0]);
+      }
+    });
+    if (this.state.isLoggedIn) {
+      const posts = await storehash.methods.getVotedPosts(this.state.walletAddress).call()
+        .then((result) => {
+          return result;
+        });
+      this.setState({ votedPosts: posts });
+      console.log("After update posts:" + this.state.votedPosts)
+    }
   }
 
   //loading the list of hash from the deployed storeHash contract
@@ -152,45 +178,51 @@ class App extends Component {
   // }
   // get users' wallet address
   disconnectWallet = async () => {
-    window.ethereum.disabled();
+    this.setState({isLoggedIn:false});
   }
 
   connectWallet = async () => {
 
-    window.web3 = new Web3(window.ethereum);
-    window.ethereum.enable();
+    //window.web3 = new Web3(window.ethereum);
+    //window.ethereum.enable();
 
-    await web3.eth.getAccounts().then((accounts) => {
-      this.setState({ walletAddress: accounts[0] });
-      console.log('Fetching address ' + this.state.walletAddress);
+    await window.ethereum.send('eth_requestAccounts').then( async ()=>{
+      window.web3 = new Web3(window.ethereum);
+      await web3.eth.getAccounts().then((accounts) => {
+        this.setState({ walletAddress: accounts[0] });
+        console.log('Fetching address ' + this.state.walletAddress);
+  
+        if (typeof this.state.walletAddress === 'string' && this.state.walletAddress != '') {
+          this.setState({ isLoggedIn: true });
+          console.log('Login successful');
+        }
+  
+        // Check if wallet address exists
+        if (this.state.isLoggedIn) {
+          this.updateReputation();
+          this.getTokenBalance();
+          this.getUsername(accounts[0]);
+          this.getBio(accounts[0]);
+  
+          // send tokens to the first time users
+          // const amount = BigInt(1000000000000000000);
+          // await storehash.methods.checkFirstTimeUser(this.state.walletAddress).call().then((result) => {
+          //   if(result){
+          //     MemeToken.methods.buy(amount).send({
+          //       from: this.state.walletAddress
+          //     },(error,tokenTransactionHash) => {
+          //       console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
+          //     });
+          //   }
+          // }).catch( error =>
+          //   console.log(error)
+          // );
+        }
+      });
+    
+    })
 
-      if (typeof this.state.walletAddress === 'string' && this.state.walletAddress != '') {
-        this.setState({ isLoggedIn: true });
-        console.log('Login successful');
-      }
 
-      // Check if wallet address exists
-      if (this.state.isLoggedIn) {
-        this.updateReputation();
-        this.getTokenBalance();
-        this.getUsername(accounts[0]);
-        this.getBio(accounts[0]);
-
-        // send tokens to the first time users
-        // const amount = BigInt(1000000000000000000);
-        // await storehash.methods.checkFirstTimeUser(this.state.walletAddress).call().then((result) => {
-        //   if(result){
-        //     MemeToken.methods.buy(amount).send({
-        //       from: this.state.walletAddress
-        //     },(error,tokenTransactionHash) => {
-        //       console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
-        //     });
-        //   }
-        // }).catch( error =>
-        //   console.log(error)
-        // );
-      }
-    });
     if (this.state.isLoggedIn) {
       const posts = await storehash.methods.getVotedPosts(this.state.walletAddress).call()
         .then((result) => {
@@ -688,7 +720,7 @@ class App extends Component {
     const menu = this.menuItems;
 
     //render website
-    const noShow=false;
+    const noShow = false;
 
     return (
       <div className="App">
@@ -699,19 +731,19 @@ class App extends Component {
             {(this.state.isLoggedIn) ? (
               <button className="connectedButton" onClick={this.disconnectWallet}>{
                 <div className="connect-row">
-                  <div className="connect-info" style={{display:"flex",flexDirection:"column"}}>
+                  <div className="connect-info" style={{ display: "flex", flexDirection: "column" }}>
                     <span className="connect-token">{this.state.token_balance} NUMT</span>
-                    <span className="connect-address">{this.state.walletAddress.substring(0,15)}</span>
+                    <span className="connect-address">{this.state.walletAddress.substring(0, 15)}</span>
                   </div>
                   <div className="avatar">
-                    <div style={{width:"25px",height:"25px",borderRadius:"12.5px",backgroundColor:"yellow",position:"relative"}}>
-                      <div style={noShow?{display:"none"}:{width:"10px",height:"10px",borderRadius:"5px",position:"absolute",top:14,left:0,backgroundColor:"#0f0",border:"1.5px solid white"}}/>
+                    <div style={{ width: "25px", height: "25px", borderRadius: "12.5px", backgroundColor: "yellow", position: "relative" }}>
+                      <div style={noShow ? { display: "none" } : { width: "10px", height: "10px", borderRadius: "5px", position: "absolute", top: 14, left: 0, backgroundColor: "#0f0", border: "1.5px solid white" }} />
                       <Avatar
                         size={24}
                         icon={<UserOutlined />}
                       />
                     </div>
-                    
+
                   </div>
                 </div>
               }</button>
@@ -765,11 +797,6 @@ class App extends Component {
                 <Tabs defaultActiveKey="post" id="profile-post-tab">
                   <Tab eventKey="post" title="Post">
                     <br />
-                    <Row>
-                      <Col span={8}>
-                        <p> Metamask account: {this.state.walletAddress}</p>
-                      </Col>
-                    </Row>
                     <div className="button">
                       <Row>
                         <Col xs={3}>
@@ -931,8 +958,7 @@ class App extends Component {
                         <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.editProfile}> Set Profile</Button>
                       ) : (
                           <div>
-                            <p><i>please connect browser to your MetaMask Account and press login or refresh the page. </i></p>
-                            <Button bsStyle="primary" style={{ width: "130px" }} type="submit" onClick={this.connectWallet}>Login</Button>
+                            <p><i>please connect browser to your MetaMask Account. </i></p>
                           </div>
                         )}
                     </div>
