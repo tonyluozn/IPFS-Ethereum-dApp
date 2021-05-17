@@ -716,6 +716,16 @@ class App extends Component {
         && e.tag.includes(this.state.tag_selected))
       .sort(function (a, b) { return a.post_repu - b.post_repu });
 
+    const saved_posts = this.state.newsList
+      .filter(e =>
+        (e.username.toLowerCase().includes(this.state.searchField.toLowerCase())
+          || e.tag.toLowerCase().includes(this.state.searchField.toLowerCase())
+          || e.location.toLowerCase().includes(this.state.searchField.toLowerCase())
+        )
+        && e.category === 'saved'
+        && e.tag.includes(this.state.tag_selected))
+      .sort(function (a, b) { return a.post_repu - b.post_repu });
+
     const cur_tag = this.state.tag_selected;
     const menu = this.menuItems;
 
@@ -788,6 +798,11 @@ class App extends Component {
                 <Tab eventKey="premium" title="Premium">
                   <div className="list-wrapper">
                     <p>{this.renderNews(filtered_premium_posts)}</p>
+                  </div>
+                </Tab>
+                <Tab eventKey="saved" title="Saved Posts">
+                  <div className="list-wrapper">
+                    <p>{this.renderNews(saved_posts)}</p>
                   </div>
                 </Tab>
               </Tabs>

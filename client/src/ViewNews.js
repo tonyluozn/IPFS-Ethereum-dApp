@@ -127,6 +127,11 @@ export default function ViewNews(props) {
     </Popover>
   );
 
+  const handleSave = async () => {
+    //const address = props.update.user;
+    //await storehash.methods.addSavedPosts(address).call();
+  }
+
 
 
   // assuming the file is either text file or an image. Conditional rendering added
@@ -163,6 +168,9 @@ export default function ViewNews(props) {
                           <Button className="copy" variant="outline-primary" onClick={() => { navigator.clipboard.writeText("Sending this funny meme via NU Meme Platform(https://nu-meme-sharing-dapp.web.app/): https://gateway.ipfs.io/ipfs/" + props.update.fileHash) }}>Copy</Button>
                         </OverlayTrigger>
                       </ButtonGroup>
+                    </Col>
+                    <Col>
+                      <Button className="save" variant="outline-primary" onClick = {() => this.handleSave()}>Save</Button>
                     </Col>
                     {props.update.imageHash ?
                       <Col>
