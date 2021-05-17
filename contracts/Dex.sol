@@ -61,12 +61,12 @@ contract ERC20Basic is IERC20 {
     }
 
     function isReady(address account) public view returns (bool) {
-        return (readyTime[account] <= block.timestamp);
+        return (readyTime[account] <= uint32(block.timestamp));
     }
     
     //helper functions for transfer
     function resetTokenRequest(address receiver) internal {
-        if(getReadytime(receiver) < (block.timestamp - 1 days)) {
+        if(getReadytime(receiver) < uint32(block.timestamp - 1 days)) {
             tokensRequested[receiver] = 0;
         }
     }
@@ -82,7 +82,7 @@ contract ERC20Basic is IERC20 {
     }
 
     function transfer(address receiver, uint256 numTokens) public override returns (bool) {
-        resetTokenRequest(receiver);
+        //resetTokenRequest(receiver);
         manageLimitBreach(receiver, numTokens);
         require(numTokens <= balances[msg.sender]);
         balances[msg.sender] = balances[msg.sender].sub(numTokens);
