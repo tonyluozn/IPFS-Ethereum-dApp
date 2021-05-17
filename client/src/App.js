@@ -308,13 +308,13 @@ class App extends Component {
 
   //submit both image and text to ipfs network, save two returned hashes to states.
   actualUpload = async () => {
-    const amount = BigInt(100000000000000000);
+    //const amount = BigInt(100000000000000000);
     //require tokens for upload
-    MemeToken.methods.sell(amount).send({
-      from: this.state.walletAddress
-    },(error,tokenTransactionHash) => {
-      console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
-    });
+    //MemeToken.methods.sell(amount).send({
+    //  from: this.state.walletAddress
+    //},(error,tokenTransactionHash) => {
+    //  console.log('token recieved successfully with the tansaction hash: ' + tokenTransactionHash);
+    //});
     //If there is no image, the buffer is ''
     if (this.state.imageBuffer !== '') {
       console.log(this.state.textBuffer);
