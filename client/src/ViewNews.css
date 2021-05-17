@@ -1,9 +1,4 @@
 /* ViewNews style*/
-.file-link, .img-link{
-    padding: 4px;
-    vertical-align: middle;
-    
-}
 
 .copy {
     position: absolute;
@@ -14,11 +9,6 @@
     /*vertical-align: middle;*/
 }
 
-.save {
-    vertical-align: middle;
-    
-}
-
 img {
     display: block;
     margin-left: auto;
@@ -27,7 +17,35 @@ img {
     width: 100%;
 }
 
-.links {
-    margin-top: 5px;
-    border-radius: 50%;
+.img-container:hover img{
+    position: relative;
+    transform: scale(1.05);
+    filter: blur(4px);
+    transition: transform 1.0s, filter 1.0s;    
+}
+
+.file-links {
+    position: absolute;
+    top: 12.5%;
+    left: 17.5%;
+    display: flex;
+    width: 300px;
+    filter: drop-shadow(8px 8px 10px gray);
+}
+
+.save {
+    position: absolute;
+    top: 40%;
+    left: 42.5%;
+    display: flex;
+    filter: drop-shadow(8px 8px 10px gray);
+}
+
+.img-links {
+    position: absolute;
+    top: 67.5%;
+    left: 17.5%;
+    display: flex;
+    width: 300px;
+    filter: drop-shadow(8px 8px 10px gray);
 }

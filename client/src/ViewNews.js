@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import './ViewNews.css';
-import { Modal, Button, Col, Row, ListGroup, Container, InputGroup, FormControl, ButtonGroup, Popover, OverlayTrigger } from "react-bootstrap";
+import { Modal, Button, Col, Row, Image, ListGroup, Container, InputGroup, FormControl, ButtonGroup, Popover, OverlayTrigger } from "react-bootstrap";
 import storehash from './storehash';
 import ReactAudioPlayer from 'react-audio-player';
 import MemeToken from "./MemeToken";
@@ -130,7 +130,10 @@ export default function ViewNews(props) {
   const handleSave = async () => {
     //const address = props.update.user;
     //await storehash.methods.addSavedPosts(address).call();
+    console.log("Temporary message");
   }
+
+  const [isHovered, setHover] = useState(false);
 
 
 
@@ -159,32 +162,29 @@ export default function ViewNews(props) {
               {canView ?
                 <Col>
                   <Row><Col><p>{content}</p></Col></Row>
-                  {media}
-                  <Row>
-                    <Col>
-                      <ButtonGroup className="links">
-                        <Button className="file-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/" + props.update.fileHash}>File Link</Button>
+                  
+                  <div className="img-container" onMouseOver={()=>setHover(true)} onMouseLeave={()=>setHover(false)}>
+                    {media}
+                    {isHovered && 
+                      <Button className="save" variant="primary" size="lg" onClick= {() => this.handleSave()}>Save</Button>
+                    } 
+                    {isHovered && (
+                      <ButtonGroup className="file-links" size="lg">
+                        <Button className="file-link" variant="primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/" + props.update.fileHash}>File Link</Button>
                         <OverlayTrigger trigger="focus" placement="top" overlay={copyPrompt}>
-                          <Button className="copy" variant="outline-primary" onClick={() => { navigator.clipboard.writeText("Sending this funny meme via NU Meme Platform(https://nu-meme-sharing-dapp.web.app/): https://gateway.ipfs.io/ipfs/" + props.update.fileHash) }}>Copy</Button>
+                          <Button className="file-copy" variant="primary" onClick={() => { navigator.clipboard.writeText("Sending this funny meme via NU Meme Platform(https://nu-meme-sharing-dapp.web.app/): https://gateway.ipfs.io/ipfs/" + props.update.fileHash) }}>Copy</Button>
                         </OverlayTrigger>
                       </ButtonGroup>
-                    </Col>
-                    <Col>
-                      <Button className="save" variant="outline-primary" onClick = {() => this.handleSave()}>Save</Button>
-                    </Col>
-                    {props.update.imageHash ?
-                      <Col>
-                        <ButtonGroup className="links">
-                          <Button className="img-link" variant="outline-primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/" + props.update.imageHash}>Image Link</Button>
-                          <OverlayTrigger trigger="focus" placement="top" overlay={copyPrompt}>
-                            <Button className="copy" variant="outline-primary" onClick={() => { navigator.clipboard.writeText("Sending this funny meme via NU Meme Platform(https://nu-meme-sharing-dapp.web.app/): https://gateway.ipfs.io/ipfs/" + props.update.imageHash) }}>Copy</Button>
-                          </OverlayTrigger>
-                        </ButtonGroup>
-                      </Col>
-                      :
-                      <p />
-                    }
-                  </Row>
+                    )}
+                    {isHovered && props.update.imageHash && (
+                      <ButtonGroup className="img-links" size="lg">
+                        <Button className="img-link" variant="primary" target="_blank" href={"https://gateway.ipfs.io/ipfs/" + props.update.imageHash}>Image Link</Button>
+                        <OverlayTrigger trigger="focus" placement="top" overlay={copyPrompt}>
+                          <Button className="img-copy" variant="primary" onClick={() => { navigator.clipboard.writeText("Sending this funny meme via NU Meme Platform(https://nu-meme-sharing-dapp.web.app/): https://gateway.ipfs.io/ipfs/" + props.update.imageHash) }}>Copy</Button>
+                        </OverlayTrigger>
+                      </ButtonGroup>
+                    )} 
+                  </div>
                   <hr />
                   <p>
                     Posted by {props.update.username} <br />
