@@ -20,7 +20,7 @@ export default function ViewNews(props) {
   //if meet the requirement, show the content
   const [canView, setCanView] = useState(false);
   const [media, setMedia] = useState(null);
-  useEffect(() => { onLoad() }, []);
+  useEffect(() => { onLoad() }, [props.isLoggedIn]);
 
   async function onLoad() {
     // if the post is free, then user can view; if it's premium, then check if the user has paid or not
@@ -158,8 +158,7 @@ export default function ViewNews(props) {
           {lowRepu ?
             <p>This post was uploaded by someone with low reputation, do you want to proceed?</p>
             :
-            <p>
-              {canView ?
+              <div>{canView ?
                 <Col>
                   <Row><Col><p>{content}</p></Col></Row>
                   
@@ -195,7 +194,7 @@ export default function ViewNews(props) {
                 :
                 <p>You need to pay NUMT to access this post.</p>
               }
-            </p>
+</div>
           }
         </Modal.Body>
         <Modal.Footer>
