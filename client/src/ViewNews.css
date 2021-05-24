@@ -17,6 +17,14 @@ img {
     width: 100%;
 }
 
+.img-container {
+    position:relative;
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+    width: 100%;
+}
+
 .img-container:hover img{
     position: relative;
     transform: scale(1.05);
