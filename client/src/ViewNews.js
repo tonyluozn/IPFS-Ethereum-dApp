@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import './ViewNews.css';
+import web3 from './web3';
 import { Modal, Button, Col, Row, Image, ListGroup, Container, InputGroup, FormControl, ButtonGroup, Popover, OverlayTrigger } from "react-bootstrap";
 import storehash from './storehash';
 import ReactAudioPlayer from 'react-audio-player';
@@ -109,13 +110,14 @@ export default function ViewNews(props) {
     const amount = BigInt(100000000000000000);
     await MemeToken.methods.transfer(props.update.user, amount).send({
       from: props.user
-    }, (error, tokenTransactionHash) => {
+    }, async (error, tokenTransactionHash) => {
       //once the transaction is successful, update the view and give the access
+      const txReceipt = await web3.eth.getTransactionReceipt(tokenTransactionHash);
+    if (txReceipt && txReceipt.blockNumber) {
       console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
-      if (tokenTransactionHash) {
-        setCanView(true);
+      setCanView(true);
         storehash.methods.grantAccess(props.update.fileHash, props.user).send({ from: props.user });
-      }
+    }
     });
   };
   const copyPrompt = (
