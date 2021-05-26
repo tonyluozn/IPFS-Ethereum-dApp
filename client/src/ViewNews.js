@@ -107,18 +107,24 @@ export default function ViewNews(props) {
 
   // the current user pay 0.1 NUHT to the author of the post
   const handlePayment = async () => {
-    const amount = BigInt(100000000000000000);
-    await MemeToken.methods.transfer(props.update.user, amount).send({
-      from: props.user
-    }, async (error, tokenTransactionHash) => {
-      //once the transaction is successful, update the view and give the access
-      const txReceipt = await web3.eth.getTransactionReceipt(tokenTransactionHash);
-      if (txReceipt && txReceipt.blockNumber) {
-        console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
-        setCanView(true);
-        storehash.methods.grantAccess(props.update.fileHash, props.user).send({ from: props.user });
-      }
-    });
+    // require the user to be logged in before handling payment
+    if (props.isLoggedIn){
+      const amount = BigInt(100000000000000000);
+      await MemeToken.methods.transfer(props.update.user, amount).send({
+        from: props.user
+      }, async (error, tokenTransactionHash) => {
+        //once the transaction is successful, update the view and give the access
+        const txReceipt = await web3.eth.getTransactionReceipt(tokenTransactionHash);
+        if (txReceipt && txReceipt.blockNumber) {
+          console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
+          setCanView(true);
+          storehash.methods.grantAccess(props.update.fileHash, props.user).send({ from: props.user });
+        }
+      });
+    }
+    // throw error
+    console.log('You need to log in first')
+    
   };
   const copyPrompt = (
     <Popover id="popover-basic">
@@ -136,7 +142,10 @@ export default function ViewNews(props) {
   }
 
   const [isHovered, setHover] = useState(false);
-
+//alerting user to log in before paying
+function loginAlert() {
+  alert('Connect wallet first in order to pay')
+}
 
 
   // assuming the file is either text file or an image. Conditional rendering added
@@ -222,10 +231,16 @@ export default function ViewNews(props) {
                 :
                 <Row>
                   <Col>
+                   {props.isLoggedIn ? 
                     <Button variant="outline-secondary" onClick={handlePayment}>
-                      Pay
-                      </Button>
+                    Pay 
+                    </Button> 
+                    :
+                    <Button variant="outline-secondary" onClick={loginAlert}>
+                    Pay 
+                    </Button> }
                   </Col>
+
                   <Col>
                     <Button variant="outline-secondary" onClick={handleClose}>
                       Close
