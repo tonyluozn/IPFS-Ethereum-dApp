@@ -130,8 +130,9 @@ export default function ViewNews(props) {
       await web3.eth.getTransactionReceipt(tokenTransactionHash, (err, txReceipt) => {
         setPaymentReceipt(txReceipt)
       });
-      await setCanView(true);
+      
       await storehash.methods.grantAccess(props.update.fileHash, props.user).send({ from: props.user }); 
+      await setCanView(true);
     }
     catch (error) {
       console.log(error);
