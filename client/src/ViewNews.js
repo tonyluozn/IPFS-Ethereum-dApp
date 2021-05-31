@@ -21,6 +21,8 @@ export default function ViewNews(props) {
   //if meet the requirement, show the content
   const [canView, setCanView] = useState(false);
   const [media, setMedia] = useState(null);
+  const [payButton, setPayButton] = useState("Pay");
+  const [paymentReceipt, setPaymentReceipt] = useState(null);
   useEffect(() => { onLoad() }, [props.isLoggedIn]);
 
   async function onLoad() {
@@ -108,24 +110,34 @@ export default function ViewNews(props) {
   // the current user pay 0.1 NUHT to the author of the post
   const handlePayment = async () => {
     // require the user to be logged in before handling payment
-    if (props.isLoggedIn){
+    if (props.isLoggedIn) {
       const amount = BigInt(100000000000000000);
       await MemeToken.methods.transfer(props.update.user, amount).send({
         from: props.user
       }, async (error, tokenTransactionHash) => {
-        //once the transaction is successful, update the view and give the access
-        const txReceipt = await web3.eth.getTransactionReceipt(tokenTransactionHash);
-        if (txReceipt && txReceipt.blockNumber) {
-          console.log('token transaction successfull with the tansaction hash: ' + tokenTransactionHash);
-          setCanView(true);
-          storehash.methods.grantAccess(props.update.fileHash, props.user).send({ from: props.user });
-        }
+        console.log(tokenTransactionHash);
+        getTransactionReceipt(tokenTransactionHash);
       });
+    } else {
+      // throw error
+      console.log('You need to log in first')
     }
-    // throw error
-    console.log('You need to log in first')
-    
   };
+
+  async function getTransactionReceipt (tokenTransactionHash) {
+    try {
+      setPayButton("Waiting...");
+      await web3.eth.getTransactionReceipt(tokenTransactionHash, (err, txReceipt) => {
+        setPaymentReceipt(txReceipt)
+      });
+      await setCanView(true);
+      await storehash.methods.grantAccess(props.update.fileHash, props.user).send({ from: props.user }); 
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
   const copyPrompt = (
     <Popover id="popover-basic">
       <Popover.Title as="h3">Successfully Copied!</Popover.Title>
@@ -224,7 +236,7 @@ function loginAlert() {
             </Row>
             :
             <p>
-              {canView ?
+              {canView?
                 <Button variant="outline-secondary" onClick={handleClose}>
                   Close
                     </Button>
@@ -233,7 +245,7 @@ function loginAlert() {
                   <Col>
                    {props.isLoggedIn ? 
                     <Button variant="outline-secondary" onClick={handlePayment}>
-                    Pay 
+                    {payButton} 
                     </Button> 
                     :
                     <Button variant="outline-secondary" onClick={loginAlert}>
