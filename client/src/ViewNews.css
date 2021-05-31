@@ -33,8 +33,9 @@ img {
 }
 
 .file-links {
+    padding: auto;
     position: absolute;
-    top: 12.5%;
+    top: 0%;
     left: 17.5%;
     display: flex;
     width: 300px;
@@ -42,6 +43,7 @@ img {
 }
 
 .save {
+    padding: auto;
     position: absolute;
     top: 40%;
     left: 42.5%;
@@ -50,8 +52,9 @@ img {
 }
 
 .img-links {
+    padding: auto;
     position: absolute;
-    top: 67.5%;
+    top: 80%;
     left: 17.5%;
     display: flex;
     width: 300px;
